@@ -1,0 +1,25 @@
+---
+description: When commiting to git use this message best practice
+globs: 
+---
+
+Git commit message best practices:
+
+1. Use a clear structure: Start with a concise subject line (50 chars max), followed by a blank line and detailed description if needed
+
+2. Write in imperative mood: "Add feature" not "Added feature"
+
+3. Begin with a capital letter and don't end with a period
+
+4. Be specific about what changed and why
+
+5. Consider using conventional commits format: type(scope): message
+   - feat: new feature
+   - fix: bug fix
+   - docs: documentation changes
+   - style: formatting changes
+   - refactor: code restructuring
+   - test: adding tests
+   - chore: maintenance tasks
+
+This structured approach makes your commit history more readable and useful for collaboration.
