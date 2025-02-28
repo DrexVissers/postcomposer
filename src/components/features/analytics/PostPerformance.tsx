@@ -34,10 +34,10 @@ interface PostPerformanceProps {
 
 export default function PostPerformance({
   posts,
-  className = "bg-card-lighter dark:bg-card-lighter rounded-lg shadow-md p-6",
+  className = "bg-card dark:bg-card rounded-lg shadow-md p-6",
   textClassName = "text-foreground/90 dark:text-foreground/90",
   subtextClassName = "text-muted-foreground dark:text-muted-foreground",
-  headerClassName = "border-border text-muted-foreground bg-muted/30 dark:bg-muted/10",
+  headerClassName = "border-border bg-muted/30 dark:bg-muted/10",
   rowClassName = "hover:bg-muted/20 dark:hover:bg-muted/10",
 }: PostPerformanceProps) {
   // Format numbers with k for thousands

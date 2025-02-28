@@ -108,6 +108,58 @@ export default function AnalyticsPage() {
     };
   });
 
+  // Define additional chart data for the other charts
+  const impressionsData = PREDEFINED_CHART_DATA.map((item) => {
+    // Update dates to be relative to today
+    const today = new Date();
+    const pastDate = new Date(today);
+    const dayOffset =
+      PREDEFINED_CHART_DATA.length -
+      1 -
+      PREDEFINED_CHART_DATA.findIndex((d) => d.date === item.date);
+    pastDate.setDate(today.getDate() - dayOffset);
+
+    // Use a different value pattern for impressions
+    return {
+      date: pastDate.toISOString().split("T")[0],
+      value: Math.round(item.value * 1.5), // Higher values for impressions
+    };
+  });
+
+  const engagementsData = PREDEFINED_CHART_DATA.map((item) => {
+    // Update dates to be relative to today
+    const today = new Date();
+    const pastDate = new Date(today);
+    const dayOffset =
+      PREDEFINED_CHART_DATA.length -
+      1 -
+      PREDEFINED_CHART_DATA.findIndex((d) => d.date === item.date);
+    pastDate.setDate(today.getDate() - dayOffset);
+
+    // Use a different value pattern for engagements
+    return {
+      date: pastDate.toISOString().split("T")[0],
+      value: Math.round(item.value * 0.4), // Lower values for engagements
+    };
+  });
+
+  const followersData = PREDEFINED_CHART_DATA.map((item, index) => {
+    // Update dates to be relative to today
+    const today = new Date();
+    const pastDate = new Date(today);
+    const dayOffset =
+      PREDEFINED_CHART_DATA.length -
+      1 -
+      PREDEFINED_CHART_DATA.findIndex((d) => d.date === item.date);
+    pastDate.setDate(today.getDate() - dayOffset);
+
+    // Use a different value pattern for followers
+    return {
+      date: pastDate.toISOString().split("T")[0],
+      value: 5000 + Math.round(index * 50 + (item.value - 1200) / 10), // Steady growth for followers
+    };
+  });
+
   // Use predefined platform data instead of random values
   const platformData = PREDEFINED_POST_ANALYTICS;
 
@@ -231,7 +283,7 @@ export default function AnalyticsPage() {
               formatter={(val) =>
                 val >= 1000 ? (val / 1000).toFixed(1) + "k" : val.toString()
               }
-              className="bg-card-lighter dark:bg-card-lighter shadow-md"
+              className="bg-card dark:bg-card shadow-md"
               textClassName="text-foreground/90 dark:text-foreground/90"
               subtextClassName="text-muted-foreground"
               iconClassName="bg-muted/50 dark:bg-muted/30"
@@ -246,7 +298,7 @@ export default function AnalyticsPage() {
               formatter={(val) =>
                 val >= 1000 ? (val / 1000).toFixed(1) + "k" : val.toString()
               }
-              className="bg-card-lighter dark:bg-card-lighter shadow-md"
+              className="bg-card dark:bg-card shadow-md"
               textClassName="text-foreground/90 dark:text-foreground/90"
               subtextClassName="text-muted-foreground"
               iconClassName="bg-muted/50 dark:bg-muted/30"
@@ -258,7 +310,7 @@ export default function AnalyticsPage() {
               value={totalMetrics.shares}
               change={weeklyChanges.shares}
               icon={<Share2 className="w-5 h-5 text-primary" />}
-              className="bg-card-lighter dark:bg-card-lighter shadow-md"
+              className="bg-card dark:bg-card shadow-md"
               textClassName="text-foreground/90 dark:text-foreground/90"
               subtextClassName="text-muted-foreground"
               iconClassName="bg-muted/50 dark:bg-muted/30"
@@ -270,7 +322,7 @@ export default function AnalyticsPage() {
               value={totalMetrics.comments}
               change={weeklyChanges.comments}
               icon={<MessageSquare className="w-5 h-5 text-primary" />}
-              className="bg-card-lighter dark:bg-card-lighter shadow-md"
+              className="bg-card dark:bg-card shadow-md"
               textClassName="text-foreground/90 dark:text-foreground/90"
               subtextClassName="text-muted-foreground"
               iconClassName="bg-muted/50 dark:bg-muted/30"
@@ -282,7 +334,7 @@ export default function AnalyticsPage() {
               value={totalMetrics.clicks}
               change={weeklyChanges.clicks}
               icon={<ExternalLink className="w-5 h-5 text-primary" />}
-              className="bg-card-lighter dark:bg-card-lighter shadow-md"
+              className="bg-card dark:bg-card shadow-md"
               textClassName="text-foreground/90 dark:text-foreground/90"
               subtextClassName="text-muted-foreground"
               iconClassName="bg-muted/50 dark:bg-muted/30"
@@ -298,7 +350,7 @@ export default function AnalyticsPage() {
                 selectedMetric.charAt(0).toUpperCase() + selectedMetric.slice(1)
               } Over Time`}
               data={chartData}
-              className="bg-card-lighter dark:bg-card-lighter border border-border shadow-md"
+              className="bg-card dark:bg-card border border-border shadow-md"
               textClassName="text-foreground/90 dark:text-foreground/90"
               subtextClassName="text-muted-foreground"
               lineColor="hsl(var(--primary))"
@@ -309,7 +361,7 @@ export default function AnalyticsPage() {
               data={platformData}
               selectedMetric={selectedMetric}
               onSelectMetric={handleMetricSelect}
-              className="bg-card-lighter dark:bg-card-lighter border border-border shadow-md"
+              className="bg-card dark:bg-card border border-border shadow-md"
               textClassName="text-foreground/90 dark:text-foreground/90"
               subtextClassName="text-muted-foreground"
               buttonClassName="bg-muted/50 dark:bg-muted/30 text-foreground/80 dark:text-foreground/80"
@@ -322,11 +374,30 @@ export default function AnalyticsPage() {
         <div className="mb-8">
           <PostPerformance
             posts={postsWithAnalytics}
-            className="bg-card-lighter dark:bg-card-lighter border border-border shadow-md"
+            className="bg-card dark:bg-card border border-border shadow-md"
             textClassName="text-foreground/90 dark:text-foreground/90"
             subtextClassName="text-muted-foreground"
-            headerClassName="border-border bg-muted/30 dark:bg-muted/10"
-            rowClassName="hover:bg-muted/20 dark:hover:bg-muted/10"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <AnalyticsChart
+            title="Impressions Over Time"
+            data={impressionsData}
+            className="bg-card dark:bg-card border border-border shadow-md"
+            lineColor="hsl(var(--chart-1))"
+          />
+          <AnalyticsChart
+            title="Engagements Over Time"
+            data={engagementsData}
+            className="bg-card dark:bg-card border border-border shadow-md"
+            lineColor="hsl(var(--chart-2))"
+          />
+          <AnalyticsChart
+            title="Followers Growth"
+            data={followersData}
+            className="bg-card dark:bg-card border border-border shadow-md"
+            lineColor="hsl(var(--chart-3))"
           />
         </div>
       </div>

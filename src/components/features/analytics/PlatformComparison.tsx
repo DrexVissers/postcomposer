@@ -26,7 +26,7 @@ export default function PlatformComparison({
   data,
   selectedMetric,
   onSelectMetric,
-  className = "bg-card-lighter dark:bg-card-lighter shadow-md",
+  className = "bg-card dark:bg-card shadow-md",
   textClassName = "text-foreground/90 dark:text-foreground/90",
   subtextClassName = "text-muted-foreground dark:text-muted-foreground",
   buttonClassName = "bg-muted/50 dark:bg-muted/30 text-foreground/80 dark:text-foreground/80",

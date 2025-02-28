@@ -19,7 +19,7 @@ export default function AnalyticsChart({
   title,
   data,
   color = "hsl(var(--primary))", // Use primary color variable
-  className = "bg-card-lighter dark:bg-card-lighter shadow-md",
+  className = "bg-card dark:bg-card shadow-md",
   textClassName = "text-foreground/90 dark:text-foreground/90",
   subtextClassName = "text-muted-foreground dark:text-muted-foreground",
   lineColor,
@@ -54,7 +54,7 @@ export default function AnalyticsChart({
         </div>
 
         {/* Chart area */}
-        <div className="ml-8 h-full relative bg-card-lighter dark:bg-card-lighter rounded-sm">
+        <div className="ml-8 h-full relative bg-card dark:bg-card rounded-sm">
           {/* X-axis grid lines */}
           <div className="absolute inset-0 border-b border-border flex flex-col justify-between">
             <div className="border-t border-border h-0"></div>

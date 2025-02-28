@@ -127,7 +127,7 @@ export default function CreatePostPage() {
         <div className="flex flex-col md:flex-row gap-8">
           {/* Left Column - Content Creation */}
           <div className="flex-1 space-y-6">
-            <div className="bg-card-lighter dark:bg-card-lighter rounded-lg border border-border shadow-sm p-6">
+            <div className="bg-card dark:bg-card rounded-lg border border-border shadow-sm p-6">
               <h1 className="text-2xl font-bold text-foreground/90 dark:text-foreground/90 mb-6">
                 Create New Post
               </h1>
@@ -298,7 +298,7 @@ export default function CreatePostPage() {
                 {templates.map((template) => (
                   <div
                     key={template.id}
-                    className="p-3 border border-border bg-card-lighter dark:bg-card-lighter rounded-lg hover:border-primary cursor-pointer text-sm"
+                    className="p-3 border border-border bg-card dark:bg-card rounded-lg hover:border-primary cursor-pointer text-sm"
                     onClick={() => handleTemplateSelect(template.id)}
                   >
                     <p className="font-medium text-foreground/90 dark:text-foreground/90">
@@ -336,7 +336,7 @@ export default function CreatePostPage() {
                 .map((tagId) => mockTags.find((t) => t.id === tagId))
                 .filter(Boolean)}
               media={selectedMedia}
-              className="bg-card-lighter dark:bg-card-lighter rounded-lg shadow-sm p-4 sm:p-6 border border-border"
+              className="bg-card dark:bg-card rounded-lg shadow-sm p-4 sm:p-6 border border-border"
               textClassName="text-foreground/90 dark:text-foreground/90"
               subtextClassName="text-muted-foreground dark:text-muted-foreground"
               tabClassName="text-muted-foreground hover:text-foreground/80"

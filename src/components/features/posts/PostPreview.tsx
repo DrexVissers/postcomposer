@@ -31,7 +31,7 @@ export default function PostPreview({
   category,
   tags = [],
   media = [],
-  className = "bg-card-lighter dark:bg-card-lighter rounded-lg shadow-sm p-4 sm:p-6",
+  className = "bg-card dark:bg-card rounded-lg shadow-sm p-4 sm:p-6",
   textClassName = "text-foreground/90 dark:text-foreground/90",
   subtextClassName = "text-muted-foreground dark:text-muted-foreground",
   tabClassName = "text-muted-foreground hover:text-foreground/80",

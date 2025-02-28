@@ -48,7 +48,7 @@ export default function Notification({
         return {
           icon: <CheckCircle className="w-5 h-5" />,
           containerClass:
-            "bg-card-lighter dark:bg-card-lighter border-green-500 dark:border-green-600 shadow-lg",
+            "bg-card dark:bg-card border-green-500 dark:border-green-600 shadow-lg",
           iconClass: "text-green-500 dark:text-green-400",
           titleClass: "text-foreground/90 dark:text-foreground/90",
           messageClass: "text-muted-foreground dark:text-muted-foreground",
@@ -57,7 +57,7 @@ export default function Notification({
         return {
           icon: <AlertCircle className="w-5 h-5" />,
           containerClass:
-            "bg-card-lighter dark:bg-card-lighter border-red-500 dark:border-red-600 shadow-lg",
+            "bg-card dark:bg-card border-red-500 dark:border-red-600 shadow-lg",
           iconClass: "text-red-500 dark:text-red-400",
           titleClass: "text-foreground/90 dark:text-foreground/90",
           messageClass: "text-muted-foreground dark:text-muted-foreground",
@@ -66,7 +66,7 @@ export default function Notification({
         return {
           icon: <AlertTriangle className="w-5 h-5" />,
           containerClass:
-            "bg-card-lighter dark:bg-card-lighter border-yellow-500 dark:border-yellow-600 shadow-lg",
+            "bg-card dark:bg-card border-yellow-500 dark:border-yellow-600 shadow-lg",
           iconClass: "text-yellow-500 dark:text-yellow-400",
           titleClass: "text-foreground/90 dark:text-foreground/90",
           messageClass: "text-muted-foreground dark:text-muted-foreground",
@@ -76,7 +76,7 @@ export default function Notification({
         return {
           icon: <Info className="w-5 h-5" />,
           containerClass:
-            "bg-card-lighter dark:bg-card-lighter border-blue-500 dark:border-blue-600 shadow-lg",
+            "bg-card dark:bg-card border-blue-500 dark:border-blue-600 shadow-lg",
           iconClass: "text-blue-500 dark:text-blue-400",
           titleClass: "text-foreground/90 dark:text-foreground/90",
           messageClass: "text-muted-foreground dark:text-muted-foreground",
@@ -93,9 +93,7 @@ export default function Notification({
       } ${styles.containerClass}`}
       role="alert"
     >
-      <div className={`flex-shrink-0 mr-3 ${styles.iconClass}`}>
-        {styles.icon}
-      </div>
+      <div className={`flex-shrink-0 mr-3`}>{styles.icon}</div>
       <div className="flex-1">
         <h3 className={`text-sm font-medium ${styles.titleClass}`}>{title}</h3>
         <div className={`mt-1 text-sm ${styles.messageClass}`}>{message}</div>

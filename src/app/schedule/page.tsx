@@ -132,7 +132,7 @@ export default function SchedulePage() {
               scheduledPosts={calendarPosts}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              className="bg-card-lighter dark:bg-card-lighter border border-border"
+              className="bg-card dark:bg-card border border-border"
               textClassName="text-foreground/90 dark:text-foreground/90"
               subtextClassName="text-muted-foreground"
             />
@@ -143,7 +143,7 @@ export default function SchedulePage() {
                 scheduledPosts={calendarPosts}
                 onDateSelect={handleDateSelect}
                 selectedDate={selectedDate}
-                className="bg-card-lighter dark:bg-card-lighter border border-border mb-6"
+                className="bg-card dark:bg-card border border-border mb-6"
                 textClassName="text-foreground/90 dark:text-foreground/90"
                 subtextClassName="text-muted-foreground"
                 selectedClassName="bg-primary/20 text-primary"
@@ -154,10 +154,10 @@ export default function SchedulePage() {
                   selectedDate={selectedDate}
                   onSchedule={handleSchedule}
                   posts={mockPosts}
-                  className="bg-card-lighter dark:bg-card-lighter border border-border"
+                  className="bg-card dark:bg-card border border-border"
                   textClassName="text-foreground/90 dark:text-foreground/90"
                   subtextClassName="text-muted-foreground"
-                  buttonClassName="bg-card-lighter hover:bg-card text-muted-foreground hover:text-foreground/80"
+                  buttonClassName="bg-card dark:bg-card text-muted-foreground hover:text-foreground/80"
                 />
               </div>
             </div>

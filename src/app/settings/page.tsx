@@ -332,7 +332,7 @@ export default function SettingsPage() {
               </h2>
 
               <div className="mb-8">
-                <div className="bg-card-lighter dark:bg-card-lighter p-4 rounded-lg border border-border">
+                <div className="bg-card dark:bg-card p-4 rounded-lg border border-border">
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-medium text-foreground/90 dark:text-foreground/90">
                       Current Plan
@@ -444,7 +444,7 @@ export default function SettingsPage() {
               </h2>
 
               <div className="space-y-4">
-                <div className="flex justify-between items-center p-4 border border-border rounded-lg bg-card-lighter dark:bg-card-lighter">
+                <div className="flex justify-between items-center p-4 border border-border rounded-lg bg-card dark:bg-card">
                   <div className="flex items-center">
                     <Linkedin className="w-6 h-6 text-blue-600 mr-3" />
                     <div>
@@ -471,7 +471,7 @@ export default function SettingsPage() {
                   </button>
                 </div>
 
-                <div className="flex justify-between items-center p-4 border border-border rounded-lg bg-card-lighter dark:bg-card-lighter">
+                <div className="flex justify-between items-center p-4 border border-border rounded-lg bg-card dark:bg-card">
                   <div className="flex items-center">
                     <Twitter className="w-6 h-6 text-sky-500 mr-3" />
                     <div>
@@ -618,7 +618,7 @@ export default function SettingsPage() {
               </div>
 
               {isEditingCategory && (
-                <div className="mb-6 p-4 border border-border rounded-lg bg-card-lighter dark:bg-card-lighter">
+                <div className="mb-6 p-4 border border-border rounded-lg bg-card dark:bg-card">
                   <h3 className="text-md font-medium mb-4 text-foreground/90 dark:text-foreground/90">
                     {currentCategory ? "Edit Category" : "Add New Category"}
                   </h3>
@@ -756,7 +756,7 @@ export default function SettingsPage() {
               </div>
 
               {isEditingTag && (
-                <div className="mb-6 p-4 border border-border rounded-lg bg-card-lighter dark:bg-card-lighter">
+                <div className="mb-6 p-4 border border-border rounded-lg bg-card dark:bg-card">
                   <h3 className="text-md font-medium mb-4 text-foreground/90 dark:text-foreground/90">
                     {currentTag ? "Edit Tag" : "Add New Tag"}
                   </h3>
@@ -927,7 +927,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-6">
-                <div className="bg-card-lighter dark:bg-card-lighter p-4 rounded-md border border-border">
+                <div className="bg-card dark:bg-card p-4 rounded-md border border-border">
                   <h3 className="text-sm font-medium text-foreground/90 dark:text-foreground/90 mb-2">
                     Role Permissions
                   </h3>
@@ -987,7 +987,7 @@ export default function SettingsPage() {
                     {teamMembers.map((member) => (
                       <div
                         key={member.id}
-                        className="flex items-center justify-between p-4 border border-border rounded-md bg-card-lighter dark:bg-card-lighter"
+                        className="flex items-center justify-between p-4 border border-border rounded-md bg-card dark:bg-card"
                       >
                         <div className="flex items-center gap-3">
                           <Avatar>

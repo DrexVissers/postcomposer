@@ -41,7 +41,7 @@ export default function PreviewPage() {
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-card-lighter dark:bg-card-lighter rounded-lg shadow-sm p-6 border border-border">
+          <div className="bg-card dark:bg-card rounded-lg shadow-sm p-6 border border-border">
             <h2 className="text-lg font-medium text-foreground/90 dark:text-foreground/90 mb-4">
               Preview Settings
             </h2>
@@ -95,11 +95,9 @@ export default function PreviewPage() {
 
           <PostPreview
             content={customContent}
-            className="bg-card-lighter dark:bg-card-lighter rounded-lg shadow-sm p-4 sm:p-6 border border-border"
+            className="bg-card dark:bg-card rounded-lg shadow-sm p-4 sm:p-6 border border-border"
             textClassName="text-foreground/90 dark:text-foreground/90"
             subtextClassName="text-muted-foreground dark:text-muted-foreground"
-            tabClassName="text-muted-foreground hover:text-foreground/80"
-            selectedTabClassName="bg-background dark:bg-background shadow-sm text-primary"
           />
         </div>
       </div>
