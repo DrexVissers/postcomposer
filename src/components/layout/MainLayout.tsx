@@ -10,6 +10,8 @@ import {
   X,
   User,
   LogOut,
+  Eye,
+  Calendar,
 } from "lucide-react";
 import { mockUser } from "@/lib/mock-data";
 
@@ -46,6 +48,20 @@ export default function MainLayout({ children }: MainLayoutProps) {
             >
               <PlusCircle className="w-5 h-5 mr-3" />
               <span>Create Post</span>
+            </Link>
+            <Link
+              href="/schedule"
+              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+            >
+              <Calendar className="w-5 h-5 mr-3" />
+              <span>Schedule</span>
+            </Link>
+            <Link
+              href="/preview"
+              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+            >
+              <Eye className="w-5 h-5 mr-3" />
+              <span>Preview Tool</span>
             </Link>
             <Link
               href="/settings"
@@ -112,6 +128,22 @@ export default function MainLayout({ children }: MainLayoutProps) {
             >
               <PlusCircle className="w-5 h-5 mr-3" />
               <span>Create Post</span>
+            </Link>
+            <Link
+              href="/schedule"
+              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              onClick={toggleMobileMenu}
+            >
+              <Calendar className="w-5 h-5 mr-3" />
+              <span>Schedule</span>
+            </Link>
+            <Link
+              href="/preview"
+              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              onClick={toggleMobileMenu}
+            >
+              <Eye className="w-5 h-5 mr-3" />
+              <span>Preview Tool</span>
             </Link>
             <Link
               href="/settings"

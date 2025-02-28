@@ -16,6 +16,15 @@ export interface Post {
   };
 }
 
+export interface ScheduledPost {
+  id: string;
+  content: string;
+  scheduledDate: string;
+  platform: "linkedin" | "twitter";
+  postId?: string; // Reference to the original post if applicable
+  repeat?: "none" | "daily" | "weekly" | "monthly";
+}
+
 export interface User {
   id: string;
   name: string;
@@ -91,6 +100,65 @@ export const mockPosts: Post[] = [
         published: false,
       },
     },
+  },
+];
+
+// Mock scheduled posts
+export const mockScheduledPosts: ScheduledPost[] = [
+  {
+    id: "sched1",
+    content:
+      "Just launched our new product! So excited to share this with everyone.",
+    scheduledDate: new Date(
+      new Date().setDate(new Date().getDate() + 1)
+    ).toISOString(),
+    platform: "linkedin",
+    postId: "1",
+    repeat: "none",
+  },
+  {
+    id: "sched2",
+    content:
+      "Just launched our new product! 🚀 Check it out at example.com #NewProduct #Excited",
+    scheduledDate: new Date(
+      new Date().setDate(new Date().getDate() + 1)
+    ).toISOString(),
+    platform: "twitter",
+    postId: "1",
+    repeat: "none",
+  },
+  {
+    id: "sched3",
+    content:
+      "Working from home can be challenging. Here are 5 tips I've found helpful for maintaining productivity...",
+    scheduledDate: new Date(
+      new Date().setDate(new Date().getDate() + 3)
+    ).toISOString(),
+    platform: "linkedin",
+    postId: "2",
+    repeat: "weekly",
+  },
+  {
+    id: "sched4",
+    content:
+      "5 WFH productivity tips: 1. Dedicated workspace 2. Consistent schedule 3. Regular breaks...",
+    scheduledDate: new Date(
+      new Date().setDate(new Date().getDate() + 3)
+    ).toISOString(),
+    platform: "twitter",
+    postId: "2",
+    repeat: "weekly",
+  },
+  {
+    id: "sched5",
+    content:
+      "Yesterday, I had the privilege of attending the Future of AI Conference...",
+    scheduledDate: new Date(
+      new Date().setDate(new Date().getDate() + 7)
+    ).toISOString(),
+    platform: "linkedin",
+    postId: "3",
+    repeat: "none",
   },
 ];
 

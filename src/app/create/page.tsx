@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mockTemplates } from "@/lib/mock-data";
 import { Mic, Image as ImageIcon, Send, RefreshCw } from "lucide-react";
+import PostPreview from "@/components/features/posts/PostPreview";
 
 export default function CreatePostPage() {
   const [content, setContent] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [activeTab, setActiveTab] = useState("linkedin");
+  const [activeTab] = useState("linkedin");
   const [generatedContent, setGeneratedContent] = useState({
     linkedin: "",
     twitter: "",
@@ -123,46 +123,9 @@ export default function CreatePostPage() {
             </div>
           </div>
 
-          {/* Preview Section */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-medium text-gray-800 mb-4">Preview</h2>
-
-            <Tabs
-              defaultValue="linkedin"
-              className="w-full"
-              onValueChange={setActiveTab}
-            >
-              <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="linkedin">LinkedIn</TabsTrigger>
-                <TabsTrigger value="twitter">Twitter</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="linkedin" className="mt-0">
-                <div className="border border-gray-200 rounded-lg p-4 min-h-[200px]">
-                  {generatedContent.linkedin ? (
-                    <div className="whitespace-pre-line">
-                      {generatedContent.linkedin}
-                    </div>
-                  ) : (
-                    <div className="text-gray-400 italic">
-                      LinkedIn preview will appear here after generation.
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-
-              <TabsContent value="twitter" className="mt-0">
-                <div className="border border-gray-200 rounded-lg p-4 min-h-[200px]">
-                  {generatedContent.twitter ? (
-                    <div>{generatedContent.twitter}</div>
-                  ) : (
-                    <div className="text-gray-400 italic">
-                      Twitter preview will appear here after generation.
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-            </Tabs>
+          {/* Preview Section - Using the new PostPreview component */}
+          <div>
+            <PostPreview content={generatedContent} />
 
             <div className="mt-6 flex justify-end">
               <button
