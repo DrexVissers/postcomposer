@@ -80,7 +80,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between h-16 px-6 border-b border-border">
-            <h1 className="text-xl font-bold text-primary">Levercast</h1>
+            <h1 className="text-xl font-bold text-primary">SocialSphere</h1>
             <div className="flex items-center gap-2">
               <ThemeToggle />
               <NotificationCenter />
@@ -175,7 +175,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
       {/* Mobile Menu Button */}
       <div className="fixed top-0 left-0 right-0 z-20 flex items-center justify-between h-16 px-4 bg-card/90 dark:bg-card/50 shadow-md lg:hidden">
-        <h1 className="text-xl font-bold text-primary">Levercast</h1>
+        <h1 className="text-xl font-bold text-primary">SocialSphere</h1>
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <NotificationCenter />
@@ -215,7 +215,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between h-16 px-6 border-b border-border">
-            <h1 className="text-xl font-bold text-primary">Levercast</h1>
+            <h1 className="text-xl font-bold text-primary">SocialSphere</h1>
             <button
               onClick={toggleMobileMenu}
               className="p-2 text-foreground/80 dark:text-foreground/80 rounded-md hover:bg-muted/50 dark:hover:bg-background/50 focus:outline-none focus:ring-2 focus:ring-ring"

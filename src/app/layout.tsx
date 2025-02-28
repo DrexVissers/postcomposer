@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Levercast - Transform Ideas into Social Media Posts",
+  title: "SocialSphere - Transform Ideas into Social Media Posts",
   description:
     "Quickly capture your ideas and transform them into polished social media posts for LinkedIn and Twitter.",
 };
