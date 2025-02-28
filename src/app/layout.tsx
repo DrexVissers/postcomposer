@@ -4,6 +4,7 @@ import "./globals.css";
 import { NotificationProvider } from "@/context/NotificationContext";
 import { TemplateProvider } from "@/context/TemplateContext";
 import { SystemNotificationProvider } from "@/context/SystemNotificationContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,15 +28,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NotificationProvider>
-          <SystemNotificationProvider>
-            <TemplateProvider>{children}</TemplateProvider>
-          </SystemNotificationProvider>
-        </NotificationProvider>
+        <ThemeProvider>
+          <NotificationProvider>
+            <SystemNotificationProvider>
+              <TemplateProvider>{children}</TemplateProvider>
+            </SystemNotificationProvider>
+          </NotificationProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

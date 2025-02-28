@@ -18,6 +18,7 @@ import {
 import { mockUser } from "@/lib/mock-data";
 import MobileNavBar from "./MobileNavBar";
 import NotificationCenter from "@/components/features/notifications/NotificationCenter";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -71,60 +72,63 @@ export default function MainLayout({ children }: MainLayoutProps) {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-background">
       {/* Desktop Sidebar */}
-      <aside className="bg-white shadow-md fixed inset-y-0 left-0 z-30 w-64 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 hidden lg:block">
+      <aside className="bg-card shadow-md fixed inset-y-0 left-0 z-30 w-64 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 hidden lg:block">
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between h-16 px-6 border-b">
-            <h1 className="text-xl font-bold text-teal-600">Levercast</h1>
-            <NotificationCenter />
+          <div className="flex items-center justify-between h-16 px-6 border-b border-border">
+            <h1 className="text-xl font-bold text-primary">Levercast</h1>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <NotificationCenter />
+            </div>
           </div>
           <nav className="flex-1 px-4 py-6 space-y-2">
             <Link
               href="/dashboard"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
             >
               <LayoutDashboard className="w-5 h-5 mr-3" />
               <span>My Posts</span>
             </Link>
             <Link
               href="/create"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
             >
               <PlusCircle className="w-5 h-5 mr-3" />
               <span>Create Post</span>
             </Link>
             <Link
               href="/schedule"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
             >
               <Calendar className="w-5 h-5 mr-3" />
               <span>Schedule</span>
             </Link>
             <Link
               href="/preview"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
             >
               <Eye className="w-5 h-5 mr-3" />
               <span>Preview</span>
             </Link>
             <Link
               href="/templates"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
             >
               <FileText className="w-5 h-5 mr-3" />
               <span>Templates</span>
             </Link>
             <Link
               href="/analytics"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
             >
               <BarChart2 className="w-5 h-5 mr-3" />
               <span>Analytics</span>
             </Link>
             <Link
               href="/media"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
             >
               <ImageIcon className="w-5 h-5 mr-3" />
               <span>Media</span>
@@ -132,7 +136,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             {canApprove && (
               <Link
                 href="/dashboard/approvals"
-                className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+                className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
               >
                 <CheckCircle className="w-5 h-5 mr-3" />
                 <span>Approvals</span>
@@ -140,24 +144,24 @@ export default function MainLayout({ children }: MainLayoutProps) {
             )}
             <Link
               href="/settings"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
             >
               <Settings className="w-5 h-5 mr-3" />
               <span>Settings</span>
             </Link>
           </nav>
-          <div className="px-6 py-4 border-t">
+          <div className="px-6 py-4 border-t border-border">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center text-white">
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
                   {mockUser.name.charAt(0)}
                 </div>
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-700">
+                <p className="text-sm font-medium text-foreground">
                   {mockUser.name}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   {mockUser.subscription.plan} plan
                 </p>
               </div>
@@ -167,13 +171,14 @@ export default function MainLayout({ children }: MainLayoutProps) {
       </aside>
 
       {/* Mobile Menu Button */}
-      <div className="fixed top-0 left-0 right-0 z-20 flex items-center justify-between h-16 px-4 bg-white shadow-md lg:hidden">
-        <h1 className="text-xl font-bold text-teal-600">Levercast</h1>
+      <div className="fixed top-0 left-0 right-0 z-20 flex items-center justify-between h-16 px-4 bg-card shadow-md lg:hidden">
+        <h1 className="text-xl font-bold text-primary">Levercast</h1>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <NotificationCenter />
           <button
             onClick={toggleMobileMenu}
-            className="p-2 text-gray-700 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+            className="p-2 text-foreground rounded-md hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring"
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMobileMenuOpen ? (
@@ -196,16 +201,16 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
       {/* Mobile Sidebar */}
       <aside
-        className={`bg-white shadow-md fixed inset-y-0 left-0 z-30 w-64 transform transition-transform duration-300 ease-in-out ${
+        className={`bg-card shadow-md fixed inset-y-0 left-0 z-30 w-64 transform transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         } lg:hidden overflow-y-auto`}
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between h-16 px-6 border-b">
-            <h1 className="text-xl font-bold text-teal-600">Levercast</h1>
+          <div className="flex items-center justify-between h-16 px-6 border-b border-border">
+            <h1 className="text-xl font-bold text-primary">Levercast</h1>
             <button
               onClick={toggleMobileMenu}
-              className="p-2 text-gray-700 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="p-2 text-foreground rounded-md hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring"
               aria-label="Close menu"
             >
               <X className="w-6 h-6" />
@@ -214,7 +219,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
           <nav className="flex-1 px-4 py-6 space-y-2">
             <Link
               href="/dashboard"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
               onClick={toggleMobileMenu}
             >
               <LayoutDashboard className="w-5 h-5 mr-3" />
@@ -222,7 +227,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             </Link>
             <Link
               href="/create"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
               onClick={toggleMobileMenu}
             >
               <PlusCircle className="w-5 h-5 mr-3" />
@@ -230,7 +235,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             </Link>
             <Link
               href="/schedule"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
               onClick={toggleMobileMenu}
             >
               <Calendar className="w-5 h-5 mr-3" />
@@ -238,7 +243,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             </Link>
             <Link
               href="/preview"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
               onClick={toggleMobileMenu}
             >
               <Eye className="w-5 h-5 mr-3" />
@@ -246,7 +251,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             </Link>
             <Link
               href="/templates"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
               onClick={toggleMobileMenu}
             >
               <FileText className="w-5 h-5 mr-3" />
@@ -254,7 +259,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             </Link>
             <Link
               href="/analytics"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
               onClick={toggleMobileMenu}
             >
               <BarChart2 className="w-5 h-5 mr-3" />
@@ -262,7 +267,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             </Link>
             <Link
               href="/media"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
               onClick={toggleMobileMenu}
             >
               <ImageIcon className="w-5 h-5 mr-3" />
@@ -271,7 +276,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             {canApprove && (
               <Link
                 href="/dashboard/approvals"
-                className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+                className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
                 onClick={toggleMobileMenu}
               >
                 <CheckCircle className="w-5 h-5 mr-3" />
@@ -280,25 +285,25 @@ export default function MainLayout({ children }: MainLayoutProps) {
             )}
             <Link
               href="/settings"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              className="flex items-center px-4 py-3 text-foreground rounded-lg hover:bg-muted"
               onClick={toggleMobileMenu}
             >
               <Settings className="w-5 h-5 mr-3" />
               <span>Settings</span>
             </Link>
           </nav>
-          <div className="px-6 py-4 border-t">
+          <div className="px-6 py-4 border-t border-border">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center text-white">
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
                   {mockUser.name.charAt(0)}
                 </div>
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-700">
+                <p className="text-sm font-medium text-foreground">
                   {mockUser.name}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   {mockUser.subscription.plan} plan
                 </p>
               </div>

@@ -43,7 +43,7 @@ export default function MobileNavBar() {
 
   return (
     <div
-      className={`fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-20 transition-transform duration-300 lg:hidden ${
+      className={`fixed bottom-0 left-0 right-0 bg-card border-t border-border z-20 transition-transform duration-300 lg:hidden ${
         isVisible ? "translate-y-0" : "translate-y-full"
       }`}
     >
@@ -51,7 +51,7 @@ export default function MobileNavBar() {
         <Link
           href="/dashboard"
           className={`flex flex-col items-center justify-center w-full h-full ${
-            isActive("/dashboard") ? "text-teal-600" : "text-gray-500"
+            isActive("/dashboard") ? "text-primary" : "text-muted-foreground"
           }`}
         >
           <LayoutDashboard className="w-5 h-5" />
@@ -61,7 +61,7 @@ export default function MobileNavBar() {
         <Link
           href="/create"
           className={`flex flex-col items-center justify-center w-full h-full ${
-            isActive("/create") ? "text-teal-600" : "text-gray-500"
+            isActive("/create") ? "text-primary" : "text-muted-foreground"
           }`}
         >
           <PlusCircle className="w-5 h-5" />
@@ -71,7 +71,7 @@ export default function MobileNavBar() {
         <Link
           href="/schedule"
           className={`flex flex-col items-center justify-center w-full h-full ${
-            isActive("/schedule") ? "text-teal-600" : "text-gray-500"
+            isActive("/schedule") ? "text-primary" : "text-muted-foreground"
           }`}
         >
           <Calendar className="w-5 h-5" />
@@ -81,7 +81,7 @@ export default function MobileNavBar() {
         <Link
           href="/settings"
           className={`flex flex-col items-center justify-center w-full h-full ${
-            isActive("/settings") ? "text-teal-600" : "text-gray-500"
+            isActive("/settings") ? "text-primary" : "text-muted-foreground"
           }`}
         >
           <Settings className="w-5 h-5" />
@@ -89,7 +89,7 @@ export default function MobileNavBar() {
         </Link>
 
         <button
-          className="flex flex-col items-center justify-center w-full h-full text-gray-500"
+          className="flex flex-col items-center justify-center w-full h-full text-muted-foreground"
           aria-label="More options"
         >
           <Menu className="w-5 h-5" />
