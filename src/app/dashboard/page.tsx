@@ -1,9 +1,9 @@
 "use client";
 
 import MainLayout from "@/components/layout/MainLayout";
-import { mockPosts, mockCategories, mockTags } from "@/lib/mock-data";
+import { mockPosts, mockCategories, mockTags, mockUser } from "@/lib/mock-data";
 import { formatDistanceToNow } from "date-fns";
-import { Edit, Trash, ExternalLink, Filter, X } from "lucide-react";
+import { Edit, Trash, ExternalLink, Filter, X, Clock } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,14 @@ export default function DashboardPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedPlatform, setSelectedPlatform] = useState<string>("all");
+
+  // Count posts pending approval
+  const pendingApprovalCount = mockPosts.filter(
+    (post) => post.status === "pending_approval"
+  ).length;
+
+  // Check if user can approve posts
+  const canApprove = mockUser.role === "owner" || mockUser.role === "admin";
 
   // Filter posts based on selected filters
   const filteredPosts = mockPosts.filter((post) => {
@@ -74,15 +82,27 @@ export default function DashboardPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-800">My Posts</h1>
-          <Link
-            href="/create"
-            className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
-          >
-            Create New Post
-          </Link>
+          <h1 className="text-2xl font-bold text-gray-800">
+            Content Dashboard
+          </h1>
+          <div className="flex gap-3">
+            {canApprove && pendingApprovalCount > 0 && (
+              <Link href="/dashboard/approvals">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-amber-500" />
+                  <span>Pending Approvals</span>
+                  <Badge className="ml-1 bg-amber-100 text-amber-800 hover:bg-amber-100">
+                    {pendingApprovalCount}
+                  </Badge>
+                </Button>
+              </Link>
+            )}
+            <Link href="/create">
+              <Button>Create New Post</Button>
+            </Link>
+          </div>
         </div>
 
         {/* Filter Section */}

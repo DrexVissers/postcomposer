@@ -16,6 +16,9 @@ export interface Post {
       publishedAt?: string;
     };
   };
+  status?: "draft" | "pending_approval" | "approved" | "rejected"; // Post approval status
+  approvedBy?: string; // User ID who approved the post
+  createdBy: string; // User ID who created the post
 }
 
 export interface ScheduledPost {
@@ -42,7 +45,12 @@ export interface User {
     linkedin: boolean;
     twitter: boolean;
   };
+  role: UserRole;
+  teamId?: string; // ID of the team the user belongs to
+  avatar?: string; // URL to user's avatar
 }
+
+export type UserRole = "owner" | "admin" | "editor" | "viewer";
 
 export interface Template {
   id: string;
@@ -136,55 +144,56 @@ export const mockTags: Tag[] = [
 // Mock data for posts
 export const mockPosts: Post[] = [
   {
-    id: "1",
-    content:
-      "Just launched our new product! So excited to share this with everyone.",
+    id: "post1",
+    content: "Excited to announce our new product launch! #innovation #tech",
     createdAt: "2023-06-15T10:30:00Z",
-    category: "cat-1", // Product Updates
-    tags: ["tag-1", "tag-5"], // marketing, growth
+    category: "product",
+    tags: ["innovation", "technology"],
     platforms: {
       linkedin: {
         content:
-          "I'm thrilled to announce the launch of our new product! After months of hard work, our team has created something truly special. #ProductLaunch #Innovation",
+          "Excited to announce our new product launch! This is a game-changer for our industry. #innovation #tech",
         published: true,
-        publishedAt: "2023-06-15T10:35:00Z",
+        publishedAt: "2023-06-15T10:30:00Z",
       },
       twitter: {
         content:
-          "Just launched our new product! 🚀 Check it out at example.com #NewProduct #Excited",
+          "Excited to announce our new product launch! #innovation #tech",
         published: true,
-        publishedAt: "2023-06-15T10:40:00Z",
+        publishedAt: "2023-06-15T10:30:00Z",
       },
     },
+    createdBy: "user1",
   },
   {
-    id: "2",
+    id: "post2",
     content:
-      "Our team is growing! We're looking for talented individuals to join us.",
-    createdAt: "2023-06-10T14:20:00Z",
-    category: "cat-4", // Company News
-    tags: ["tag-5", "tag-6"], // growth, strategy
+      "Check out our latest blog post on industry trends and insights. Link in bio!",
+    createdAt: "2023-06-10T14:45:00Z",
+    category: "blog",
+    tags: ["insights", "trends"],
     platforms: {
       linkedin: {
         content:
-          "Exciting news! Our team is expanding and we're on the lookout for passionate individuals to join our journey. Check out our careers page for open positions. #Hiring #JobOpportunity",
+          "Check out our latest blog post on industry trends and insights. We've compiled data from over 100 sources to bring you the most comprehensive analysis. Link in bio!",
         published: true,
-        publishedAt: "2023-06-10T14:25:00Z",
+        publishedAt: "2023-06-10T14:45:00Z",
       },
     },
+    createdBy: "user1",
   },
   {
-    id: "3",
-    content:
-      "Attended an amazing conference on AI and machine learning yesterday.",
+    id: "post3",
+    content: "We're hiring! Join our team of passionate professionals.",
     createdAt: "2023-06-05T09:15:00Z",
     platforms: {
       linkedin: {
         content:
-          "Yesterday, I had the privilege of attending the Future of AI Conference. The insights shared by industry leaders were truly eye-opening. Particularly fascinated by the discussions on ethical AI development and practical applications in healthcare.\n\nKey takeaways:\n- AI ethics should be built-in, not bolted on\n- Healthcare applications showing promising results\n- Collaboration between humans and AI remains essential\n\n#AIConference #MachineLearning #TechInnovation",
+          "We're hiring! Join our team of passionate professionals. We offer competitive benefits and a great work culture.",
         published: false,
       },
     },
+    createdBy: "user1",
   },
 ];
 
@@ -488,6 +497,9 @@ export const mockUser: User = {
     linkedin: true,
     twitter: true,
   },
+  role: "owner",
+  teamId: "team1",
+  avatar: "https://example.com/avatar.jpg",
 };
 
 // Mock templates
@@ -575,5 +587,126 @@ export const mockMediaItems: MediaItem[] = [
     dimensions: { width: 1200, height: 800 },
     createdAt: "2024-02-05T13:40:00Z",
     tags: ["office", "workspace"],
+  },
+];
+
+export interface Team {
+  id: string;
+  name: string;
+  createdAt: string;
+  ownerId: string; // User ID of the team owner
+  members: TeamMember[];
+}
+
+export interface TeamMember {
+  userId: string;
+  role: UserRole;
+  addedAt: string;
+  invitedBy: string; // User ID who invited this member
+}
+
+export const mockTeams: Team[] = [
+  {
+    id: "team1",
+    name: "Marketing Team",
+    createdAt: "2023-01-15T08:00:00Z",
+    ownerId: "user1",
+    members: [
+      {
+        userId: "user1",
+        role: "owner",
+        addedAt: "2023-01-15T08:00:00Z",
+        invitedBy: "user1",
+      },
+      {
+        userId: "user2",
+        role: "admin",
+        addedAt: "2023-01-16T10:30:00Z",
+        invitedBy: "user1",
+      },
+      {
+        userId: "user3",
+        role: "editor",
+        addedAt: "2023-01-20T14:45:00Z",
+        invitedBy: "user1",
+      },
+      {
+        userId: "user4",
+        role: "viewer",
+        addedAt: "2023-02-05T09:15:00Z",
+        invitedBy: "user2",
+      },
+    ],
+  },
+];
+
+export const mockTeamMembers: User[] = [
+  {
+    id: "user1",
+    name: "John Doe",
+    email: "john@example.com",
+    subscription: {
+      plan: "enterprise",
+      status: "active",
+      renewalDate: "2024-01-15",
+    },
+    connectedAccounts: {
+      linkedin: true,
+      twitter: true,
+    },
+    role: "owner",
+    teamId: "team1",
+    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
+  },
+  {
+    id: "user2",
+    name: "Jane Smith",
+    email: "jane@example.com",
+    subscription: {
+      plan: "pro",
+      status: "active",
+      renewalDate: "2024-02-20",
+    },
+    connectedAccounts: {
+      linkedin: true,
+      twitter: false,
+    },
+    role: "admin",
+    teamId: "team1",
+    avatar: "https://randomuser.me/api/portraits/women/2.jpg",
+  },
+  {
+    id: "user3",
+    name: "Mike Johnson",
+    email: "mike@example.com",
+    subscription: {
+      plan: "pro",
+      status: "active",
+      renewalDate: "2024-03-10",
+    },
+    connectedAccounts: {
+      linkedin: true,
+      twitter: true,
+    },
+    role: "editor",
+    teamId: "team1",
+    avatar: "https://randomuser.me/api/portraits/men/3.jpg",
+  },
+  {
+    id: "user4",
+    name: "Sarah Williams",
+    email: "sarah@example.com",
+    subscription: {
+      plan: "free",
+      status: "active",
+      renewalDate: "2024-04-05",
+    },
+    connectedAccounts: {
+      linkedin: false,
+      twitter: true,
+    },
+    role: "viewer",
+    teamId: "team1",
+    avatar: "https://randomuser.me/api/portraits/women/4.jpg",
   },
 ];

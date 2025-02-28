@@ -8,12 +8,11 @@ import {
   Settings,
   Menu,
   X,
-  User,
-  LogOut,
   Eye,
   Calendar,
   BarChart2,
   Image as ImageIcon,
+  CheckCircle,
 } from "lucide-react";
 import { mockUser } from "@/lib/mock-data";
 
@@ -23,6 +22,9 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Check if user has permission to approve posts
+  const canApprove = mockUser.role === "owner" || mockUser.role === "admin";
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -59,6 +61,13 @@ export default function MainLayout({ children }: MainLayoutProps) {
               <span>Schedule</span>
             </Link>
             <Link
+              href="/preview"
+              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+            >
+              <Eye className="w-5 h-5 mr-3" />
+              <span>Preview</span>
+            </Link>
+            <Link
               href="/analytics"
               className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
             >
@@ -70,21 +79,23 @@ export default function MainLayout({ children }: MainLayoutProps) {
               className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
             >
               <ImageIcon className="w-5 h-5 mr-3" />
-              <span>Media Library</span>
+              <span>Media</span>
             </Link>
-            <Link
-              href="/preview"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
-            >
-              <Eye className="w-5 h-5 mr-3" />
-              <span>Preview Tool</span>
-            </Link>
+            {canApprove && (
+              <Link
+                href="/dashboard/approvals"
+                className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              >
+                <CheckCircle className="w-5 h-5 mr-3" />
+                <span>Approvals</span>
+              </Link>
+            )}
             <Link
               href="/settings"
               className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
             >
               <Settings className="w-5 h-5 mr-3" />
-              <span>Account Settings</span>
+              <span>Settings</span>
             </Link>
           </nav>
           <div className="px-6 py-4 border-t">
@@ -107,24 +118,34 @@ export default function MainLayout({ children }: MainLayoutProps) {
         </div>
       </aside>
 
-      {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+      {/* Mobile Menu Button */}
+      <div className="fixed top-0 left-0 right-0 z-20 flex items-center justify-between h-16 px-4 bg-white shadow-md lg:hidden">
+        <h1 className="text-xl font-bold text-teal-600">Levercast</h1>
+        <button
           onClick={toggleMobileMenu}
-        />
-      )}
+          className="p-2 text-gray-700 rounded-md hover:bg-gray-100"
+        >
+          {isMobileMenuOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
+        </button>
+      </div>
 
       {/* Mobile Sidebar */}
       <aside
-        className={`bg-white shadow-md fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out ${
+        className={`bg-white shadow-md fixed inset-y-0 left-0 z-30 w-64 transform transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         } lg:hidden`}
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between h-16 px-6 border-b">
             <h1 className="text-xl font-bold text-teal-600">Levercast</h1>
-            <button onClick={toggleMobileMenu} className="lg:hidden">
+            <button
+              onClick={toggleMobileMenu}
+              className="p-2 text-gray-700 rounded-md hover:bg-gray-100"
+            >
               <X className="w-6 h-6" />
             </button>
           </div>
@@ -154,6 +175,14 @@ export default function MainLayout({ children }: MainLayoutProps) {
               <span>Schedule</span>
             </Link>
             <Link
+              href="/preview"
+              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              onClick={toggleMobileMenu}
+            >
+              <Eye className="w-5 h-5 mr-3" />
+              <span>Preview</span>
+            </Link>
+            <Link
               href="/analytics"
               className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
               onClick={toggleMobileMenu}
@@ -167,23 +196,25 @@ export default function MainLayout({ children }: MainLayoutProps) {
               onClick={toggleMobileMenu}
             >
               <ImageIcon className="w-5 h-5 mr-3" />
-              <span>Media Library</span>
+              <span>Media</span>
             </Link>
-            <Link
-              href="/preview"
-              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
-              onClick={toggleMobileMenu}
-            >
-              <Eye className="w-5 h-5 mr-3" />
-              <span>Preview Tool</span>
-            </Link>
+            {canApprove && (
+              <Link
+                href="/dashboard/approvals"
+                className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+                onClick={toggleMobileMenu}
+              >
+                <CheckCircle className="w-5 h-5 mr-3" />
+                <span>Approvals</span>
+              </Link>
+            )}
             <Link
               href="/settings"
               className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
               onClick={toggleMobileMenu}
             >
               <Settings className="w-5 h-5 mr-3" />
-              <span>Account Settings</span>
+              <span>Settings</span>
             </Link>
           </nav>
           <div className="px-6 py-4 border-t">
@@ -207,32 +238,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
       </aside>
 
       {/* Main Content */}
-      <div className="flex flex-col flex-1 overflow-hidden">
-        {/* Header */}
-        <header className="bg-white shadow-sm h-16 flex items-center justify-between px-6">
-          <div className="flex items-center lg:hidden">
-            <button
-              onClick={toggleMobileMenu}
-              className="text-gray-500 focus:outline-none"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
-          </div>
-          <div className="flex items-center space-x-4 ml-auto">
-            <button className="text-gray-500 hover:text-gray-700">
-              <User className="w-5 h-5" />
-            </button>
-            <button className="text-gray-500 hover:text-gray-700">
-              <LogOut className="w-5 h-5" />
-            </button>
-          </div>
-        </header>
-
-        {/* Content */}
-        <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
-          {children}
-        </main>
-      </div>
+      <main className="flex-1 overflow-y-auto pt-16 lg:pt-0 pb-8">
+        {children}
+      </main>
     </div>
   );
 }

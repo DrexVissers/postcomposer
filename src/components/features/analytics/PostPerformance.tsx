@@ -7,7 +7,7 @@ import {
   Linkedin,
   Twitter,
 } from "lucide-react";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 
 interface PostWithAnalytics {
   id: string;
@@ -34,6 +34,19 @@ export default function PostPerformance({ posts }: PostPerformanceProps) {
       return (num / 1000).toFixed(1) + "k";
     }
     return num.toString();
+  };
+
+  // Format date safely
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      if (!dateString || !isValid(date)) {
+        return "Unknown date";
+      }
+      return format(date, "MMM d, yyyy");
+    } catch {
+      return "Unknown date";
+    }
   };
 
   // Get platform icon
@@ -91,7 +104,7 @@ export default function PostPerformance({ posts }: PostPerformanceProps) {
                         {post.content}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        {format(new Date(post.createdAt), "MMM d, yyyy")}
+                        {formatDate(post.createdAt)}
                       </p>
                     </div>
                   </div>

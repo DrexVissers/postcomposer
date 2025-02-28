@@ -7,6 +7,11 @@ import {
   mockTags,
   Category,
   Tag,
+  mockTeams,
+  mockTeamMembers,
+  Team,
+  User as UserType,
+  UserRole,
 } from "@/lib/mock-data";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -21,11 +26,32 @@ import {
   Pencil,
   Save,
   Trash,
+  UserPlus,
+  Users,
+  Shield,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
 export default function SettingsPage() {
   // Add state for categories and tags
@@ -44,6 +70,16 @@ export default function SettingsPage() {
   const [currentTag, setCurrentTag] = useState<Tag | null>(null);
   const [tagName, setTagName] = useState("");
   const [tagColor, setTagColor] = useState("#ef4444");
+
+  // State for team management
+  const [teams, setTeams] = useState<Team[]>(mockTeams);
+  const [teamMembers, setTeamMembers] = useState<UserType[]>(mockTeamMembers);
+  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState<UserRole>("editor");
+  const [isEditRoleDialogOpen, setIsEditRoleDialogOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<UserType | null>(null);
+  const [newRole, setNewRole] = useState<UserRole>("editor");
 
   // Handle category actions
   const addCategory = () => {
@@ -139,6 +175,95 @@ export default function SettingsPage() {
     setTags(tags.filter((tag) => tag.id !== tagId));
   };
 
+  // Handle team member invitation
+  const handleInviteMember = () => {
+    // In a real app, this would send an invitation email
+    // For now, we'll just close the dialog
+    setIsInviteDialogOpen(false);
+    setInviteEmail("");
+    setInviteRole("editor");
+  };
+
+  // Handle role change
+  const handleRoleChange = () => {
+    if (selectedMember) {
+      const updatedMembers = teamMembers.map((member) => {
+        if (member.id === selectedMember.id) {
+          return { ...member, role: newRole };
+        }
+        return member;
+      });
+      setTeamMembers(updatedMembers);
+
+      // Also update the team members array in the teams
+      const updatedTeams = teams.map((team) => {
+        if (team.id === selectedMember.teamId) {
+          const updatedTeamMembers = team.members.map((member) => {
+            if (member.userId === selectedMember.id) {
+              return { ...member, role: newRole };
+            }
+            return member;
+          });
+          return { ...team, members: updatedTeamMembers };
+        }
+        return team;
+      });
+      setTeams(updatedTeams);
+
+      setIsEditRoleDialogOpen(false);
+      setSelectedMember(null);
+      setNewRole("editor");
+    }
+  };
+
+  // Handle member removal
+  const handleRemoveMember = (memberId: string) => {
+    const memberToRemove = teamMembers.find((member) => member.id === memberId);
+    if (memberToRemove && memberToRemove.teamId) {
+      // Remove from teamMembers
+      setTeamMembers(teamMembers.filter((member) => member.id !== memberId));
+
+      // Remove from teams
+      const updatedTeams = teams.map((team) => {
+        if (team.id === memberToRemove.teamId) {
+          return {
+            ...team,
+            members: team.members.filter(
+              (member) => member.userId !== memberId
+            ),
+          };
+        }
+        return team;
+      });
+      setTeams(updatedTeams);
+    }
+  };
+
+  // Get initials for avatar fallback
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+  };
+
+  // Get role badge color
+  const getRoleBadgeColor = (role: UserRole) => {
+    switch (role) {
+      case "owner":
+        return "bg-purple-100 text-purple-800 hover:bg-purple-100";
+      case "admin":
+        return "bg-blue-100 text-blue-800 hover:bg-blue-100";
+      case "editor":
+        return "bg-green-100 text-green-800 hover:bg-green-100";
+      case "viewer":
+        return "bg-gray-100 text-gray-800 hover:bg-gray-100";
+      default:
+        return "bg-gray-100 text-gray-800 hover:bg-gray-100";
+    }
+  };
+
   return (
     <MainLayout>
       <div className="max-w-4xl mx-auto">
@@ -147,11 +272,12 @@ export default function SettingsPage() {
         </h1>
 
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-5 mb-8">
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="subscription">Subscription</TabsTrigger>
             <TabsTrigger value="connections">Connected Accounts</TabsTrigger>
             <TabsTrigger value="categories">Categories & Tags</TabsTrigger>
+            <TabsTrigger value="team">Team</TabsTrigger>
           </TabsList>
 
           {/* Profile Tab */}
@@ -589,6 +715,238 @@ export default function SettingsPage() {
                     </div>
                   ))
                 )}
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Team Tab */}
+          <TabsContent value="team" className="mt-0">
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-lg font-medium text-gray-800 flex items-center">
+                  <Users className="w-5 h-5 mr-2" />
+                  <span>Team Management</span>
+                </h2>
+                <Dialog
+                  open={isInviteDialogOpen}
+                  onOpenChange={setIsInviteDialogOpen}
+                >
+                  <DialogTrigger asChild>
+                    <Button className="flex items-center gap-2">
+                      <UserPlus className="w-4 h-4" />
+                      <span>Invite Member</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Invite Team Member</DialogTitle>
+                      <DialogDescription>
+                        Send an invitation to join your team. They&apos;ll
+                        receive an email with instructions.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input
+                          id="email"
+                          placeholder="colleague@example.com"
+                          value={inviteEmail}
+                          onChange={(e) => setInviteEmail(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="role">Role</Label>
+                        <Select
+                          value={inviteRole}
+                          onValueChange={(value) =>
+                            setInviteRole(value as UserRole)
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="admin">Admin</SelectItem>
+                            <SelectItem value="editor">Editor</SelectItem>
+                            <SelectItem value="viewer">Viewer</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsInviteDialogOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button onClick={handleInviteMember}>
+                        Send Invitation
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+
+              <div className="space-y-6">
+                <div className="bg-gray-50 p-4 rounded-md">
+                  <h3 className="text-sm font-medium text-gray-700 mb-2">
+                    Role Permissions
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-start gap-2">
+                      <Shield className="w-4 h-4 text-purple-600 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium">Owner</p>
+                        <p className="text-xs text-gray-500">
+                          Full access to all settings and billing
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Shield className="w-4 h-4 text-blue-600 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium">Admin</p>
+                        <p className="text-xs text-gray-500">
+                          Can manage team members and content
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Shield className="w-4 h-4 text-green-600 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium">Editor</p>
+                        <p className="text-xs text-gray-500">
+                          Can create and edit content
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Shield className="w-4 h-4 text-gray-600 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium">Viewer</p>
+                        <p className="text-xs text-gray-500">
+                          Can view content but not edit
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-medium text-gray-700 mb-4">
+                    Team Members
+                  </h3>
+                  <div className="space-y-4">
+                    {teamMembers.map((member) => (
+                      <div
+                        key={member.id}
+                        className="flex items-center justify-between p-4 border border-gray-200 rounded-md"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Avatar>
+                            <AvatarImage src={member.avatar} />
+                            <AvatarFallback>
+                              {getInitials(member.name)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium">{member.name}</p>
+                            <p className="text-sm text-gray-500">
+                              {member.email}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge className={getRoleBadgeColor(member.role)}>
+                            {member.role.charAt(0).toUpperCase() +
+                              member.role.slice(1)}
+                          </Badge>
+                          {member.role !== "owner" && (
+                            <div className="flex items-center">
+                              <Dialog
+                                open={
+                                  isEditRoleDialogOpen &&
+                                  selectedMember?.id === member.id
+                                }
+                                onOpenChange={(open) => {
+                                  setIsEditRoleDialogOpen(open);
+                                  if (open) {
+                                    setSelectedMember(member);
+                                    setNewRole(member.role);
+                                  }
+                                }}
+                              >
+                                <DialogTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0"
+                                  >
+                                    <Pencil className="h-4 w-4" />
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>Change Role</DialogTitle>
+                                    <DialogDescription>
+                                      Change the role for {member.name}
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  <div className="py-4">
+                                    <Select
+                                      value={newRole}
+                                      onValueChange={(value) =>
+                                        setNewRole(value as UserRole)
+                                      }
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select a role" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="admin">
+                                          Admin
+                                        </SelectItem>
+                                        <SelectItem value="editor">
+                                          Editor
+                                        </SelectItem>
+                                        <SelectItem value="viewer">
+                                          Viewer
+                                        </SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <DialogFooter>
+                                    <Button
+                                      variant="outline"
+                                      onClick={() =>
+                                        setIsEditRoleDialogOpen(false)
+                                      }
+                                    >
+                                      Cancel
+                                    </Button>
+                                    <Button onClick={handleRoleChange}>
+                                      Save Changes
+                                    </Button>
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 text-red-500 hover:text-red-600"
+                                onClick={() => handleRemoveMember(member.id)}
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </TabsContent>
