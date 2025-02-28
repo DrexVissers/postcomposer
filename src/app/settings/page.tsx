@@ -29,6 +29,9 @@ import {
   UserPlus,
   Users,
   Shield,
+  Check,
+  AlertCircle,
+  Clock,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -52,6 +55,7 @@ import {
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function SettingsPage() {
   // Add state for categories and tags
@@ -272,10 +276,11 @@ export default function SettingsPage() {
         </h1>
 
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-8">
+          <TabsList className="grid w-full grid-cols-6 mb-8">
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="subscription">Subscription</TabsTrigger>
             <TabsTrigger value="connections">Connected Accounts</TabsTrigger>
+            <TabsTrigger value="notifications">Notifications</TabsTrigger>
             <TabsTrigger value="categories">Categories & Tags</TabsTrigger>
             <TabsTrigger value="team">Team</TabsTrigger>
           </TabsList>
@@ -494,6 +499,161 @@ export default function SettingsPage() {
                   posts directly to your profiles. We use OAuth for secure
                   authentication and never store your passwords.
                 </p>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Notifications Tab */}
+          <TabsContent value="notifications" className="mt-0">
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-lg font-medium text-gray-800 mb-6 flex items-center">
+                <Bell className="w-5 h-5 mr-2" />
+                <span>Notification Preferences</span>
+              </h2>
+
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-700 mb-4">
+                    Notification Types
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Check className="w-5 h-5 text-green-500 mr-3" />
+                        <div>
+                          <p className="font-medium">Post Status Updates</p>
+                          <p className="text-sm text-gray-500">
+                            Get notified when your post status changes
+                          </p>
+                        </div>
+                      </div>
+                      <Checkbox id="post-status" defaultChecked />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <AlertCircle className="w-5 h-5 text-amber-500 mr-3" />
+                        <div>
+                          <p className="font-medium">Approval Requests</p>
+                          <p className="text-sm text-gray-500">
+                            Get notified when posts need your approval
+                          </p>
+                        </div>
+                      </div>
+                      <Checkbox id="approval-requests" defaultChecked />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Clock className="w-5 h-5 text-blue-500 mr-3" />
+                        <div>
+                          <p className="font-medium">Scheduled Posts</p>
+                          <p className="text-sm text-gray-500">
+                            Get notified about scheduled post updates
+                          </p>
+                        </div>
+                      </div>
+                      <Checkbox id="scheduled-posts" defaultChecked />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Bell className="w-5 h-5 text-gray-500 mr-3" />
+                        <div>
+                          <p className="font-medium">System Notifications</p>
+                          <p className="text-sm text-gray-500">
+                            Get notified about system updates and maintenance
+                          </p>
+                        </div>
+                      </div>
+                      <Checkbox id="system-notifications" defaultChecked />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t pt-6">
+                  <h3 className="text-sm font-medium text-gray-700 mb-4">
+                    Notification Delivery
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">In-app Notifications</p>
+                        <p className="text-sm text-gray-500">
+                          Show notifications in the app
+                        </p>
+                      </div>
+                      <Checkbox id="in-app" defaultChecked />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">Email Notifications</p>
+                        <p className="text-sm text-gray-500">
+                          Send notifications to your email
+                        </p>
+                      </div>
+                      <Checkbox id="email" defaultChecked />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t pt-6">
+                  <h3 className="text-sm font-medium text-gray-700 mb-4">
+                    Notification Display
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="notification-display-limit">
+                        Maximum notifications to display
+                      </Label>
+                      <Select defaultValue="10">
+                        <SelectTrigger
+                          id="notification-display-limit"
+                          className="w-full"
+                        >
+                          <SelectValue placeholder="Select a limit" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="5">5 notifications</SelectItem>
+                          <SelectItem value="10">10 notifications</SelectItem>
+                          <SelectItem value="20">20 notifications</SelectItem>
+                          <SelectItem value="50">50 notifications</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="notification-retention">
+                        Notification retention period
+                      </Label>
+                      <Select defaultValue="30">
+                        <SelectTrigger
+                          id="notification-retention"
+                          className="w-full"
+                        >
+                          <SelectValue placeholder="Select a period" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="7">7 days</SelectItem>
+                          <SelectItem value="14">14 days</SelectItem>
+                          <SelectItem value="30">30 days</SelectItem>
+                          <SelectItem value="90">90 days</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4">
+                  <Button className="mr-2">Save Preferences</Button>
+                  <Button
+                    variant="outline"
+                    className="text-red-600 border-red-600 hover:bg-red-50"
+                  >
+                    Clear All Notifications
+                  </Button>
+                </div>
               </div>
             </div>
           </TabsContent>

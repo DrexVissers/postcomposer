@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { mockUser } from "@/lib/mock-data";
 import MobileNavBar from "./MobileNavBar";
+import NotificationCenter from "@/components/features/notifications/NotificationCenter";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -76,6 +77,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between h-16 px-6 border-b">
             <h1 className="text-xl font-bold text-teal-600">Levercast</h1>
+            <NotificationCenter />
           </div>
           <nav className="flex-1 px-4 py-6 space-y-2">
             <Link
@@ -167,17 +169,20 @@ export default function MainLayout({ children }: MainLayoutProps) {
       {/* Mobile Menu Button */}
       <div className="fixed top-0 left-0 right-0 z-20 flex items-center justify-between h-16 px-4 bg-white shadow-md lg:hidden">
         <h1 className="text-xl font-bold text-teal-600">Levercast</h1>
-        <button
-          onClick={toggleMobileMenu}
-          className="p-2 text-gray-700 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
-          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-        >
-          {isMobileMenuOpen ? (
-            <X className="w-6 h-6" />
-          ) : (
-            <Menu className="w-6 h-6" />
-          )}
-        </button>
+        <div className="flex items-center gap-2">
+          <NotificationCenter />
+          <button
+            onClick={toggleMobileMenu}
+            className="p-2 text-gray-700 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {isMobileMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Overlay when mobile menu is open */}
