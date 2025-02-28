@@ -227,7 +227,7 @@ export default function AnalyticsPage() {
                 duration: 5000,
               })
             }
-            className="px-3 py-2 bg-blue-500/90 text-white rounded-md text-sm hover:bg-blue-600 transition-colors font-medium"
+            className="px-3 py-2 bg-card dark:bg-card text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 rounded-lg border border-border shadow-sm transition-colors"
           >
             Test Info
           </button>
@@ -240,7 +240,7 @@ export default function AnalyticsPage() {
                 duration: 5000,
               })
             }
-            className="px-3 py-2 bg-green-500/90 text-white rounded-md text-sm hover:bg-green-600 transition-colors font-medium"
+            className="px-3 py-2 bg-card dark:bg-card text-green-500 dark:text-green-400 hover:text-green-600 dark:hover:text-green-300 rounded-lg border border-border shadow-sm transition-colors"
           >
             Test Success
           </button>
@@ -253,7 +253,7 @@ export default function AnalyticsPage() {
                 duration: 5000,
               })
             }
-            className="px-3 py-2 bg-yellow-500/90 text-white rounded-md text-sm hover:bg-yellow-600 transition-colors font-medium"
+            className="px-3 py-2 bg-card dark:bg-card text-yellow-500 dark:text-yellow-400 hover:text-yellow-600 dark:hover:text-yellow-300 rounded-lg border border-border shadow-sm transition-colors"
           >
             Test Warning
           </button>
@@ -266,7 +266,7 @@ export default function AnalyticsPage() {
                 duration: 5000,
               })
             }
-            className="px-3 py-2 bg-red-500/90 text-white rounded-md text-sm hover:bg-red-600 transition-colors font-medium"
+            className="px-3 py-2 bg-card dark:bg-card text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 rounded-lg border border-border shadow-sm transition-colors"
           >
             Test Error
           </button>
