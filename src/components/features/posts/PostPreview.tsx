@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Smartphone, Monitor, Linkedin, Twitter } from "lucide-react";
+import { Category, Tag, MediaItem } from "@/lib/mock-data";
+import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 
 interface PostPreviewProps {
   content: {
@@ -10,6 +13,9 @@ interface PostPreviewProps {
   showDeviceToggle?: boolean;
   activeTab?: string;
   onTabChange?: (tab: string) => void;
+  category?: Category;
+  tags?: (Tag | undefined)[];
+  media?: MediaItem[];
 }
 
 export default function PostPreview({
@@ -17,6 +23,9 @@ export default function PostPreview({
   showDeviceToggle = true,
   activeTab = "linkedin",
   onTabChange,
+  category,
+  tags = [],
+  media = [],
 }: PostPreviewProps) {
   const [deviceView, setDeviceView] = useState<"mobile" | "desktop">("desktop");
 
@@ -94,8 +103,72 @@ export default function PostPreview({
             </div>
             <div className="p-4 bg-white">
               {content.linkedin ? (
-                <div className="whitespace-pre-line text-sm">
-                  {content.linkedin}
+                <div className="space-y-3">
+                  <div className="whitespace-pre-line text-sm">
+                    {content.linkedin}
+                  </div>
+
+                  {/* Category and Tags */}
+                  <div className="flex flex-wrap gap-1 pt-2">
+                    {category && (
+                      <Badge
+                        className="mb-1 mr-1"
+                        style={{
+                          backgroundColor: category.color,
+                          color: "white",
+                        }}
+                      >
+                        {category.name}
+                      </Badge>
+                    )}
+                    {tags.map(
+                      (tag) =>
+                        tag && (
+                          <Badge
+                            key={tag.id}
+                            variant="outline"
+                            className="mb-1 mr-1"
+                            style={{
+                              borderColor: tag.color,
+                              color: tag.color,
+                            }}
+                          >
+                            {tag.name}
+                          </Badge>
+                        )
+                    )}
+                  </div>
+
+                  {/* Media Preview */}
+                  {media.length > 0 && (
+                    <div className="pt-2">
+                      <div
+                        className={`grid ${
+                          media.length > 1 ? "grid-cols-2" : "grid-cols-1"
+                        } gap-2`}
+                      >
+                        {media.slice(0, 4).map((item) => (
+                          <div
+                            key={item.id}
+                            className="relative rounded-md overflow-hidden"
+                          >
+                            <Image
+                              src={item.url}
+                              alt={item.name}
+                              width={300}
+                              height={200}
+                              className="w-full h-auto object-cover"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      {media.length > 4 && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          +{media.length - 4} more
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="text-gray-400 italic text-sm">
@@ -139,9 +212,73 @@ export default function PostPreview({
                       • Just now
                     </span>
                   </div>
-                  <div className="mt-1 text-sm">
+                  <div className="mt-1 space-y-3">
                     {content.twitter ? (
-                      <div>{content.twitter}</div>
+                      <>
+                        <div className="text-sm">{content.twitter}</div>
+
+                        {/* Category and Tags */}
+                        <div className="flex flex-wrap gap-1 pt-1">
+                          {category && (
+                            <Badge
+                              className="mb-1 mr-1 text-xs"
+                              style={{
+                                backgroundColor: category.color,
+                                color: "white",
+                              }}
+                            >
+                              {category.name}
+                            </Badge>
+                          )}
+                          {tags.map(
+                            (tag) =>
+                              tag && (
+                                <Badge
+                                  key={tag.id}
+                                  variant="outline"
+                                  className="mb-1 mr-1 text-xs"
+                                  style={{
+                                    borderColor: tag.color,
+                                    color: tag.color,
+                                  }}
+                                >
+                                  {tag.name}
+                                </Badge>
+                              )
+                          )}
+                        </div>
+
+                        {/* Media Preview */}
+                        {media.length > 0 && (
+                          <div className="pt-1">
+                            <div
+                              className={`grid ${
+                                media.length > 1 ? "grid-cols-2" : "grid-cols-1"
+                              } gap-2`}
+                            >
+                              {media.slice(0, 4).map((item) => (
+                                <div
+                                  key={item.id}
+                                  className="relative rounded-md overflow-hidden"
+                                >
+                                  <Image
+                                    src={item.url}
+                                    alt={item.name}
+                                    width={300}
+                                    height={200}
+                                    className="w-full h-auto object-cover"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                            {media.length > 4 && (
+                              <div className="text-xs text-gray-500 mt-1">
+                                +{media.length - 4} more
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <div className="text-gray-400 italic">
                         Twitter preview will appear here.

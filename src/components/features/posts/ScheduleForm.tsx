@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Clock, Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
+import { Post } from "@/lib/mock-data";
 
 interface ScheduleFormProps {
   selectedDate: Date;
@@ -9,12 +10,15 @@ interface ScheduleFormProps {
     time: string;
     platforms: { linkedin: boolean; twitter: boolean };
     repeat: string;
+    postId?: string;
   }) => void;
+  posts?: Post[];
 }
 
 export default function ScheduleForm({
   selectedDate,
   onSchedule,
+  posts = [],
 }: ScheduleFormProps) {
   const [time, setTime] = useState("09:00");
   const [platforms, setPlatforms] = useState({
@@ -22,6 +26,9 @@ export default function ScheduleForm({
     twitter: false,
   });
   const [repeat, setRepeat] = useState("none");
+  const [selectedPostId, setSelectedPostId] = useState<string | undefined>(
+    undefined
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +43,7 @@ export default function ScheduleForm({
       time,
       platforms,
       repeat,
+      postId: selectedPostId,
     });
   };
 
@@ -64,6 +72,26 @@ export default function ScheduleForm({
               <span>{format(selectedDate, "EEEE, MMMM d, yyyy")}</span>
             </div>
           </div>
+
+          {posts.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Select Post
+              </label>
+              <select
+                className="w-full p-2 border border-gray-300 rounded-md"
+                value={selectedPostId || ""}
+                onChange={(e) => setSelectedPostId(e.target.value || undefined)}
+              >
+                <option value="">Random Post</option>
+                {posts.map((post) => (
+                  <option key={post.id} value={post.id}>
+                    {post.content.substring(0, 50)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">

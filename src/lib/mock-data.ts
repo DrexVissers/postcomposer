@@ -2,6 +2,8 @@ export interface Post {
   id: string;
   content: string;
   createdAt: string;
+  category?: string; // Category of the post
+  tags?: string[]; // Tags associated with the post
   platforms: {
     linkedin?: {
       content: string;
@@ -23,6 +25,8 @@ export interface ScheduledPost {
   platform: "linkedin" | "twitter";
   postId?: string; // Reference to the original post if applicable
   repeat?: "none" | "daily" | "weekly" | "monthly";
+  category?: string; // Category ID
+  tags?: string[]; // Array of tag IDs
 }
 
 export interface User {
@@ -78,6 +82,57 @@ export interface MediaItem {
   tags: string[];
 }
 
+// Add new interfaces for categories and tags
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  color?: string;
+}
+
+export interface Tag {
+  id: string;
+  name: string;
+  color?: string;
+}
+
+// Add mock data for categories and tags
+export const mockCategories: Category[] = [
+  {
+    id: "cat-1",
+    name: "Product Updates",
+    description: "Posts about product updates and new features",
+    color: "#3b82f6", // blue
+  },
+  {
+    id: "cat-2",
+    name: "Industry News",
+    description: "Posts about industry news and trends",
+    color: "#10b981", // green
+  },
+  {
+    id: "cat-3",
+    name: "Tips & Tricks",
+    description: "Helpful tips and tricks for users",
+    color: "#f59e0b", // amber
+  },
+  {
+    id: "cat-4",
+    name: "Company News",
+    description: "News about the company",
+    color: "#8b5cf6", // purple
+  },
+];
+
+export const mockTags: Tag[] = [
+  { id: "tag-1", name: "marketing", color: "#ef4444" }, // red
+  { id: "tag-2", name: "social media", color: "#3b82f6" }, // blue
+  { id: "tag-3", name: "analytics", color: "#10b981" }, // green
+  { id: "tag-4", name: "engagement", color: "#f59e0b" }, // amber
+  { id: "tag-5", name: "growth", color: "#8b5cf6" }, // purple
+  { id: "tag-6", name: "strategy", color: "#ec4899" }, // pink
+];
+
 // Mock data for posts
 export const mockPosts: Post[] = [
   {
@@ -85,6 +140,8 @@ export const mockPosts: Post[] = [
     content:
       "Just launched our new product! So excited to share this with everyone.",
     createdAt: "2023-06-15T10:30:00Z",
+    category: "cat-1", // Product Updates
+    tags: ["tag-1", "tag-5"], // marketing, growth
     platforms: {
       linkedin: {
         content:
@@ -96,26 +153,23 @@ export const mockPosts: Post[] = [
         content:
           "Just launched our new product! 🚀 Check it out at example.com #NewProduct #Excited",
         published: true,
-        publishedAt: "2023-06-15T10:35:00Z",
+        publishedAt: "2023-06-15T10:40:00Z",
       },
     },
   },
   {
     id: "2",
     content:
-      "Here are 5 tips for improving your productivity while working from home.",
+      "Our team is growing! We're looking for talented individuals to join us.",
     createdAt: "2023-06-10T14:20:00Z",
+    category: "cat-4", // Company News
+    tags: ["tag-5", "tag-6"], // growth, strategy
     platforms: {
       linkedin: {
         content:
-          "Working from home can be challenging. Here are 5 tips I've found helpful for maintaining productivity:\n\n1. Create a dedicated workspace\n2. Stick to a schedule\n3. Take regular breaks\n4. Set clear boundaries\n5. Stay connected with your team\n\nWhat strategies have worked for you? #RemoteWork #Productivity",
+          "Exciting news! Our team is expanding and we're on the lookout for passionate individuals to join our journey. Check out our careers page for open positions. #Hiring #JobOpportunity",
         published: true,
         publishedAt: "2023-06-10T14:25:00Z",
-      },
-      twitter: {
-        content:
-          "5 WFH productivity tips:\n\n1. Dedicated workspace\n2. Consistent schedule\n3. Regular breaks\n4. Clear boundaries\n5. Team connection\n\nWhat works for you? #RemoteWork",
-        published: false,
       },
     },
   },
@@ -146,6 +200,8 @@ export const mockScheduledPosts: ScheduledPost[] = [
     platform: "linkedin",
     postId: "1",
     repeat: "none",
+    category: "cat-1",
+    tags: ["tag-1", "tag-5"],
   },
   {
     id: "sched2",
@@ -157,6 +213,8 @@ export const mockScheduledPosts: ScheduledPost[] = [
     platform: "twitter",
     postId: "1",
     repeat: "none",
+    category: "cat-1",
+    tags: ["tag-1", "tag-5"],
   },
   {
     id: "sched3",
@@ -168,6 +226,8 @@ export const mockScheduledPosts: ScheduledPost[] = [
     platform: "linkedin",
     postId: "2",
     repeat: "weekly",
+    category: "cat-3",
+    tags: ["tag-3"],
   },
   {
     id: "sched4",
@@ -179,6 +239,8 @@ export const mockScheduledPosts: ScheduledPost[] = [
     platform: "twitter",
     postId: "2",
     repeat: "weekly",
+    category: "cat-3",
+    tags: ["tag-3"],
   },
   {
     id: "sched5",
@@ -190,6 +252,8 @@ export const mockScheduledPosts: ScheduledPost[] = [
     platform: "linkedin",
     postId: "3",
     repeat: "none",
+    category: "cat-2",
+    tags: ["tag-2"],
   },
 ];
 

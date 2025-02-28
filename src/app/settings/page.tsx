@@ -1,11 +1,144 @@
 "use client";
 
 import MainLayout from "@/components/layout/MainLayout";
-import { mockUser } from "@/lib/mock-data";
+import {
+  mockUser,
+  mockCategories,
+  mockTags,
+  Category,
+  Tag,
+} from "@/lib/mock-data";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Linkedin, Twitter, CreditCard, User, Bell } from "lucide-react";
+import {
+  Linkedin,
+  Twitter,
+  CreditCard,
+  User,
+  Bell,
+  Tag as TagIcon,
+  Plus,
+  X,
+  Pencil,
+  Save,
+  Trash,
+} from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function SettingsPage() {
+  // Add state for categories and tags
+  const [categories, setCategories] = useState<Category[]>(mockCategories);
+  const [tags, setTags] = useState<Tag[]>(mockTags);
+
+  // State for new/edit category
+  const [isEditingCategory, setIsEditingCategory] = useState(false);
+  const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
+  const [categoryName, setCategoryName] = useState("");
+  const [categoryDescription, setCategoryDescription] = useState("");
+  const [categoryColor, setCategoryColor] = useState("#3b82f6");
+
+  // State for new/edit tag
+  const [isEditingTag, setIsEditingTag] = useState(false);
+  const [currentTag, setCurrentTag] = useState<Tag | null>(null);
+  const [tagName, setTagName] = useState("");
+  const [tagColor, setTagColor] = useState("#ef4444");
+
+  // Handle category actions
+  const addCategory = () => {
+    setIsEditingCategory(true);
+    setCurrentCategory(null);
+    setCategoryName("");
+    setCategoryDescription("");
+    setCategoryColor("#3b82f6");
+  };
+
+  const editCategory = (category: Category) => {
+    setIsEditingCategory(true);
+    setCurrentCategory(category);
+    setCategoryName(category.name);
+    setCategoryDescription(category.description || "");
+    setCategoryColor(category.color || "#3b82f6");
+  };
+
+  const saveCategory = () => {
+    if (!categoryName.trim()) return;
+
+    if (currentCategory) {
+      // Edit existing category
+      setCategories(
+        categories.map((cat) =>
+          cat.id === currentCategory.id
+            ? {
+                ...cat,
+                name: categoryName,
+                description: categoryDescription,
+                color: categoryColor,
+              }
+            : cat
+        )
+      );
+    } else {
+      // Add new category
+      const newCategory: Category = {
+        id: `cat-${Date.now()}`,
+        name: categoryName,
+        description: categoryDescription,
+        color: categoryColor,
+      };
+      setCategories([...categories, newCategory]);
+    }
+
+    setIsEditingCategory(false);
+  };
+
+  const deleteCategory = (categoryId: string) => {
+    setCategories(categories.filter((cat) => cat.id !== categoryId));
+  };
+
+  // Handle tag actions
+  const addTag = () => {
+    setIsEditingTag(true);
+    setCurrentTag(null);
+    setTagName("");
+    setTagColor("#ef4444");
+  };
+
+  const editTag = (tag: Tag) => {
+    setIsEditingTag(true);
+    setCurrentTag(tag);
+    setTagName(tag.name);
+    setTagColor(tag.color || "#ef4444");
+  };
+
+  const saveTag = () => {
+    if (!tagName.trim()) return;
+
+    if (currentTag) {
+      // Edit existing tag
+      setTags(
+        tags.map((t) =>
+          t.id === currentTag.id ? { ...t, name: tagName, color: tagColor } : t
+        )
+      );
+    } else {
+      // Add new tag
+      const newTag: Tag = {
+        id: `tag-${Date.now()}`,
+        name: tagName,
+        color: tagColor,
+      };
+      setTags([...tags, newTag]);
+    }
+
+    setIsEditingTag(false);
+  };
+
+  const deleteTag = (tagId: string) => {
+    setTags(tags.filter((tag) => tag.id !== tagId));
+  };
+
   return (
     <MainLayout>
       <div className="max-w-4xl mx-auto">
@@ -14,10 +147,11 @@ export default function SettingsPage() {
         </h1>
 
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="subscription">Subscription</TabsTrigger>
             <TabsTrigger value="connections">Connected Accounts</TabsTrigger>
+            <TabsTrigger value="categories">Categories & Tags</TabsTrigger>
           </TabsList>
 
           {/* Profile Tab */}
@@ -234,6 +368,227 @@ export default function SettingsPage() {
                   posts directly to your profiles. We use OAuth for secure
                   authentication and never store your passwords.
                 </p>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Categories & Tags Tab */}
+          <TabsContent value="categories" className="mt-0">
+            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-lg font-medium text-gray-800 flex items-center">
+                  <TagIcon className="w-5 h-5 mr-2" />
+                  <span>Categories</span>
+                </h2>
+                <Button
+                  onClick={addCategory}
+                  size="sm"
+                  className="flex items-center"
+                >
+                  <Plus className="w-4 h-4 mr-1" /> Add Category
+                </Button>
+              </div>
+
+              {isEditingCategory && (
+                <div className="mb-6 p-4 border border-gray-200 rounded-lg">
+                  <h3 className="text-md font-medium mb-4">
+                    {currentCategory ? "Edit Category" : "Add New Category"}
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="category-name">Name</Label>
+                      <Input
+                        id="category-name"
+                        value={categoryName}
+                        onChange={(e) => setCategoryName(e.target.value)}
+                        placeholder="Category name"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="category-description">Description</Label>
+                      <Input
+                        id="category-description"
+                        value={categoryDescription}
+                        onChange={(e) => setCategoryDescription(e.target.value)}
+                        placeholder="Category description"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="category-color">Color</Label>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="color"
+                          id="category-color"
+                          value={categoryColor}
+                          onChange={(e) => setCategoryColor(e.target.value)}
+                          className="w-10 h-10 rounded border-0"
+                        />
+                        <Input
+                          value={categoryColor}
+                          onChange={(e) => setCategoryColor(e.target.value)}
+                          className="w-32"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex space-x-2 pt-2">
+                      <Button onClick={saveCategory}>
+                        <Save className="w-4 h-4 mr-1" /> Save
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsEditingCategory(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                {categories.length === 0 ? (
+                  <p className="text-gray-500 text-center py-4">
+                    No categories yet. Add your first category.
+                  </p>
+                ) : (
+                  categories.map((category) => (
+                    <div
+                      key={category.id}
+                      className="flex items-center justify-between p-3 border border-gray-200 rounded-lg"
+                    >
+                      <div className="flex items-center">
+                        <div
+                          className="w-4 h-4 rounded-full mr-3"
+                          style={{ backgroundColor: category.color }}
+                        ></div>
+                        <div>
+                          <h3 className="font-medium">{category.name}</h3>
+                          {category.description && (
+                            <p className="text-sm text-gray-500">
+                              {category.description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex space-x-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => editCategory(category)}
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500 hover:text-red-700"
+                          onClick={() => deleteCategory(category.id)}
+                        >
+                          <Trash className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-lg font-medium text-gray-800 flex items-center">
+                  <TagIcon className="w-5 h-5 mr-2" />
+                  <span>Tags</span>
+                </h2>
+                <Button
+                  onClick={addTag}
+                  size="sm"
+                  className="flex items-center"
+                >
+                  <Plus className="w-4 h-4 mr-1" /> Add Tag
+                </Button>
+              </div>
+
+              {isEditingTag && (
+                <div className="mb-6 p-4 border border-gray-200 rounded-lg">
+                  <h3 className="text-md font-medium mb-4">
+                    {currentTag ? "Edit Tag" : "Add New Tag"}
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="tag-name">Name</Label>
+                      <Input
+                        id="tag-name"
+                        value={tagName}
+                        onChange={(e) => setTagName(e.target.value)}
+                        placeholder="Tag name"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="tag-color">Color</Label>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="color"
+                          id="tag-color"
+                          value={tagColor}
+                          onChange={(e) => setTagColor(e.target.value)}
+                          className="w-10 h-10 rounded border-0"
+                        />
+                        <Input
+                          value={tagColor}
+                          onChange={(e) => setTagColor(e.target.value)}
+                          className="w-32"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex space-x-2 pt-2">
+                      <Button onClick={saveTag}>
+                        <Save className="w-4 h-4 mr-1" /> Save
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsEditingTag(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-2">
+                {tags.length === 0 ? (
+                  <p className="text-gray-500 text-center py-4 w-full">
+                    No tags yet. Add your first tag.
+                  </p>
+                ) : (
+                  tags.map((tag) => (
+                    <div
+                      key={tag.id}
+                      className="flex items-center space-x-2 p-2 border border-gray-200 rounded-lg"
+                      style={{ borderColor: tag.color }}
+                    >
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: tag.color }}
+                      ></div>
+                      <span style={{ color: tag.color }}>{tag.name}</span>
+                      <div className="flex space-x-1">
+                        <button
+                          className="text-gray-400 hover:text-gray-600"
+                          onClick={() => editTag(tag)}
+                        >
+                          <Pencil className="w-3 h-3" />
+                        </button>
+                        <button
+                          className="text-gray-400 hover:text-red-600"
+                          onClick={() => deleteTag(tag.id)}
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </TabsContent>

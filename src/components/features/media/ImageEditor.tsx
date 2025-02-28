@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import Image from "next/image";
 import ReactCrop, {
   Crop,
   PixelCrop,
@@ -301,13 +300,24 @@ export default function ImageEditor({ mediaId, onClose }: ImageEditorProps) {
       {activeTab === "resize" && (
         <div className="space-y-6">
           <div className="flex justify-center">
-            <Image
-              src={mediaItem.url}
-              alt={mediaItem.name}
-              width={mediaItem.dimensions?.width || 400}
-              height={mediaItem.dimensions?.height || 300}
-              className="max-w-full max-h-[400px] object-contain"
-            />
+            <ReactCrop
+              crop={crop}
+              onChange={(c) => setCrop(c)}
+              onComplete={handleCropComplete}
+              aspect={aspectRatio}
+            >
+              {/* 
+                Using regular img tag here because ReactCrop requires it.
+                Next.js Image component is not compatible with ReactCrop.
+              */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                ref={imgRef}
+                src={mediaItem.url}
+                alt={mediaItem.name}
+                style={{ transform: `scale(${scale / 100})` }}
+              />
+            </ReactCrop>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

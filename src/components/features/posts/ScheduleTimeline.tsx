@@ -1,11 +1,15 @@
 import { Clock, Linkedin, Twitter, Trash, Edit } from "lucide-react";
 import { format, isSameDay } from "date-fns";
+import { mockCategories, mockTags } from "@/lib/mock-data";
+import { Badge } from "@/components/ui/badge";
 
 interface ScheduledPost {
   id: string;
   content: string;
   scheduledDate: Date;
   platform: "linkedin" | "twitter";
+  category?: string; // Category ID
+  tags?: string[]; // Array of tag IDs
 }
 
 interface ScheduleTimelineProps {
@@ -29,20 +33,23 @@ export default function ScheduleTimeline({
   const groupedPosts: { [key: string]: ScheduledPost[] } = {};
 
   sortedPosts.forEach((post) => {
-    const dateKey = format(new Date(post.scheduledDate), "yyyy-MM-dd");
+    const date = new Date(post.scheduledDate);
+    const dateKey = format(date, "yyyy-MM-dd");
+
     if (!groupedPosts[dateKey]) {
       groupedPosts[dateKey] = [];
     }
+
     groupedPosts[dateKey].push(post);
   });
 
-  const dateKeys = Object.keys(groupedPosts);
+  const dateKeys = Object.keys(groupedPosts).sort();
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <h2 className="text-lg font-medium text-gray-800 mb-6 flex items-center">
         <Clock className="w-5 h-5 mr-2" />
-        <span>Upcoming Posts</span>
+        <span>Scheduled Posts</span>
       </h2>
 
       {dateKeys.length > 0 ? (
@@ -61,53 +68,99 @@ export default function ScheduleTimeline({
                 </div>
 
                 <div className="ml-4 border-l-2 border-gray-200 pl-4 space-y-4">
-                  {groupedPosts[dateKey].map((post) => (
-                    <div key={post.id} className="relative">
-                      <div className="absolute -left-6 top-1 w-2 h-2 bg-gray-300 rounded-full"></div>
-                      <div className="flex items-start">
-                        <div className="min-w-[60px] text-xs text-gray-500">
-                          {format(new Date(post.scheduledDate), "h:mm a")}
-                        </div>
-                        <div className="flex-1 bg-gray-50 rounded-lg p-3 border border-gray-200">
-                          <div className="flex justify-between items-start mb-2">
-                            <div className="flex items-center">
-                              {post.platform === "linkedin" ? (
-                                <Linkedin className="w-4 h-4 text-blue-600 mr-1" />
-                              ) : (
-                                <Twitter className="w-4 h-4 text-sky-500 mr-1" />
-                              )}
-                              <span className="text-xs font-medium">
-                                {post.platform === "linkedin"
-                                  ? "LinkedIn"
-                                  : "Twitter"}
-                              </span>
+                  {groupedPosts[dateKey].map((post) => {
+                    // Find category details
+                    const category = post.category
+                      ? mockCategories.find((c) => c.id === post.category)
+                      : null;
+
+                    // Find tag details
+                    const tags = post.tags
+                      ? post.tags
+                          .map((tagId) => mockTags.find((t) => t.id === tagId))
+                          .filter(Boolean)
+                      : [];
+
+                    return (
+                      <div key={post.id} className="relative">
+                        <div className="absolute -left-6 top-1 w-2 h-2 bg-gray-300 rounded-full"></div>
+                        <div className="flex items-start">
+                          <div className="min-w-[60px] text-xs text-gray-500">
+                            {format(new Date(post.scheduledDate), "h:mm a")}
+                          </div>
+                          <div className="flex-1 bg-gray-50 rounded-lg p-3 border border-gray-200">
+                            <div className="flex justify-between items-start mb-2">
+                              <div className="flex items-center">
+                                {post.platform === "linkedin" ? (
+                                  <Linkedin className="w-4 h-4 text-blue-600 mr-1" />
+                                ) : (
+                                  <Twitter className="w-4 h-4 text-sky-500 mr-1" />
+                                )}
+                                <span className="text-xs font-medium">
+                                  {post.platform === "linkedin"
+                                    ? "LinkedIn"
+                                    : "Twitter"}
+                                </span>
+                              </div>
+                              <div className="flex space-x-1">
+                                {onEdit && (
+                                  <button
+                                    onClick={() => onEdit(post.id)}
+                                    className="text-gray-400 hover:text-teal-600"
+                                  >
+                                    <Edit className="w-3.5 h-3.5" />
+                                  </button>
+                                )}
+                                {onDelete && (
+                                  <button
+                                    onClick={() => onDelete(post.id)}
+                                    className="text-gray-400 hover:text-red-600"
+                                  >
+                                    <Trash className="w-3.5 h-3.5" />
+                                  </button>
+                                )}
+                              </div>
                             </div>
-                            <div className="flex space-x-1">
-                              {onEdit && (
-                                <button
-                                  onClick={() => onEdit(post.id)}
-                                  className="text-gray-400 hover:text-teal-600"
+                            <p className="text-sm text-gray-700 line-clamp-2 mb-2">
+                              {post.content}
+                            </p>
+
+                            {/* Display category and tags */}
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {category && (
+                                <Badge
+                                  className="text-xs"
+                                  style={{
+                                    backgroundColor: category.color,
+                                    color: "white",
+                                  }}
                                 >
-                                  <Edit className="w-3.5 h-3.5" />
-                                </button>
+                                  {category.name}
+                                </Badge>
                               )}
-                              {onDelete && (
-                                <button
-                                  onClick={() => onDelete(post.id)}
-                                  className="text-gray-400 hover:text-red-600"
-                                >
-                                  <Trash className="w-3.5 h-3.5" />
-                                </button>
-                              )}
+                              {tags.length > 0 &&
+                                tags.map(
+                                  (tag) =>
+                                    tag && (
+                                      <Badge
+                                        key={tag.id}
+                                        variant="outline"
+                                        className="text-xs"
+                                        style={{
+                                          borderColor: tag.color,
+                                          color: tag.color,
+                                        }}
+                                      >
+                                        {tag.name}
+                                      </Badge>
+                                    )
+                                )}
                             </div>
                           </div>
-                          <p className="text-sm text-gray-700 line-clamp-2">
-                            {post.content}
-                          </p>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             );
