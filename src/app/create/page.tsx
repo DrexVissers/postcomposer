@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
-import {
-  mockTemplates,
-  mockCategories,
-  mockTags,
-  mockUser,
-} from "@/lib/mock-data";
+import { mockCategories, mockTags, mockUser } from "@/lib/mock-data";
 import {
   Image as ImageIcon,
   Send,
@@ -37,6 +32,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useTemplates } from "@/context/TemplateContext";
+import Link from "next/link";
 
 export default function CreatePostPage() {
   const [content, setContent] = useState("");
@@ -52,6 +49,7 @@ export default function CreatePostPage() {
   const requiresApproval =
     mockUser.role !== "owner" && mockUser.role !== "admin";
   const { addNotification } = useNotification();
+  const { templates } = useTemplates();
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
@@ -125,7 +123,7 @@ export default function CreatePostPage() {
   };
 
   const handleTemplateSelect = (templateId: string) => {
-    const template = mockTemplates.find((t) => t.id === templateId);
+    const template = templates.find((t) => t.id === templateId);
     if (template) {
       setContent(template.structure);
       addNotification({
@@ -331,7 +329,7 @@ export default function CreatePostPage() {
                 Templates
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {mockTemplates.map((template) => (
+                {templates.map((template) => (
                   <div
                     key={template.id}
                     className="p-3 border border-gray-200 rounded-lg hover:border-teal-500 cursor-pointer text-sm"
@@ -343,6 +341,14 @@ export default function CreatePostPage() {
                     </p>
                   </div>
                 ))}
+              </div>
+              <div className="mt-2 text-right">
+                <Link
+                  href="/templates"
+                  className="text-sm text-teal-600 hover:text-teal-700"
+                >
+                  Manage Templates →
+                </Link>
               </div>
             </div>
           </div>

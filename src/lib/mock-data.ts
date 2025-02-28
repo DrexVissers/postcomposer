@@ -57,6 +57,8 @@ export interface Template {
   name: string;
   platform: "linkedin" | "twitter";
   structure: string;
+  category?: string; // Category of the template
+  isCustom?: boolean; // Whether this is a custom user-created template
 }
 
 export interface PostAnalytics {
@@ -502,6 +504,36 @@ export const mockUser: User = {
   avatar: "https://example.com/avatar.jpg",
 };
 
+// Mock template categories
+export interface TemplateCategory {
+  id: string;
+  name: string;
+  description?: string;
+}
+
+export const mockTemplateCategories: TemplateCategory[] = [
+  {
+    id: "cat-announcement",
+    name: "Announcements",
+    description: "Templates for sharing news and updates",
+  },
+  {
+    id: "cat-engagement",
+    name: "Engagement",
+    description: "Templates designed to drive audience interaction",
+  },
+  {
+    id: "cat-list",
+    name: "Lists",
+    description: "Templates formatted as lists or bullet points",
+  },
+  {
+    id: "cat-custom",
+    name: "Custom",
+    description: "Your custom templates",
+  },
+];
+
 // Mock templates
 export const mockTemplates: Template[] = [
   {
@@ -510,12 +542,14 @@ export const mockTemplates: Template[] = [
     platform: "linkedin",
     structure:
       "I'm excited to share that [MAIN_POINT]. This represents [SIGNIFICANCE]. #[HASHTAG1] #[HASHTAG2]",
+    category: "cat-announcement",
   },
   {
     id: "template2",
     name: "Quick Update",
     platform: "twitter",
     structure: "Just [ACTION]! [EMOJI] [BRIEF_DETAIL] #[HASHTAG]",
+    category: "cat-announcement",
   },
   {
     id: "template3",
@@ -523,6 +557,22 @@ export const mockTemplates: Template[] = [
     platform: "linkedin",
     structure:
       "[TOPIC] tips:\n\n1. [POINT1]\n2. [POINT2]\n3. [POINT3]\n4. [POINT4]\n5. [POINT5]\n\n#[HASHTAG1] #[HASHTAG2]",
+    category: "cat-list",
+  },
+  {
+    id: "template4",
+    name: "Question Post",
+    platform: "linkedin",
+    structure:
+      "What's your take on [TOPIC]? [QUESTION]\n\nShare your thoughts in the comments below! #[HASHTAG1] #[HASHTAG2]",
+    category: "cat-engagement",
+  },
+  {
+    id: "template5",
+    name: "Poll Introduction",
+    platform: "twitter",
+    structure: "I'm curious: [QUESTION]\n\nVote in the poll below! [EMOJI]",
+    category: "cat-engagement",
   },
 ];
 
