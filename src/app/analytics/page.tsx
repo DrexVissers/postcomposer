@@ -50,6 +50,26 @@ const PREDEFINED_POST_ANALYTICS = [
       clicks: 180,
     },
   },
+  {
+    platform: "threads" as const,
+    metrics: {
+      views: 1800,
+      likes: 280,
+      shares: 65,
+      comments: 110,
+      clicks: 150,
+    },
+  },
+  {
+    platform: "mastodon" as const,
+    metrics: {
+      views: 1200,
+      likes: 190,
+      shares: 45,
+      comments: 75,
+      clicks: 95,
+    },
+  },
 ];
 
 export default function AnalyticsPage() {
@@ -119,10 +139,9 @@ export default function AnalyticsPage() {
       PREDEFINED_CHART_DATA.findIndex((d) => d.date === item.date);
     pastDate.setDate(today.getDate() - dayOffset);
 
-    // Use a different value pattern for impressions
     return {
       date: pastDate.toISOString().split("T")[0],
-      value: Math.round(item.value * 1.5), // Higher values for impressions
+      value: Math.floor(item.value * 1.2), // Slightly higher than engagement
     };
   });
 
@@ -136,14 +155,13 @@ export default function AnalyticsPage() {
       PREDEFINED_CHART_DATA.findIndex((d) => d.date === item.date);
     pastDate.setDate(today.getDate() - dayOffset);
 
-    // Use a different value pattern for engagements
     return {
       date: pastDate.toISOString().split("T")[0],
-      value: Math.round(item.value * 0.4), // Lower values for engagements
+      value: Math.floor(item.value * 0.8), // 80% of the views
     };
   });
 
-  const followersData = PREDEFINED_CHART_DATA.map((item, index) => {
+  const followersData = PREDEFINED_CHART_DATA.map((item) => {
     // Update dates to be relative to today
     const today = new Date();
     const pastDate = new Date(today);
@@ -153,37 +171,52 @@ export default function AnalyticsPage() {
       PREDEFINED_CHART_DATA.findIndex((d) => d.date === item.date);
     pastDate.setDate(today.getDate() - dayOffset);
 
-    // Use a different value pattern for followers
     return {
       date: pastDate.toISOString().split("T")[0],
-      value: 5000 + Math.round(index * 50 + (item.value - 1200) / 10), // Steady growth for followers
+      value: 5000 + Math.floor(item.value * 0.1), // Base followers + small growth
     };
   });
 
-  // Use predefined platform data instead of random values
+  // Use the predefined platform data
   const platformData = PREDEFINED_POST_ANALYTICS;
 
-  // Prepare data for post performance table with consistent values
+  // Generate post analytics data for the table
   const postsWithAnalytics = mockPosts.slice(0, 5).map((post, index) => {
-    // Use consistent platform assignment based on index
-    const platform =
-      index % 2 === 0 ? ("linkedin" as const) : ("twitter" as const);
+    // Determine which platform to use for this post
+    let platform: "linkedin" | "twitter" | "threads" | "mastodon";
 
-    // Use consistent metrics based on post index
-    const baseMetrics = {
-      views: 1000 + index * 500,
-      likes: 100 + index * 50,
-      shares: 10 + index * 5,
-      comments: 20 + index * 10,
-      clicks: 50 + index * 15,
-    };
+    // Assign platforms in a round-robin fashion
+    switch (index % 4) {
+      case 0:
+        platform = "linkedin";
+        break;
+      case 1:
+        platform = "twitter";
+        break;
+      case 2:
+        platform = "threads";
+        break;
+      case 3:
+        platform = "mastodon";
+        break;
+      default:
+        platform = "linkedin";
+    }
 
     return {
       id: post.id,
-      content: post.content,
+      content:
+        post.content.substring(0, 100) +
+        (post.content.length > 100 ? "..." : ""),
       createdAt: post.createdAt,
       platform,
-      metrics: baseMetrics,
+      metrics: {
+        views: Math.floor(Math.random() * 2000) + 500,
+        likes: Math.floor(Math.random() * 200) + 50,
+        shares: Math.floor(Math.random() * 50) + 10,
+        comments: Math.floor(Math.random() * 30) + 5,
+        clicks: Math.floor(Math.random() * 100) + 20,
+      },
     };
   });
 

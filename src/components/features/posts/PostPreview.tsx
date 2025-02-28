@@ -1,20 +1,29 @@
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Smartphone, Monitor, Linkedin, Twitter } from "lucide-react";
-import { Category, Tag, MediaItem } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
+import { Category, MediaItem, Tag } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/badge";
-import Image from "next/image";
+import {
+  Linkedin,
+  Twitter,
+  Instagram,
+  Globe,
+  Monitor,
+  Laptop,
+} from "lucide-react";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface PostPreviewProps {
-  content: {
+  content?: {
     linkedin?: string;
     twitter?: string;
+    threads?: string;
+    mastodon?: string;
   };
-  showDeviceToggle?: boolean;
   activeTab?: string;
   onTabChange?: (tab: string) => void;
   category?: Category;
-  tags?: (Tag | undefined)[];
+  tags?: Tag[];
   media?: MediaItem[];
   className?: string;
   textClassName?: string;
@@ -24,8 +33,7 @@ interface PostPreviewProps {
 }
 
 export default function PostPreview({
-  content,
-  showDeviceToggle = true,
+  content = {},
   activeTab = "linkedin",
   onTabChange,
   category,
@@ -34,404 +42,356 @@ export default function PostPreview({
   className = "bg-card dark:bg-card rounded-lg shadow-sm p-4 sm:p-6",
   textClassName = "text-foreground/90 dark:text-foreground/90",
   subtextClassName = "text-muted-foreground dark:text-muted-foreground",
-  tabClassName = "text-muted-foreground hover:text-foreground/80",
-  selectedTabClassName = "bg-card dark:bg-card shadow-sm text-primary",
 }: PostPreviewProps) {
-  const [deviceView, setDeviceView] = useState<"mobile" | "desktop">("desktop");
-  const [isMobile, setIsMobile] = useState(false);
+  const [deviceView, setDeviceView] = useState<"desktop" | "mobile">("desktop");
+  const [internalActiveTab, setInternalActiveTab] = useState(activeTab);
+  const isMobile = useMediaQuery("(max-width: 640px)");
 
-  // Check for mobile screen size
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
+  // Use the internal state if no onTabChange is provided
+  const effectiveActiveTab = onTabChange ? activeTab : internalActiveTab;
 
-    // Initial check
-    checkIfMobile();
-
-    // Set mobile view by default on small screens
-    if (window.innerWidth < 768) {
-      setDeviceView("mobile");
-    }
-
-    // Add event listener
-    window.addEventListener("resize", checkIfMobile);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener("resize", checkIfMobile);
-    };
-  }, []);
-
-  const handleTabChange = (value: string) => {
+  // Handle tab changes internally if no onTabChange is provided
+  const handleInternalTabChange = (tab: string) => {
     if (onTabChange) {
-      onTabChange(value);
+      onTabChange(tab);
+    } else {
+      setInternalActiveTab(tab);
     }
   };
 
+  useEffect(() => {
+    if (isMobile) {
+      setDeviceView("mobile");
+    }
+  }, [isMobile]);
+
+  const tabClassName = "text-muted-foreground hover:text-foreground/80";
+  const selectedTabClassName = "bg-card dark:bg-card shadow-sm text-primary";
+
   return (
     <div className={className}>
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
-        <h2 className={`text-lg font-medium ${textClassName}`}>Preview</h2>
-
-        {showDeviceToggle && (
-          <div
-            className={`flex items-center space-x-2 bg-muted/50 dark:bg-muted/30 p-1 rounded-md self-start ${
-              isMobile ? "w-full justify-center" : ""
-            }`}
-          >
-            <button
-              onClick={() => setDeviceView("mobile")}
-              className={`p-1.5 rounded-md flex items-center ${
-                deviceView === "mobile" ? selectedTabClassName : tabClassName
-              }`}
-              aria-label="Mobile view"
-            >
-              <Smartphone className="w-4 h-4 mr-1" />
-              <span className="text-xs">Mobile</span>
-            </button>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className={cn("text-lg font-medium", textClassName)}>Preview</h3>
+        {!isMobile && (
+          <div className="flex items-center space-x-2">
             <button
               onClick={() => setDeviceView("desktop")}
-              className={`p-1.5 rounded-md flex items-center ${
-                deviceView === "desktop" ? selectedTabClassName : tabClassName
-              }`}
+              className={cn(
+                "p-1.5 rounded-md transition-colors",
+                deviceView === "desktop"
+                  ? "bg-muted text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
               aria-label="Desktop view"
             >
-              <Monitor className="w-4 h-4 mr-1" />
-              <span className="text-xs">Desktop</span>
+              <Monitor className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setDeviceView("mobile")}
+              className={cn(
+                "p-1.5 rounded-md transition-colors",
+                deviceView === "mobile"
+                  ? "bg-muted text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+              aria-label="Mobile view"
+            >
+              <Laptop className="h-4 w-4" />
             </button>
           </div>
         )}
       </div>
 
       <Tabs
-        value={activeTab}
-        onValueChange={handleTabChange}
-        className="w-full"
+        defaultValue={effectiveActiveTab}
+        value={effectiveActiveTab}
+        onValueChange={handleInternalTabChange}
+        className="space-y-4"
       >
-        <TabsList className="grid w-full grid-cols-2 mb-4">
-          <TabsTrigger value="linkedin" className="flex items-center space-x-2">
-            <Linkedin className="w-4 h-4" />
-            <span>LinkedIn</span>
+        <TabsList className="grid grid-cols-4 h-9">
+          <TabsTrigger
+            value="linkedin"
+            className={cn(
+              "flex items-center gap-1.5 text-xs h-8",
+              tabClassName,
+              effectiveActiveTab === "linkedin" && selectedTabClassName
+            )}
+          >
+            <Linkedin className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">LinkedIn</span>
           </TabsTrigger>
-          <TabsTrigger value="twitter" className="flex items-center space-x-2">
-            <Twitter className="w-4 h-4" />
-            <span>Twitter</span>
+          <TabsTrigger
+            value="twitter"
+            className={cn(
+              "flex items-center gap-1.5 text-xs h-8",
+              tabClassName,
+              effectiveActiveTab === "twitter" && selectedTabClassName
+            )}
+          >
+            <Twitter className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Twitter</span>
+          </TabsTrigger>
+          <TabsTrigger
+            value="threads"
+            className={cn(
+              "flex items-center gap-1.5 text-xs h-8",
+              tabClassName,
+              effectiveActiveTab === "threads" && selectedTabClassName
+            )}
+          >
+            <Instagram className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Threads</span>
+          </TabsTrigger>
+          <TabsTrigger
+            value="mastodon"
+            className={cn(
+              "flex items-center gap-1.5 text-xs h-8",
+              tabClassName,
+              effectiveActiveTab === "mastodon" && selectedTabClassName
+            )}
+          >
+            <Globe className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Mastodon</span>
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="linkedin" key="preview-linkedin" className="mt-0">
+        <TabsContent value="linkedin" className="space-y-4">
           <div
-            className={`border border-border rounded-lg overflow-hidden ${
-              deviceView === "mobile" || isMobile
-                ? "max-w-[375px] mx-auto"
-                : "w-full"
-            }`}
+            className={cn(
+              "bg-white dark:bg-gray-900 rounded-lg border border-border p-4",
+              deviceView === "mobile" ? "max-w-[320px] mx-auto" : ""
+            )}
           >
-            <div className="bg-background dark:bg-background p-2 border-b border-border">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-muted/50 dark:bg-muted/30 rounded-full"></div>
+            <div className="flex items-start gap-3">
+              <div className="w-12 h-12 rounded-full bg-muted/50 dark:bg-muted/30 flex-shrink-0"></div>
+              <div className="flex-1">
                 <div>
-                  <div className={`text-sm font-medium ${textClassName}`}>
-                    Jane Smith
-                  </div>
-                  <div className={`text-xs ${subtextClassName}`}>
-                    Product Manager • Just now
-                  </div>
+                  <span className={cn("font-bold text-sm", textClassName)}>
+                    Your Name
+                  </span>
+                  <span className={cn("text-xs block", subtextClassName)}>
+                    Your Title
+                  </span>
                 </div>
-              </div>
-            </div>
-            <div className="p-4 bg-background dark:bg-background">
-              {content.linkedin ? (
-                <div className="space-y-3">
-                  <div
-                    className={`whitespace-pre-line text-sm ${textClassName}`}
-                  >
-                    {content.linkedin}
-                  </div>
 
-                  {/* Category and Tags */}
-                  <div className="flex flex-wrap gap-1 pt-2">
-                    {category && (
-                      <Badge
-                        className="mb-1 mr-1"
-                        style={{
-                          backgroundColor: category.color,
-                          color: "white",
-                        }}
-                      >
-                        {category.name}
-                      </Badge>
-                    )}
-                    {isMobile && tags.length > 2 ? (
-                      <>
-                        {tags.slice(0, 2).map(
-                          (tag) =>
-                            tag && (
-                              <Badge
-                                key={tag.id}
-                                variant="outline"
-                                className="mb-1 mr-1"
-                                style={{
-                                  borderColor: tag.color,
-                                  color: tag.color,
-                                }}
-                              >
-                                {tag.name}
-                              </Badge>
-                            )
-                        )}
-                        <Badge variant="outline" className="mb-1">
-                          +{tags.length - 2} more
-                        </Badge>
-                      </>
-                    ) : (
-                      tags.map(
-                        (tag) =>
-                          tag && (
-                            <Badge
-                              key={tag.id}
-                              variant="outline"
-                              className="mb-1 mr-1"
-                              style={{
-                                borderColor: tag.color,
-                                color: tag.color,
-                              }}
-                            >
-                              {tag.name}
-                            </Badge>
-                          )
-                      )
-                    )}
-                  </div>
-
-                  {/* Media Preview */}
-                  {media.length > 0 && (
-                    <div className="pt-2">
-                      <div
-                        className={`grid ${
-                          media.length > 1
-                            ? deviceView === "mobile" || isMobile
-                              ? "grid-cols-1"
-                              : "grid-cols-2"
-                            : "grid-cols-1"
-                        } gap-2`}
-                      >
-                        {media
-                          .slice(0, deviceView === "mobile" || isMobile ? 2 : 4)
-                          .map((item) => (
-                            <div
-                              key={item.id}
-                              className="relative rounded-md overflow-hidden"
-                            >
-                              <Image
-                                src={item.url}
-                                alt={item.name}
-                                width={300}
-                                height={200}
-                                className="w-full h-auto object-cover"
-                              />
-                            </div>
-                          ))}
-                      </div>
-                      {media.length >
-                        (deviceView === "mobile" || isMobile ? 2 : 4) && (
-                        <div className={`text-xs ${subtextClassName} mt-1`}>
-                          +
-                          {media.length -
-                            (deviceView === "mobile" || isMobile ? 2 : 4)}{" "}
-                          more
-                        </div>
-                      )}
-                    </div>
+                <div
+                  className={cn(
+                    "mt-3 text-sm whitespace-pre-wrap",
+                    textClassName
                   )}
+                >
+                  {content?.linkedin ||
+                    "Your LinkedIn post content will appear here."}
                 </div>
-              ) : (
-                <div className={`italic text-sm ${subtextClassName}`}>
-                  LinkedIn preview will appear here.
-                </div>
-              )}
-            </div>
-            <div className="bg-background dark:bg-background border-t border-border p-2 flex space-x-4">
-              <div className={`text-xs ${subtextClassName} flex items-center`}>
-                <span className="w-4 h-4 bg-muted/50 dark:bg-muted/30 rounded-full mr-1"></span>
-                Like
-              </div>
-              <div className={`text-xs ${subtextClassName} flex items-center`}>
-                <span className="w-4 h-4 bg-muted/50 dark:bg-muted/30 rounded-full mr-1"></span>
-                Comment
-              </div>
-              <div className={`text-xs ${subtextClassName} flex items-center`}>
-                <span className="w-4 h-4 bg-muted/50 dark:bg-muted/30 rounded-full mr-1"></span>
-                Share
+
+                {media.length > 0 && (
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    {media.map((item) => (
+                      <div
+                        key={item.id}
+                        className="aspect-video bg-muted/30 rounded-md overflow-hidden relative"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={item.thumbnailUrl}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </TabsContent>
 
-        <TabsContent value="twitter" key="preview-twitter" className="mt-0">
+        <TabsContent value="twitter" className="space-y-4">
           <div
-            className={`border border-border rounded-lg overflow-hidden ${
-              deviceView === "mobile" || isMobile
-                ? "max-w-[375px] mx-auto"
-                : "w-full"
-            }`}
+            className={cn(
+              "bg-white dark:bg-gray-900 rounded-lg border border-border p-4",
+              deviceView === "mobile" ? "max-w-[320px] mx-auto" : ""
+            )}
           >
-            <div className="bg-background dark:bg-background p-3 border-b border-border">
-              <div className="flex items-start space-x-3">
-                <div className="w-10 h-10 bg-muted/50 dark:bg-muted/30 rounded-full"></div>
-                <div className="flex-1">
-                  <div className="flex items-center">
-                    <span className={`font-bold text-sm ${textClassName}`}>
-                      Jane Smith
-                    </span>
-                    <span className={`text-sm ml-1 ${subtextClassName}`}>
-                      @janesmith
-                    </span>
-                    <span className={`text-sm ml-1 ${subtextClassName}`}>
-                      • Just now
-                    </span>
-                  </div>
-                  <div className="mt-1 space-y-3">
-                    {content.twitter ? (
-                      <>
-                        <div className={`text-sm ${textClassName}`}>
-                          {content.twitter}
-                        </div>
-
-                        {/* Category and Tags */}
-                        <div className="flex flex-wrap gap-1 pt-1">
-                          {category && (
-                            <Badge
-                              className="mb-1 mr-1 text-xs"
-                              style={{
-                                backgroundColor: category.color,
-                                color: "white",
-                              }}
-                            >
-                              {category.name}
-                            </Badge>
-                          )}
-                          {isMobile && tags.length > 2 ? (
-                            <>
-                              {tags.slice(0, 2).map(
-                                (tag) =>
-                                  tag && (
-                                    <Badge
-                                      key={tag.id}
-                                      variant="outline"
-                                      className="mb-1 mr-1 text-xs"
-                                      style={{
-                                        borderColor: tag.color,
-                                        color: tag.color,
-                                      }}
-                                    >
-                                      {tag.name}
-                                    </Badge>
-                                  )
-                              )}
-                              <Badge variant="outline" className="mb-1 text-xs">
-                                +{tags.length - 2} more
-                              </Badge>
-                            </>
-                          ) : (
-                            tags.map(
-                              (tag) =>
-                                tag && (
-                                  <Badge
-                                    key={tag.id}
-                                    variant="outline"
-                                    className="mb-1 mr-1 text-xs"
-                                    style={{
-                                      borderColor: tag.color,
-                                      color: tag.color,
-                                    }}
-                                  >
-                                    {tag.name}
-                                  </Badge>
-                                )
-                            )
-                          )}
-                        </div>
-
-                        {/* Media Preview */}
-                        {media.length > 0 && (
-                          <div className="pt-1">
-                            <div
-                              className={`grid ${
-                                media.length > 1
-                                  ? deviceView === "mobile" || isMobile
-                                    ? "grid-cols-1"
-                                    : "grid-cols-2"
-                                  : "grid-cols-1"
-                              } gap-2`}
-                            >
-                              {media
-                                .slice(
-                                  0,
-                                  deviceView === "mobile" || isMobile ? 2 : 4
-                                )
-                                .map((item) => (
-                                  <div
-                                    key={item.id}
-                                    className="relative rounded-md overflow-hidden"
-                                  >
-                                    <Image
-                                      src={item.url}
-                                      alt={item.name}
-                                      width={300}
-                                      height={200}
-                                      className="w-full h-auto object-cover"
-                                    />
-                                  </div>
-                                ))}
-                            </div>
-                            {media.length >
-                              (deviceView === "mobile" || isMobile ? 2 : 4) && (
-                              <div
-                                className={`text-xs ${subtextClassName} mt-1`}
-                              >
-                                +
-                                {media.length -
-                                  (deviceView === "mobile" || isMobile
-                                    ? 2
-                                    : 4)}{" "}
-                                more
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <div className={`italic ${subtextClassName}`}>
-                        Twitter preview will appear here.
-                      </div>
-                    )}
-                  </div>
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-muted/50 dark:bg-muted/30 flex-shrink-0"></div>
+              <div className="flex-1">
+                <div className="flex items-center gap-1">
+                  <span className={cn("font-bold text-sm", textClassName)}>
+                    Your Name
+                  </span>
+                  <span className={cn("text-sm", subtextClassName)}>
+                    @yourhandle
+                  </span>
                 </div>
+
+                <div
+                  className={cn(
+                    "mt-2 text-sm whitespace-pre-wrap",
+                    textClassName
+                  )}
+                >
+                  {content?.twitter ||
+                    "Your Twitter post content will appear here."}
+                </div>
+
+                {media.length > 0 && (
+                  <div className="mt-3 rounded-xl bg-muted/30 overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={media[0].thumbnailUrl}
+                      alt={media[0].name}
+                      className="w-full h-auto object-cover"
+                    />
+                  </div>
+                )}
               </div>
             </div>
-            <div className="bg-background dark:bg-background border-t border-border p-2 flex justify-around">
-              <div className={`text-xs ${subtextClassName} flex items-center`}>
-                <span className="w-4 h-4 bg-muted/50 dark:bg-muted/30 rounded-full mr-1"></span>
-                Reply
+          </div>
+        </TabsContent>
+
+        <TabsContent value="threads" className="space-y-4">
+          <div
+            className={cn(
+              "bg-white dark:bg-gray-900 rounded-lg border border-border p-4",
+              deviceView === "mobile" ? "max-w-[320px] mx-auto" : ""
+            )}
+          >
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-muted/50 dark:bg-muted/30 flex-shrink-0"></div>
+              <div className="flex-1">
+                <div className="flex items-center gap-1">
+                  <span className={cn("font-bold text-sm", textClassName)}>
+                    Your Name
+                  </span>
+                  <span className={cn("text-sm", subtextClassName)}>
+                    @yourhandle
+                  </span>
+                </div>
+
+                <div
+                  className={cn(
+                    "mt-2 text-sm whitespace-pre-wrap",
+                    textClassName
+                  )}
+                >
+                  {content?.threads ||
+                    "Your Threads post content will appear here."}
+                </div>
+
+                {media.length > 0 && (
+                  <div className="mt-3 aspect-square bg-muted/30 rounded-md overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={media[0].thumbnailUrl}
+                      alt={media[0].name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
               </div>
-              <div className={`text-xs ${subtextClassName} flex items-center`}>
-                <span className="w-4 h-4 bg-muted/50 dark:bg-muted/30 rounded-full mr-1"></span>
-                Retweet
-              </div>
-              <div className={`text-xs ${subtextClassName} flex items-center`}>
-                <span className="w-4 h-4 bg-muted/50 dark:bg-muted/30 rounded-full mr-1"></span>
-                Like
-              </div>
-              <div className={`text-xs ${subtextClassName} flex items-center`}>
-                <span className="w-4 h-4 bg-muted/50 dark:bg-muted/30 rounded-full mr-1"></span>
-                Share
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="mastodon" className="space-y-4">
+          <div
+            className={cn(
+              "bg-white dark:bg-gray-900 rounded-lg border border-border p-4",
+              deviceView === "mobile" ? "max-w-[320px] mx-auto" : ""
+            )}
+          >
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-muted/50 dark:bg-muted/30 flex-shrink-0"></div>
+              <div className="flex-1">
+                <div className="flex items-center gap-1">
+                  <span className={cn("font-bold text-sm", textClassName)}>
+                    Your Name
+                  </span>
+                  <span className={cn("text-sm", subtextClassName)}>
+                    @yourhandle@mastodon.social
+                  </span>
+                </div>
+
+                <div
+                  className={cn(
+                    "mt-2 text-sm whitespace-pre-wrap",
+                    textClassName
+                  )}
+                >
+                  {content?.mastodon ||
+                    "Your Mastodon post content will appear here."}
+                </div>
+
+                {media.length > 0 && (
+                  <div className="mt-3 rounded-xl bg-muted/30 overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={media[0].thumbnailUrl}
+                      alt={media[0].name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </TabsContent>
       </Tabs>
+
+      <div className="mt-4 flex flex-wrap gap-1">
+        {category && (
+          <Badge
+            className="mb-1 mr-1"
+            style={{
+              backgroundColor: category.color,
+              color: "white",
+            }}
+          >
+            {category.name}
+          </Badge>
+        )}
+        {isMobile && tags.length > 2 ? (
+          <>
+            {tags.slice(0, 2).map(
+              (tag) =>
+                tag && (
+                  <Badge
+                    key={tag.id}
+                    variant="outline"
+                    className="mb-1 mr-1"
+                    style={{
+                      borderColor: tag.color,
+                      color: tag.color,
+                    }}
+                  >
+                    {tag.name}
+                  </Badge>
+                )
+            )}
+            <Badge variant="outline" className="mb-1">
+              +{tags.length - 2} more
+            </Badge>
+          </>
+        ) : (
+          tags.map(
+            (tag) =>
+              tag && (
+                <Badge
+                  key={tag.id}
+                  variant="outline"
+                  className="mb-1 mr-1"
+                  style={{
+                    borderColor: tag.color,
+                    color: tag.color,
+                  }}
+                >
+                  {tag.name}
+                </Badge>
+              )
+          )
+        )}
+      </div>
     </div>
   );
 }

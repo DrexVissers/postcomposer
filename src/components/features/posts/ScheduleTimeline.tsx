@@ -1,4 +1,4 @@
-import { Clock, Linkedin, Twitter, Trash, Edit } from "lucide-react";
+import { Clock, Trash, Edit } from "lucide-react";
 import { format, isSameDay } from "date-fns";
 import { mockCategories, mockTags } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +8,7 @@ interface ScheduledPost {
   id: string;
   content: string;
   scheduledDate: Date;
-  platform: "linkedin" | "twitter";
+  platform: "linkedin" | "twitter" | "threads" | "mastodon";
   category?: string; // Category ID
   tags?: string[]; // Array of tag IDs
 }
@@ -72,6 +72,42 @@ export default function ScheduleTimeline({
 
   const dateKeys = Object.keys(groupedPosts).sort();
 
+  // Inside the component, update the platform badge rendering
+  const getPlatformBadge = (platform: string) => {
+    switch (platform) {
+      case "linkedin":
+        return (
+          <div className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-blue-600"></span>
+            <span className="text-xs font-medium">LinkedIn</span>
+          </div>
+        );
+      case "twitter":
+        return (
+          <div className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-sky-500"></span>
+            <span className="text-xs font-medium">Twitter</span>
+          </div>
+        );
+      case "threads":
+        return (
+          <div className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-purple-600"></span>
+            <span className="text-xs font-medium">Threads</span>
+          </div>
+        );
+      case "mastodon":
+        return (
+          <div className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-teal-500"></span>
+            <span className="text-xs font-medium">Mastodon</span>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className={className}>
       <h2
@@ -132,16 +168,7 @@ export default function ScheduleTimeline({
                           >
                             <div className="flex justify-between items-start mb-2">
                               <div className="flex items-center">
-                                {post.platform === "linkedin" ? (
-                                  <Linkedin className="w-4 h-4 text-blue-600 mr-1" />
-                                ) : (
-                                  <Twitter className="w-4 h-4 text-sky-500 mr-1" />
-                                )}
-                                <span className="text-xs font-medium">
-                                  {post.platform === "linkedin"
-                                    ? "LinkedIn"
-                                    : "Twitter"}
-                                </span>
+                                {getPlatformBadge(post.platform)}
                               </div>
                               <div className="flex space-x-1">
                                 {onEdit && (

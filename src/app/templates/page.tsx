@@ -32,6 +32,8 @@ import {
   Copy,
   Twitter,
   Linkedin,
+  Instagram,
+  Globe,
 } from "lucide-react";
 
 export default function TemplatesPage() {
@@ -59,7 +61,12 @@ export default function TemplatesPage() {
   const getDisplayTemplates = () => {
     if (activeCategory === "all") {
       return templates;
-    } else if (activeCategory === "linkedin" || activeCategory === "twitter") {
+    } else if (
+      activeCategory === "linkedin" ||
+      activeCategory === "twitter" ||
+      activeCategory === "threads" ||
+      activeCategory === "mastodon"
+    ) {
       return templates.filter((t) => t.platform === activeCategory);
     } else {
       return getTemplatesByCategory(activeCategory);
@@ -145,11 +152,19 @@ export default function TemplatesPage() {
   };
 
   // Render platform icon
-  const renderPlatformIcon = (platform: "linkedin" | "twitter") => {
+  const renderPlatformIcon = (
+    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+  ) => {
     if (platform === "linkedin") {
       return <Linkedin className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
-    } else {
+    } else if (platform === "twitter") {
       return <Twitter className="h-4 w-4 text-sky-500 dark:text-sky-400" />;
+    } else if (platform === "threads") {
+      return (
+        <Instagram className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+      );
+    } else {
+      return <Globe className="h-4 w-4 text-teal-500 dark:text-teal-400" />;
     }
   };
 
@@ -200,6 +215,18 @@ export default function TemplatesPage() {
               >
                 Twitter
               </TabsTrigger>
+              <TabsTrigger
+                value="threads"
+                className="data-[state=active]:bg-background data-[state=active]:text-primary"
+              >
+                Threads
+              </TabsTrigger>
+              <TabsTrigger
+                value="mastodon"
+                className="data-[state=active]:bg-background data-[state=active]:text-primary"
+              >
+                Mastodon
+              </TabsTrigger>
               {templateCategories.map((category) => (
                 <TabsTrigger
                   key={category.id}
@@ -226,7 +253,13 @@ export default function TemplatesPage() {
                   <CardHeader className="pb-3">
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2">
-                        {renderPlatformIcon(template.platform)}
+                        {renderPlatformIcon(
+                          template.platform as
+                            | "linkedin"
+                            | "twitter"
+                            | "threads"
+                            | "mastodon"
+                        )}
                         <CardTitle className="text-lg">
                           {template.name}
                         </CardTitle>

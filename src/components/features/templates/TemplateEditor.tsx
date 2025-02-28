@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useNotification } from "@/context/NotificationContext";
+import { Linkedin, Twitter, Instagram, Globe } from "lucide-react";
 
 interface TemplateEditorProps {
   template?: Template;
@@ -30,9 +31,9 @@ export default function TemplateEditor({
   isEditing = false,
 }: TemplateEditorProps) {
   const [name, setName] = useState(template?.name || "");
-  const [platform, setPlatform] = useState<"linkedin" | "twitter">(
-    template?.platform || "linkedin"
-  );
+  const [platform, setPlatform] = useState<
+    "linkedin" | "twitter" | "threads" | "mastodon"
+  >(template?.platform || "linkedin");
   const [structure, setStructure] = useState(template?.structure || "");
   const [category, setCategory] = useState(template?.category || "");
   const [isCustom] = useState(template?.isCustom || true);
@@ -133,16 +134,38 @@ export default function TemplateEditor({
             <Label htmlFor="template-platform">Platform</Label>
             <Select
               value={platform}
-              onValueChange={(value: "linkedin" | "twitter") =>
-                setPlatform(value)
-              }
+              onValueChange={(
+                value: "linkedin" | "twitter" | "threads" | "mastodon"
+              ) => setPlatform(value)}
             >
               <SelectTrigger id="template-platform">
                 <SelectValue placeholder="Select platform" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="linkedin">LinkedIn</SelectItem>
-                <SelectItem value="twitter">Twitter</SelectItem>
+                <SelectItem value="linkedin" className="flex items-center">
+                  <div className="flex items-center">
+                    <Linkedin className="h-4 w-4 mr-2 text-blue-600" />
+                    LinkedIn
+                  </div>
+                </SelectItem>
+                <SelectItem value="twitter" className="flex items-center">
+                  <div className="flex items-center">
+                    <Twitter className="h-4 w-4 mr-2 text-sky-500" />
+                    Twitter
+                  </div>
+                </SelectItem>
+                <SelectItem value="threads" className="flex items-center">
+                  <div className="flex items-center">
+                    <Instagram className="h-4 w-4 mr-2 text-purple-600" />
+                    Threads
+                  </div>
+                </SelectItem>
+                <SelectItem value="mastodon" className="flex items-center">
+                  <div className="flex items-center">
+                    <Globe className="h-4 w-4 mr-2 text-teal-500" />
+                    Mastodon
+                  </div>
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>

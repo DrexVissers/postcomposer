@@ -6,7 +6,7 @@ interface ScheduledPost {
   id: string;
   content: string;
   scheduledDate: Date;
-  platform: "linkedin" | "twitter";
+  platform: "linkedin" | "twitter" | "threads" | "mastodon";
 }
 
 interface ScheduleCalendarProps {
@@ -120,7 +120,11 @@ export default function ScheduleCalendar({
                       className={`text-xs p-1 rounded ${
                         post.platform === "linkedin"
                           ? "bg-blue-100 text-blue-800"
-                          : "bg-sky-100 text-sky-800"
+                          : post.platform === "twitter"
+                          ? "bg-sky-100 text-sky-800"
+                          : post.platform === "threads"
+                          ? "bg-purple-100 text-purple-800"
+                          : "bg-pink-100 text-pink-800"
                       }`}
                     >
                       {post.content.substring(0, 20)}

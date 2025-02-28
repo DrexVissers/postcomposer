@@ -19,7 +19,9 @@ interface TemplateContextType {
   updateTemplateCategory: (category: TemplateCategory) => void;
   deleteTemplateCategory: (categoryId: string) => void;
   getTemplatesByCategory: (categoryId: string) => Template[];
-  getTemplatesByPlatform: (platform: "linkedin" | "twitter") => Template[];
+  getTemplatesByPlatform: (
+    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+  ) => Template[];
 }
 
 const TemplateContext = createContext<TemplateContextType | undefined>(
@@ -76,7 +78,9 @@ export function TemplateProvider({ children }: { children: ReactNode }) {
     return templates.filter((t) => t.category === categoryId);
   };
 
-  const getTemplatesByPlatform = (platform: "linkedin" | "twitter") => {
+  const getTemplatesByPlatform = (
+    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+  ) => {
     return templates.filter((t) => t.platform === platform);
   };
 

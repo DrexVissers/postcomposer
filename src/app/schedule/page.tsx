@@ -31,7 +31,12 @@ export default function SchedulePage() {
   const handleSchedule = (data: {
     date: Date;
     time: string;
-    platforms: { linkedin: boolean; twitter: boolean };
+    platforms: {
+      linkedin: boolean;
+      twitter: boolean;
+      threads: boolean;
+      mastodon: boolean;
+    };
     repeat: string;
     postId?: string;
   }) => {
@@ -82,6 +87,34 @@ export default function SchedulePage() {
       });
     }
 
+    if (data.platforms.threads) {
+      newScheduledPosts.push({
+        id: `sched-${Date.now()}-threads`,
+        content:
+          selectedPost.platforms.threads?.content || selectedPost.content,
+        scheduledDate: new Date(
+          `${data.date.toISOString().split("T")[0]}T${data.time}`
+        ).toISOString(),
+        platform: "threads" as const,
+        category: selectedPost.category,
+        tags: selectedPost.tags,
+      });
+    }
+
+    if (data.platforms.mastodon) {
+      newScheduledPosts.push({
+        id: `sched-${Date.now()}-mastodon`,
+        content:
+          selectedPost.platforms.mastodon?.content || selectedPost.content,
+        scheduledDate: new Date(
+          `${data.date.toISOString().split("T")[0]}T${data.time}`
+        ).toISOString(),
+        platform: "mastodon" as const,
+        category: selectedPost.category,
+        tags: selectedPost.tags,
+      });
+    }
+
     // Add the new scheduled posts to the state
     setScheduledPosts([...scheduledPosts, ...newScheduledPosts]);
 
@@ -126,7 +159,7 @@ export default function SchedulePage() {
           Schedule Posts
         </h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <ScheduleTimeline
               scheduledPosts={calendarPosts}

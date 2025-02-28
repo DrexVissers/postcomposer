@@ -2,13 +2,19 @@ import { useState } from "react";
 import { Clock, Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Post } from "@/lib/mock-data";
+import { Linkedin, Twitter, Instagram, Globe } from "lucide-react";
 
 interface ScheduleFormProps {
   selectedDate: Date;
   onSchedule: (data: {
     date: Date;
     time: string;
-    platforms: { linkedin: boolean; twitter: boolean };
+    platforms: {
+      linkedin: boolean;
+      twitter: boolean;
+      threads: boolean;
+      mastodon: boolean;
+    };
     repeat: string;
     postId?: string;
   }) => void;
@@ -32,6 +38,8 @@ export default function ScheduleForm({
   const [platforms, setPlatforms] = useState({
     linkedin: true,
     twitter: false,
+    threads: false,
+    mastodon: false,
   });
   const [repeat, setRepeat] = useState("none");
   const [selectedPostId, setSelectedPostId] = useState<string | undefined>(
@@ -55,7 +63,9 @@ export default function ScheduleForm({
     });
   };
 
-  const togglePlatform = (platform: "linkedin" | "twitter") => {
+  const togglePlatform = (
+    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+  ) => {
     setPlatforms({
       ...platforms,
       [platform]: !platforms[platform],
@@ -129,7 +139,7 @@ export default function ScheduleForm({
             >
               Platforms
             </label>
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap gap-2">
               <button
                 type="button"
                 className={`px-3 py-2 rounded-md flex items-center ${
@@ -139,7 +149,7 @@ export default function ScheduleForm({
                 }`}
                 onClick={() => togglePlatform("linkedin")}
               >
-                <span className="w-4 h-4 mr-2 rounded-full bg-blue-600"></span>
+                <Linkedin className="w-4 h-4 mr-2 text-blue-600" />
                 LinkedIn
               </button>
               <button
@@ -151,8 +161,32 @@ export default function ScheduleForm({
                 }`}
                 onClick={() => togglePlatform("twitter")}
               >
-                <span className="w-4 h-4 mr-2 rounded-full bg-sky-500"></span>
+                <Twitter className="w-4 h-4 mr-2 text-sky-500" />
                 Twitter
+              </button>
+              <button
+                type="button"
+                className={`px-3 py-2 rounded-md flex items-center ${
+                  platforms.threads
+                    ? "bg-purple-100 text-purple-800 border border-purple-300"
+                    : "bg-muted/50 text-muted-foreground border border-border"
+                }`}
+                onClick={() => togglePlatform("threads")}
+              >
+                <Instagram className="w-4 h-4 mr-2 text-purple-600" />
+                Threads
+              </button>
+              <button
+                type="button"
+                className={`px-3 py-2 rounded-md flex items-center ${
+                  platforms.mastodon
+                    ? "bg-teal-100 text-teal-800 border border-teal-300"
+                    : "bg-muted/50 text-muted-foreground border border-border"
+                }`}
+                onClick={() => togglePlatform("mastodon")}
+              >
+                <Globe className="w-4 h-4 mr-2 text-teal-500" />
+                Mastodon
               </button>
             </div>
           </div>

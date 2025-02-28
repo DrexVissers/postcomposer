@@ -29,6 +29,8 @@ import {
   UserPlus,
   Users,
   Shield,
+  Instagram,
+  Globe,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -53,8 +55,10 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useNotification } from "@/context/NotificationContext";
 
 export default function SettingsPage() {
+  const [user, setUser] = useState<UserType>(mockUser);
   // Add state for categories and tags
   const [categories, setCategories] = useState<Category[]>(mockCategories);
   const [tags, setTags] = useState<Tag[]>(mockTags);
@@ -81,6 +85,8 @@ export default function SettingsPage() {
   const [isEditRoleDialogOpen, setIsEditRoleDialogOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<UserType | null>(null);
   const [newRole, setNewRole] = useState<UserRole>("editor");
+
+  const { addNotification } = useNotification();
 
   // Handle category actions
   const addCategory = () => {
@@ -263,6 +269,33 @@ export default function SettingsPage() {
       default:
         return "bg-gray-100 dark:bg-gray-800/50 text-gray-800 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/60";
     }
+  };
+
+  // Handle connecting/disconnecting social accounts
+  const toggleConnection = (
+    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+  ) => {
+    const updatedUser = { ...user };
+    const isConnecting = !updatedUser.connectedAccounts[platform];
+    updatedUser.connectedAccounts[platform] = isConnecting;
+    setUser(updatedUser);
+
+    // Show notification
+    const platformNames = {
+      linkedin: "LinkedIn",
+      twitter: "Twitter",
+      threads: "Threads",
+      mastodon: "Mastodon",
+    };
+
+    addNotification({
+      type: isConnecting ? "success" : "info",
+      title: isConnecting ? "Account Connected" : "Account Disconnected",
+      message: `Your ${platformNames[platform]} account has been ${
+        isConnecting ? "connected" : "disconnected"
+      } successfully.`,
+      duration: 3000,
+    });
   };
 
   return (
@@ -452,22 +485,21 @@ export default function SettingsPage() {
                         LinkedIn
                       </p>
                       <p className="text-sm text-muted-foreground dark:text-muted-foreground">
-                        {mockUser.connectedAccounts.linkedin
+                        {user.connectedAccounts.linkedin
                           ? "Connected"
                           : "Not connected"}
                       </p>
                     </div>
                   </div>
                   <button
+                    onClick={() => toggleConnection("linkedin")}
                     className={`px-3 py-1 rounded-lg text-sm ${
-                      mockUser.connectedAccounts.linkedin
+                      user.connectedAccounts.linkedin
                         ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
                         : "bg-primary/10 text-primary hover:bg-primary/20"
                     }`}
                   >
-                    {mockUser.connectedAccounts.linkedin
-                      ? "Disconnect"
-                      : "Connect"}
+                    {user.connectedAccounts.linkedin ? "Disconnect" : "Connect"}
                   </button>
                 </div>
 
@@ -479,22 +511,73 @@ export default function SettingsPage() {
                         Twitter
                       </p>
                       <p className="text-sm text-muted-foreground dark:text-muted-foreground">
-                        {mockUser.connectedAccounts.twitter
+                        {user.connectedAccounts.twitter
                           ? "Connected"
                           : "Not connected"}
                       </p>
                     </div>
                   </div>
                   <button
+                    onClick={() => toggleConnection("twitter")}
                     className={`px-3 py-1 rounded-lg text-sm ${
-                      mockUser.connectedAccounts.twitter
+                      user.connectedAccounts.twitter
                         ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
                         : "bg-primary/10 text-primary hover:bg-primary/20"
                     }`}
                   >
-                    {mockUser.connectedAccounts.twitter
-                      ? "Disconnect"
-                      : "Connect"}
+                    {user.connectedAccounts.twitter ? "Disconnect" : "Connect"}
+                  </button>
+                </div>
+
+                <div className="flex justify-between items-center p-4 border border-border rounded-lg bg-card dark:bg-card">
+                  <div className="flex items-center">
+                    <Instagram className="w-6 h-6 text-purple-600 mr-3" />
+                    <div>
+                      <p className="font-medium text-foreground/90 dark:text-foreground/90">
+                        Threads
+                      </p>
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+                        {user.connectedAccounts.threads
+                          ? "Connected"
+                          : "Not connected"}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => toggleConnection("threads")}
+                    className={`px-3 py-1 rounded-lg text-sm ${
+                      user.connectedAccounts.threads
+                        ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
+                        : "bg-primary/10 text-primary hover:bg-primary/20"
+                    }`}
+                  >
+                    {user.connectedAccounts.threads ? "Disconnect" : "Connect"}
+                  </button>
+                </div>
+
+                <div className="flex justify-between items-center p-4 border border-border rounded-lg bg-card dark:bg-card">
+                  <div className="flex items-center">
+                    <Globe className="w-6 h-6 text-teal-500 mr-3" />
+                    <div>
+                      <p className="font-medium text-foreground/90 dark:text-foreground/90">
+                        Mastodon
+                      </p>
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+                        {user.connectedAccounts.mastodon
+                          ? "Connected"
+                          : "Not connected"}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => toggleConnection("mastodon")}
+                    className={`px-3 py-1 rounded-lg text-sm ${
+                      user.connectedAccounts.mastodon
+                        ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
+                        : "bg-primary/10 text-primary hover:bg-primary/20"
+                    }`}
+                  >
+                    {user.connectedAccounts.mastodon ? "Disconnect" : "Connect"}
                   </button>
                 </div>
               </div>

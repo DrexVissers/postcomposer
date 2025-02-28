@@ -11,7 +11,7 @@ interface ImageUploadProps {
   maxSizeMB?: number;
   allowedTypes?: string[];
   aspectRatio?: number;
-  platformPreview?: "twitter" | "linkedin" | null;
+  platformPreview?: "twitter" | "linkedin" | "threads" | "mastodon" | null;
 }
 
 export function ImageUpload({
@@ -75,6 +75,10 @@ export function ImageUpload({
       return "aspect-[16/9] max-w-[500px]";
     } else if (platformPreview === "linkedin") {
       return "aspect-[1.91/1] max-w-[500px]";
+    } else if (platformPreview === "threads") {
+      return "aspect-[1/1] max-w-[500px]";
+    } else if (platformPreview === "mastodon") {
+      return "aspect-[16/9] max-w-[500px]";
     } else if (aspectRatio) {
       return `aspect-[${aspectRatio}]`;
     }
@@ -136,8 +140,14 @@ export function ImageUpload({
           {platformPreview && (
             <div className="mt-2 text-xs text-muted-foreground">
               <ImageIcon className="w-4 h-4 inline mr-1" />
-              {platformPreview === "twitter" ? "Twitter" : "LinkedIn"} optimized
-              preview
+              {platformPreview === "twitter"
+                ? "Twitter"
+                : platformPreview === "linkedin"
+                ? "LinkedIn"
+                : platformPreview === "threads"
+                ? "Threads"
+                : "Mastodon"}{" "}
+              optimized preview
             </div>
           )}
         </div>

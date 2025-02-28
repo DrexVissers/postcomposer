@@ -1,7 +1,7 @@
-import { Linkedin, Twitter } from "lucide-react";
+import { Linkedin, Twitter, Instagram, Globe } from "lucide-react";
 
 interface PlatformData {
-  platform: "linkedin" | "twitter";
+  platform: "linkedin" | "twitter" | "threads" | "mastodon";
   metrics: {
     views: number;
     likes: number;
@@ -44,36 +44,54 @@ export default function PlatformComparison({
   };
 
   // Get platform icon
-  const getPlatformIcon = (platform: "linkedin" | "twitter") => {
+  const getPlatformIcon = (
+    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+  ) => {
     switch (platform) {
       case "linkedin":
         return <Linkedin className="w-5 h-5 text-blue-600" />;
       case "twitter":
         return <Twitter className="w-5 h-5 text-sky-500" />;
+      case "threads":
+        return <Instagram className="w-5 h-5 text-purple-600" />;
+      case "mastodon":
+        return <Globe className="w-5 h-5 text-teal-500" />;
       default:
         return null;
     }
   };
 
   // Get platform color
-  const getPlatformColor = (platform: "linkedin" | "twitter") => {
+  const getPlatformColor = (
+    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+  ) => {
     switch (platform) {
       case "linkedin":
         return "bg-blue-600";
       case "twitter":
         return "bg-sky-500";
+      case "threads":
+        return "bg-purple-600";
+      case "mastodon":
+        return "bg-teal-500";
       default:
         return "bg-gray-500";
     }
   };
 
   // Get platform name
-  const getPlatformName = (platform: "linkedin" | "twitter") => {
+  const getPlatformName = (
+    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+  ) => {
     switch (platform) {
       case "linkedin":
         return "LinkedIn";
       case "twitter":
         return "Twitter";
+      case "threads":
+        return "Threads";
+      case "mastodon":
+        return "Mastodon";
       default:
         return platform;
     }

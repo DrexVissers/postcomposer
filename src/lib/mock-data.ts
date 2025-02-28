@@ -15,6 +15,16 @@ export interface Post {
       published: boolean;
       publishedAt?: string;
     };
+    threads?: {
+      content: string;
+      published: boolean;
+      publishedAt?: string;
+    };
+    mastodon?: {
+      content: string;
+      published: boolean;
+      publishedAt?: string;
+    };
   };
   status?: "draft" | "pending_approval" | "approved" | "rejected"; // Post approval status
   approvedBy?: string; // User ID who approved the post
@@ -25,7 +35,7 @@ export interface ScheduledPost {
   id: string;
   content: string;
   scheduledDate: string;
-  platform: "linkedin" | "twitter";
+  platform: "linkedin" | "twitter" | "threads" | "mastodon";
   postId?: string; // Reference to the original post if applicable
   repeat?: "none" | "daily" | "weekly" | "monthly";
   category?: string; // Category ID
@@ -44,6 +54,8 @@ export interface User {
   connectedAccounts: {
     linkedin: boolean;
     twitter: boolean;
+    threads: boolean;
+    mastodon: boolean;
   };
   role: UserRole;
   teamId?: string; // ID of the team the user belongs to
@@ -55,7 +67,7 @@ export type UserRole = "owner" | "admin" | "editor" | "viewer";
 export interface Template {
   id: string;
   name: string;
-  platform: "linkedin" | "twitter";
+  platform: "linkedin" | "twitter" | "threads" | "mastodon";
   structure: string;
   category?: string; // Category of the template
   isCustom?: boolean; // Whether this is a custom user-created template
@@ -63,7 +75,7 @@ export interface Template {
 
 export interface PostAnalytics {
   postId: string;
-  platform: "linkedin" | "twitter";
+  platform: "linkedin" | "twitter" | "threads" | "mastodon";
   views: number;
   likes: number;
   shares: number;
@@ -483,6 +495,128 @@ export const mockAnalytics: PostAnalytics[] = [
       },
     ],
   },
+  {
+    postId: "5",
+    platform: "threads",
+    views: 980,
+    likes: 75,
+    shares: 18,
+    comments: 32,
+    clicks: 28,
+    dailyStats: [
+      {
+        date: new Date(
+          new Date().setDate(new Date().getDate() - 6)
+        ).toISOString(),
+        views: 180,
+        likes: 15,
+        shares: 3,
+        comments: 6,
+        clicks: 5,
+      },
+      {
+        date: new Date(
+          new Date().setDate(new Date().getDate() - 5)
+        ).toISOString(),
+        views: 210,
+        likes: 18,
+        shares: 4,
+        comments: 7,
+        clicks: 6,
+      },
+      {
+        date: new Date(
+          new Date().setDate(new Date().getDate() - 4)
+        ).toISOString(),
+        views: 195,
+        likes: 14,
+        shares: 3,
+        comments: 6,
+        clicks: 5,
+      },
+      {
+        date: new Date(
+          new Date().setDate(new Date().getDate() - 3)
+        ).toISOString(),
+        views: 225,
+        likes: 16,
+        shares: 4,
+        comments: 8,
+        clicks: 7,
+      },
+      {
+        date: new Date(
+          new Date().setDate(new Date().getDate() - 2)
+        ).toISOString(),
+        views: 170,
+        likes: 12,
+        shares: 4,
+        comments: 5,
+        clicks: 5,
+      },
+    ],
+  },
+  {
+    postId: "6",
+    platform: "mastodon",
+    views: 750,
+    likes: 62,
+    shares: 14,
+    comments: 25,
+    clicks: 22,
+    dailyStats: [
+      {
+        date: new Date(
+          new Date().setDate(new Date().getDate() - 6)
+        ).toISOString(),
+        views: 140,
+        likes: 12,
+        shares: 2,
+        comments: 5,
+        clicks: 4,
+      },
+      {
+        date: new Date(
+          new Date().setDate(new Date().getDate() - 5)
+        ).toISOString(),
+        views: 165,
+        likes: 14,
+        shares: 3,
+        comments: 6,
+        clicks: 5,
+      },
+      {
+        date: new Date(
+          new Date().setDate(new Date().getDate() - 4)
+        ).toISOString(),
+        views: 150,
+        likes: 11,
+        shares: 3,
+        comments: 4,
+        clicks: 4,
+      },
+      {
+        date: new Date(
+          new Date().setDate(new Date().getDate() - 3)
+        ).toISOString(),
+        views: 175,
+        likes: 13,
+        shares: 3,
+        comments: 6,
+        clicks: 5,
+      },
+      {
+        date: new Date(
+          new Date().setDate(new Date().getDate() - 2)
+        ).toISOString(),
+        views: 120,
+        likes: 12,
+        shares: 3,
+        comments: 4,
+        clicks: 4,
+      },
+    ],
+  },
 ];
 
 // Mock user data
@@ -498,6 +632,8 @@ export const mockUser: User = {
   connectedAccounts: {
     linkedin: true,
     twitter: true,
+    threads: true,
+    mastodon: true,
   },
   role: "owner",
   teamId: "team1",
@@ -572,6 +708,38 @@ export const mockTemplates: Template[] = [
     name: "Poll Introduction",
     platform: "twitter",
     structure: "I'm curious: [QUESTION]\n\nVote in the poll below! [EMOJI]",
+    category: "cat-engagement",
+  },
+  {
+    id: "template6",
+    name: "Threads Story",
+    platform: "threads",
+    structure:
+      "[OPENING_HOOK]\n\nHere's what happened: [STORY_DETAIL]\n\nThe result? [OUTCOME]\n\n#[HASHTAG1] #[HASHTAG2]",
+    category: "cat-engagement",
+  },
+  {
+    id: "template7",
+    name: "Threads Tips",
+    platform: "threads",
+    structure:
+      "[NUMBER] quick tips for [TOPIC]:\n\n✓ [TIP1]\n✓ [TIP2]\n✓ [TIP3]\n\nSave this for later! #[HASHTAG]",
+    category: "cat-list",
+  },
+  {
+    id: "template8",
+    name: "Mastodon Introduction",
+    platform: "mastodon",
+    structure:
+      "Hello Mastodon! [INTRODUCTION]\n\nI'll be sharing [CONTENT_TYPE] about [TOPIC].\n\n#[HASHTAG1] #[HASHTAG2]",
+    category: "cat-announcement",
+  },
+  {
+    id: "template9",
+    name: "Mastodon Discussion",
+    platform: "mastodon",
+    structure:
+      "Let's discuss: [TOPIC]\n\n[QUESTION]\n\nWhat are your thoughts? Boost to get more perspectives!\n\n#[HASHTAG1] #[HASHTAG2]",
     category: "cat-engagement",
   },
 ];
@@ -703,6 +871,8 @@ export const mockTeamMembers: User[] = [
     connectedAccounts: {
       linkedin: true,
       twitter: true,
+      threads: true,
+      mastodon: true,
     },
     role: "owner",
     teamId: "team1",
@@ -720,6 +890,8 @@ export const mockTeamMembers: User[] = [
     connectedAccounts: {
       linkedin: true,
       twitter: false,
+      threads: true,
+      mastodon: true,
     },
     role: "admin",
     teamId: "team1",
@@ -737,6 +909,8 @@ export const mockTeamMembers: User[] = [
     connectedAccounts: {
       linkedin: true,
       twitter: true,
+      threads: true,
+      mastodon: true,
     },
     role: "editor",
     teamId: "team1",
@@ -754,6 +928,8 @@ export const mockTeamMembers: User[] = [
     connectedAccounts: {
       linkedin: false,
       twitter: true,
+      threads: true,
+      mastodon: true,
     },
     role: "viewer",
     teamId: "team1",

@@ -6,6 +6,8 @@ import {
   ExternalLink,
   Linkedin,
   Twitter,
+  Instagram,
+  Globe,
 } from "lucide-react";
 import { format, isValid } from "date-fns";
 
@@ -13,7 +15,7 @@ interface PostWithAnalytics {
   id: string;
   content: string;
   createdAt: string;
-  platform: "linkedin" | "twitter";
+  platform: "linkedin" | "twitter" | "threads" | "mastodon";
   metrics: {
     views: number;
     likes: number;
@@ -62,14 +64,38 @@ export default function PostPerformance({
   };
 
   // Get platform icon
-  const getPlatformIcon = (platform: "linkedin" | "twitter") => {
+  const getPlatformIcon = (
+    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+  ) => {
     switch (platform) {
       case "linkedin":
         return <Linkedin className="w-4 h-4 text-blue-600" />;
       case "twitter":
         return <Twitter className="w-4 h-4 text-sky-500" />;
+      case "threads":
+        return <Instagram className="w-4 h-4 text-purple-600" />;
+      case "mastodon":
+        return <Globe className="w-4 h-4 text-teal-500" />;
       default:
         return null;
+    }
+  };
+
+  // Get platform name
+  const getPlatformName = (
+    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+  ) => {
+    switch (platform) {
+      case "linkedin":
+        return "LinkedIn";
+      case "twitter":
+        return "Twitter";
+      case "threads":
+        return "Threads";
+      case "mastodon":
+        return "Mastodon";
+      default:
+        return platform;
     }
   };
 
@@ -116,6 +142,7 @@ export default function PostPerformance({
                         {post.content}
                       </p>
                       <p className={`text-xs mt-1 ${subtextClassName}`}>
+                        {getPlatformName(post.platform)} •{" "}
                         {formatDate(post.createdAt)}
                       </p>
                     </div>

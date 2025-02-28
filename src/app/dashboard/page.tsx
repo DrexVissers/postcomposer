@@ -35,8 +35,9 @@ export default function DashboardPage() {
   // Client component with state for filters
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [selectedPlatform, setSelectedPlatform] = useState<string>("all");
+  const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [showPendingApproval, setShowPendingApproval] = useState(false);
 
   // Check for mobile screen size
   useEffect(() => {
@@ -72,20 +73,32 @@ export default function DashboardPage() {
     }
 
     // Filter by tags
-    if (selectedTags.length > 0) {
-      if (!post.tags || !post.tags.some((tag) => selectedTags.includes(tag))) {
-        return false;
-      }
+    if (
+      selectedTags.length > 0 &&
+      !selectedTags.every((tag) => post.tags?.includes(tag))
+    ) {
+      return false;
     }
 
     // Filter by platform
-    if (selectedPlatform !== "all") {
+    if (selectedPlatform !== null) {
       if (selectedPlatform === "linkedin" && !post.platforms.linkedin) {
         return false;
       }
       if (selectedPlatform === "twitter" && !post.platforms.twitter) {
         return false;
       }
+      if (selectedPlatform === "threads" && !post.platforms.threads) {
+        return false;
+      }
+      if (selectedPlatform === "mastodon" && !post.platforms.mastodon) {
+        return false;
+      }
+    }
+
+    // Filter by approval status
+    if (showPendingApproval && post.status !== "pending_approval") {
+      return false;
     }
 
     return true;
@@ -104,7 +117,8 @@ export default function DashboardPage() {
   const clearFilters = () => {
     setSelectedCategory("all");
     setSelectedTags([]);
-    setSelectedPlatform("all");
+    setSelectedPlatform(null);
+    setShowPendingApproval(false);
   };
 
   return (
@@ -247,16 +261,28 @@ export default function DashboardPage() {
                 Platform
               </Label>
               <Select
-                value={selectedPlatform}
-                onValueChange={setSelectedPlatform}
+                value={selectedPlatform || "all"}
+                onValueChange={(value) =>
+                  setSelectedPlatform(
+                    value === "all"
+                      ? null
+                      : (value as
+                          | "linkedin"
+                          | "twitter"
+                          | "threads"
+                          | "mastodon")
+                  )
+                }
               >
-                <SelectTrigger id="platform-filter" className="w-full">
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="All Platforms" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Platforms</SelectItem>
                   <SelectItem value="linkedin">LinkedIn</SelectItem>
                   <SelectItem value="twitter">Twitter</SelectItem>
+                  <SelectItem value="threads">Threads</SelectItem>
+                  <SelectItem value="mastodon">Mastodon</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -340,31 +366,73 @@ export default function DashboardPage() {
                       {timeAgo}
                     </div>
                     <div className="col-span-2 self-center">
-                      <div className="flex space-x-2">
+                      <div className="flex flex-col gap-1 mt-2">
                         {post.platforms.linkedin && (
-                          <div
-                            className={`px-2 py-1 text-xs rounded-full ${
-                              post.platforms.linkedin.published
-                                ? "bg-primary/10 text-primary"
-                                : "bg-yellow-500/10 text-yellow-500"
-                            }`}
-                          >
-                            {post.platforms.linkedin.published
-                              ? "LinkedIn"
-                              : "LinkedIn (Draft)"}
+                          <div className="flex items-center text-xs">
+                            <span className="w-3 h-3 rounded-full bg-blue-600 mr-1.5"></span>
+                            <span className="font-medium">LinkedIn:</span>
+                            <span
+                              className={`ml-1 ${
+                                post.platforms.linkedin.published
+                                  ? "text-green-600 dark:text-green-400"
+                                  : "text-amber-600 dark:text-amber-400"
+                              }`}
+                            >
+                              {post.platforms.linkedin.published
+                                ? "Published"
+                                : "Draft"}
+                            </span>
                           </div>
                         )}
                         {post.platforms.twitter && (
-                          <div
-                            className={`px-2 py-1 text-xs rounded-full ${
-                              post.platforms.twitter.published
-                                ? "bg-blue-500/10 text-blue-500"
-                                : "bg-yellow-500/10 text-yellow-500"
-                            }`}
-                          >
-                            {post.platforms.twitter.published
-                              ? "Twitter"
-                              : "Twitter (Draft)"}
+                          <div className="flex items-center text-xs">
+                            <span className="w-3 h-3 rounded-full bg-sky-500 mr-1.5"></span>
+                            <span className="font-medium">Twitter:</span>
+                            <span
+                              className={`ml-1 ${
+                                post.platforms.twitter.published
+                                  ? "text-green-600 dark:text-green-400"
+                                  : "text-amber-600 dark:text-amber-400"
+                              }`}
+                            >
+                              {post.platforms.twitter.published
+                                ? "Published"
+                                : "Draft"}
+                            </span>
+                          </div>
+                        )}
+                        {post.platforms.threads && (
+                          <div className="flex items-center text-xs">
+                            <span className="w-3 h-3 rounded-full bg-purple-600 mr-1.5"></span>
+                            <span className="font-medium">Threads:</span>
+                            <span
+                              className={`ml-1 ${
+                                post.platforms.threads.published
+                                  ? "text-green-600 dark:text-green-400"
+                                  : "text-amber-600 dark:text-amber-400"
+                              }`}
+                            >
+                              {post.platforms.threads.published
+                                ? "Published"
+                                : "Draft"}
+                            </span>
+                          </div>
+                        )}
+                        {post.platforms.mastodon && (
+                          <div className="flex items-center text-xs">
+                            <span className="w-3 h-3 rounded-full bg-teal-500 mr-1.5"></span>
+                            <span className="font-medium">Mastodon:</span>
+                            <span
+                              className={`ml-1 ${
+                                post.platforms.mastodon.published
+                                  ? "text-green-600 dark:text-green-400"
+                                  : "text-amber-600 dark:text-amber-400"
+                              }`}
+                            >
+                              {post.platforms.mastodon.published
+                                ? "Published"
+                                : "Draft"}
+                            </span>
                           </div>
                         )}
                       </div>
@@ -473,35 +541,78 @@ export default function DashboardPage() {
                       )}
                     </div>
 
-                    <div className="flex justify-between items-center">
-                      <div className="flex space-x-2">
-                        {post.platforms.linkedin && (
-                          <div
-                            className={`px-2 py-1 text-xs rounded-full ${
+                    <div className="flex flex-col gap-1 mt-2">
+                      {post.platforms.linkedin && (
+                        <div className="flex items-center text-xs">
+                          <span className="w-3 h-3 rounded-full bg-blue-600 mr-1.5"></span>
+                          <span className="font-medium">LinkedIn:</span>
+                          <span
+                            className={`ml-1 ${
                               post.platforms.linkedin.published
-                                ? "bg-primary/10 text-primary"
-                                : "bg-yellow-500/10 text-yellow-500"
+                                ? "text-green-600 dark:text-green-400"
+                                : "text-amber-600 dark:text-amber-400"
                             }`}
                           >
                             {post.platforms.linkedin.published
-                              ? "LinkedIn"
-                              : "LinkedIn (Draft)"}
-                          </div>
-                        )}
-                        {post.platforms.twitter && (
-                          <div
-                            className={`px-2 py-1 text-xs rounded-full ${
+                              ? "Published"
+                              : "Draft"}
+                          </span>
+                        </div>
+                      )}
+                      {post.platforms.twitter && (
+                        <div className="flex items-center text-xs">
+                          <span className="w-3 h-3 rounded-full bg-sky-500 mr-1.5"></span>
+                          <span className="font-medium">Twitter:</span>
+                          <span
+                            className={`ml-1 ${
                               post.platforms.twitter.published
-                                ? "bg-blue-500/10 text-blue-500"
-                                : "bg-yellow-500/10 text-yellow-500"
+                                ? "text-green-600 dark:text-green-400"
+                                : "text-amber-600 dark:text-amber-400"
                             }`}
                           >
                             {post.platforms.twitter.published
-                              ? "Twitter"
-                              : "Twitter (Draft)"}
-                          </div>
-                        )}
-                      </div>
+                              ? "Published"
+                              : "Draft"}
+                          </span>
+                        </div>
+                      )}
+                      {post.platforms.threads && (
+                        <div className="flex items-center text-xs">
+                          <span className="w-3 h-3 rounded-full bg-purple-600 mr-1.5"></span>
+                          <span className="font-medium">Threads:</span>
+                          <span
+                            className={`ml-1 ${
+                              post.platforms.threads.published
+                                ? "text-green-600 dark:text-green-400"
+                                : "text-amber-600 dark:text-amber-400"
+                            }`}
+                          >
+                            {post.platforms.threads.published
+                              ? "Published"
+                              : "Draft"}
+                          </span>
+                        </div>
+                      )}
+                      {post.platforms.mastodon && (
+                        <div className="flex items-center text-xs">
+                          <span className="w-3 h-3 rounded-full bg-teal-500 mr-1.5"></span>
+                          <span className="font-medium">Mastodon:</span>
+                          <span
+                            className={`ml-1 ${
+                              post.platforms.mastodon.published
+                                ? "text-green-600 dark:text-green-400"
+                                : "text-amber-600 dark:text-amber-400"
+                            }`}
+                          >
+                            {post.platforms.mastodon.published
+                              ? "Published"
+                              : "Draft"}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex justify-between items-center">
                       <button className="p-1 text-foreground/90 hover:text-primary transition-colors">
                         <ChevronRight className="h-4 w-4" />
                       </button>

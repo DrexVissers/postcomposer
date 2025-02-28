@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
-import { mockCategories, mockTags, mockUser } from "@/lib/mock-data";
+import {
+  mockCategories,
+  mockTags,
+  mockUser,
+  Tag,
+  MediaItem,
+} from "@/lib/mock-data";
 import {
   Image as ImageIcon,
   Send,
@@ -15,7 +21,6 @@ import { useNotification } from "@/context/NotificationContext";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { MediaProvider } from "@/context/MediaContext";
 import MediaLibrary from "@/components/features/media/MediaLibrary";
-import { MediaItem } from "@/lib/mock-data";
 import {
   Select,
   SelectContent,
@@ -41,6 +46,8 @@ export default function CreatePostPage() {
   const [generatedContent, setGeneratedContent] = useState({
     linkedin: "",
     twitter: "",
+    threads: "",
+    mastodon: "",
   });
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<MediaItem[]>([]);
@@ -332,9 +339,11 @@ export default function CreatePostPage() {
                   ? mockCategories.find((c) => c.id === selectedCategory)
                   : undefined
               }
-              tags={selectedTags
-                .map((tagId) => mockTags.find((t) => t.id === tagId))
-                .filter(Boolean)}
+              tags={
+                selectedTags
+                  .map((tagId) => mockTags.find((t) => t.id === tagId))
+                  .filter(Boolean) as Tag[]
+              }
               media={selectedMedia}
               className="bg-card dark:bg-card rounded-lg shadow-sm p-4 sm:p-6 border border-border"
               textClassName="text-foreground/90 dark:text-foreground/90"
