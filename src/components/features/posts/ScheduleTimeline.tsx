@@ -2,6 +2,7 @@ import { Clock, Linkedin, Twitter, Trash, Edit } from "lucide-react";
 import { format, isSameDay } from "date-fns";
 import { mockCategories, mockTags } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/badge";
+import { useState, useEffect } from "react";
 
 interface ScheduledPost {
   id: string;
@@ -23,6 +24,26 @@ export default function ScheduleTimeline({
   onEdit,
   onDelete,
 }: ScheduleTimelineProps) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check for mobile screen size
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkIfMobile();
+
+    // Add event listener
+    window.addEventListener("resize", checkIfMobile);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("resize", checkIfMobile);
+    };
+  }, []);
+
   // Sort posts by date
   const sortedPosts = [...scheduledPosts].sort(
     (a, b) =>
@@ -46,8 +67,8 @@ export default function ScheduleTimeline({
   const dateKeys = Object.keys(groupedPosts).sort();
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-lg font-medium text-gray-800 mb-6 flex items-center">
+    <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+      <h2 className="text-lg font-medium text-gray-800 mb-4 sm:mb-6 flex items-center">
         <Clock className="w-5 h-5 mr-2" />
         <span>Scheduled Posts</span>
       </h2>
@@ -67,7 +88,7 @@ export default function ScheduleTimeline({
                   </h3>
                 </div>
 
-                <div className="ml-4 border-l-2 border-gray-200 pl-4 space-y-4">
+                <div className="ml-2 sm:ml-4 border-l-2 border-gray-200 pl-2 sm:pl-4 space-y-4">
                   {groupedPosts[dateKey].map((post) => {
                     // Find category details
                     const category = post.category
@@ -83,12 +104,24 @@ export default function ScheduleTimeline({
 
                     return (
                       <div key={post.id} className="relative">
-                        <div className="absolute -left-6 top-1 w-2 h-2 bg-gray-300 rounded-full"></div>
-                        <div className="flex items-start">
-                          <div className="min-w-[60px] text-xs text-gray-500">
+                        <div className="absolute -left-3 top-1 w-2 h-2 bg-gray-300 rounded-full"></div>
+                        <div
+                          className={`flex ${
+                            isMobile ? "flex-col" : "items-start"
+                          }`}
+                        >
+                          <div
+                            className={`${
+                              isMobile ? "mb-2" : "min-w-[60px]"
+                            } text-xs text-gray-500`}
+                          >
                             {format(new Date(post.scheduledDate), "h:mm a")}
                           </div>
-                          <div className="flex-1 bg-gray-50 rounded-lg p-3 border border-gray-200">
+                          <div
+                            className={`flex-1 bg-gray-50 rounded-lg p-3 border border-gray-200 ${
+                              isMobile ? "w-full" : ""
+                            }`}
+                          >
                             <div className="flex justify-between items-start mb-2">
                               <div className="flex items-center">
                                 {post.platform === "linkedin" ? (
@@ -138,7 +171,34 @@ export default function ScheduleTimeline({
                                   {category.name}
                                 </Badge>
                               )}
-                              {tags.length > 0 &&
+                              {tags.length > 0 && isMobile ? (
+                                <>
+                                  {tags.slice(0, 1).map(
+                                    (tag) =>
+                                      tag && (
+                                        <Badge
+                                          key={tag.id}
+                                          variant="outline"
+                                          className="text-xs"
+                                          style={{
+                                            borderColor: tag.color,
+                                            color: tag.color,
+                                          }}
+                                        >
+                                          {tag.name}
+                                        </Badge>
+                                      )
+                                  )}
+                                  {tags.length > 1 && (
+                                    <Badge
+                                      variant="outline"
+                                      className="text-xs"
+                                    >
+                                      +{tags.length - 1} more
+                                    </Badge>
+                                  )}
+                                </>
+                              ) : (
                                 tags.map(
                                   (tag) =>
                                     tag && (
@@ -154,7 +214,8 @@ export default function ScheduleTimeline({
                                         {tag.name}
                                       </Badge>
                                     )
-                                )}
+                                )
+                              )}
                             </div>
                           </div>
                         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   LayoutDashboard,
@@ -16,6 +16,7 @@ import {
   FileText,
 } from "lucide-react";
 import { mockUser } from "@/lib/mock-data";
+import MobileNavBar from "./MobileNavBar";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -23,9 +24,46 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check for mobile screen size
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkIfMobile();
+
+    // Add event listener
+    window.addEventListener("resize", checkIfMobile);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("resize", checkIfMobile);
+    };
+  }, []);
 
   // Check if user has permission to approve posts
   const canApprove = mockUser.role === "owner" || mockUser.role === "admin";
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    setIsMounted(true);
+
+    if (isMounted) {
+      if (isMobileMenuOpen) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isMobileMenuOpen, isMounted]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -131,7 +169,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
         <h1 className="text-xl font-bold text-teal-600">Levercast</h1>
         <button
           onClick={toggleMobileMenu}
-          className="p-2 text-gray-700 rounded-md hover:bg-gray-100"
+          className="p-2 text-gray-700 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
         >
           {isMobileMenuOpen ? (
             <X className="w-6 h-6" />
@@ -141,18 +180,28 @@ export default function MainLayout({ children }: MainLayoutProps) {
         </button>
       </div>
 
+      {/* Overlay when mobile menu is open */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+          onClick={toggleMobileMenu}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Mobile Sidebar */}
       <aside
         className={`bg-white shadow-md fixed inset-y-0 left-0 z-30 w-64 transform transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:hidden`}
+        } lg:hidden overflow-y-auto`}
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between h-16 px-6 border-b">
             <h1 className="text-xl font-bold text-teal-600">Levercast</h1>
             <button
               onClick={toggleMobileMenu}
-              className="p-2 text-gray-700 rounded-md hover:bg-gray-100"
+              className="p-2 text-gray-700 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              aria-label="Close menu"
             >
               <X className="w-6 h-6" />
             </button>
@@ -254,9 +303,16 @@ export default function MainLayout({ children }: MainLayoutProps) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto pt-16 lg:pt-0 pb-8">
+      <main
+        className={`flex-1 overflow-y-auto pt-16 lg:pt-0 w-full ${
+          isMobile ? "pb-24" : "pb-8"
+        }`}
+      >
         {children}
       </main>
+
+      {/* Mobile Bottom Navigation - Only show on mobile */}
+      {isMobile && <MobileNavBar />}
     </div>
   );
 }

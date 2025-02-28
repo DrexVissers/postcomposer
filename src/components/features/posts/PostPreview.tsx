@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Smartphone, Monitor, Linkedin, Twitter } from "lucide-react";
 import { Category, Tag, MediaItem } from "@/lib/mock-data";
@@ -28,6 +28,30 @@ export default function PostPreview({
   media = [],
 }: PostPreviewProps) {
   const [deviceView, setDeviceView] = useState<"mobile" | "desktop">("desktop");
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check for mobile screen size
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkIfMobile();
+
+    // Set mobile view by default on small screens
+    if (window.innerWidth < 768) {
+      setDeviceView("mobile");
+    }
+
+    // Add event listener
+    window.addEventListener("resize", checkIfMobile);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("resize", checkIfMobile);
+    };
+  }, []);
 
   const handleTabChange = (value: string) => {
     if (onTabChange) {
@@ -36,33 +60,39 @@ export default function PostPreview({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <div className="flex justify-between items-center mb-4">
+    <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
         <h2 className="text-lg font-medium text-gray-800">Preview</h2>
 
         {showDeviceToggle && (
-          <div className="flex items-center space-x-2 bg-gray-100 p-1 rounded-md">
+          <div
+            className={`flex items-center space-x-2 bg-gray-100 p-1 rounded-md self-start ${
+              isMobile ? "w-full justify-center" : ""
+            }`}
+          >
             <button
               onClick={() => setDeviceView("mobile")}
-              className={`p-1.5 rounded-md ${
+              className={`p-1.5 rounded-md flex items-center ${
                 deviceView === "mobile"
-                  ? "bg-white shadow-sm"
+                  ? "bg-white shadow-sm text-teal-600"
                   : "text-gray-500 hover:text-gray-700"
               }`}
               aria-label="Mobile view"
             >
-              <Smartphone className="w-4 h-4" />
+              <Smartphone className="w-4 h-4 mr-1" />
+              <span className="text-xs">Mobile</span>
             </button>
             <button
               onClick={() => setDeviceView("desktop")}
-              className={`p-1.5 rounded-md ${
+              className={`p-1.5 rounded-md flex items-center ${
                 deviceView === "desktop"
-                  ? "bg-white shadow-sm"
+                  ? "bg-white shadow-sm text-teal-600"
                   : "text-gray-500 hover:text-gray-700"
               }`}
               aria-label="Desktop view"
             >
-              <Monitor className="w-4 h-4" />
+              <Monitor className="w-4 h-4 mr-1" />
+              <span className="text-xs">Desktop</span>
             </button>
           </div>
         )}
@@ -87,7 +117,9 @@ export default function PostPreview({
         <TabsContent value="linkedin" className="mt-0">
           <div
             className={`border border-gray-200 rounded-lg overflow-hidden ${
-              deviceView === "mobile" ? "max-w-[375px] mx-auto" : "w-full"
+              deviceView === "mobile" || isMobile
+                ? "max-w-[375px] mx-auto"
+                : "w-full"
             }`}
           >
             <div className="bg-[#f3f2ef] p-2 border-b border-gray-300">
@@ -121,21 +153,45 @@ export default function PostPreview({
                         {category.name}
                       </Badge>
                     )}
-                    {tags.map(
-                      (tag) =>
-                        tag && (
-                          <Badge
-                            key={tag.id}
-                            variant="outline"
-                            className="mb-1 mr-1"
-                            style={{
-                              borderColor: tag.color,
-                              color: tag.color,
-                            }}
-                          >
-                            {tag.name}
-                          </Badge>
-                        )
+                    {isMobile && tags.length > 2 ? (
+                      <>
+                        {tags.slice(0, 2).map(
+                          (tag) =>
+                            tag && (
+                              <Badge
+                                key={tag.id}
+                                variant="outline"
+                                className="mb-1 mr-1"
+                                style={{
+                                  borderColor: tag.color,
+                                  color: tag.color,
+                                }}
+                              >
+                                {tag.name}
+                              </Badge>
+                            )
+                        )}
+                        <Badge variant="outline" className="mb-1">
+                          +{tags.length - 2} more
+                        </Badge>
+                      </>
+                    ) : (
+                      tags.map(
+                        (tag) =>
+                          tag && (
+                            <Badge
+                              key={tag.id}
+                              variant="outline"
+                              className="mb-1 mr-1"
+                              style={{
+                                borderColor: tag.color,
+                                color: tag.color,
+                              }}
+                            >
+                              {tag.name}
+                            </Badge>
+                          )
+                      )
                     )}
                   </div>
 
@@ -144,27 +200,37 @@ export default function PostPreview({
                     <div className="pt-2">
                       <div
                         className={`grid ${
-                          media.length > 1 ? "grid-cols-2" : "grid-cols-1"
+                          media.length > 1
+                            ? deviceView === "mobile" || isMobile
+                              ? "grid-cols-1"
+                              : "grid-cols-2"
+                            : "grid-cols-1"
                         } gap-2`}
                       >
-                        {media.slice(0, 4).map((item) => (
-                          <div
-                            key={item.id}
-                            className="relative rounded-md overflow-hidden"
-                          >
-                            <Image
-                              src={item.url}
-                              alt={item.name}
-                              width={300}
-                              height={200}
-                              className="w-full h-auto object-cover"
-                            />
-                          </div>
-                        ))}
+                        {media
+                          .slice(0, deviceView === "mobile" || isMobile ? 2 : 4)
+                          .map((item) => (
+                            <div
+                              key={item.id}
+                              className="relative rounded-md overflow-hidden"
+                            >
+                              <Image
+                                src={item.url}
+                                alt={item.name}
+                                width={300}
+                                height={200}
+                                className="w-full h-auto object-cover"
+                              />
+                            </div>
+                          ))}
                       </div>
-                      {media.length > 4 && (
+                      {media.length >
+                        (deviceView === "mobile" || isMobile ? 2 : 4) && (
                         <div className="text-xs text-gray-500 mt-1">
-                          +{media.length - 4} more
+                          +
+                          {media.length -
+                            (deviceView === "mobile" || isMobile ? 2 : 4)}{" "}
+                          more
                         </div>
                       )}
                     </div>
@@ -196,7 +262,9 @@ export default function PostPreview({
         <TabsContent value="twitter" className="mt-0">
           <div
             className={`border border-gray-200 rounded-lg overflow-hidden ${
-              deviceView === "mobile" ? "max-w-[375px] mx-auto" : "w-full"
+              deviceView === "mobile" || isMobile
+                ? "max-w-[375px] mx-auto"
+                : "w-full"
             }`}
           >
             <div className="bg-white p-3 border-b border-gray-200">
@@ -230,21 +298,45 @@ export default function PostPreview({
                               {category.name}
                             </Badge>
                           )}
-                          {tags.map(
-                            (tag) =>
-                              tag && (
-                                <Badge
-                                  key={tag.id}
-                                  variant="outline"
-                                  className="mb-1 mr-1 text-xs"
-                                  style={{
-                                    borderColor: tag.color,
-                                    color: tag.color,
-                                  }}
-                                >
-                                  {tag.name}
-                                </Badge>
-                              )
+                          {isMobile && tags.length > 2 ? (
+                            <>
+                              {tags.slice(0, 2).map(
+                                (tag) =>
+                                  tag && (
+                                    <Badge
+                                      key={tag.id}
+                                      variant="outline"
+                                      className="mb-1 mr-1 text-xs"
+                                      style={{
+                                        borderColor: tag.color,
+                                        color: tag.color,
+                                      }}
+                                    >
+                                      {tag.name}
+                                    </Badge>
+                                  )
+                              )}
+                              <Badge variant="outline" className="mb-1 text-xs">
+                                +{tags.length - 2} more
+                              </Badge>
+                            </>
+                          ) : (
+                            tags.map(
+                              (tag) =>
+                                tag && (
+                                  <Badge
+                                    key={tag.id}
+                                    variant="outline"
+                                    className="mb-1 mr-1 text-xs"
+                                    style={{
+                                      borderColor: tag.color,
+                                      color: tag.color,
+                                    }}
+                                  >
+                                    {tag.name}
+                                  </Badge>
+                                )
+                            )
                           )}
                         </div>
 
@@ -253,27 +345,42 @@ export default function PostPreview({
                           <div className="pt-1">
                             <div
                               className={`grid ${
-                                media.length > 1 ? "grid-cols-2" : "grid-cols-1"
+                                media.length > 1
+                                  ? deviceView === "mobile" || isMobile
+                                    ? "grid-cols-1"
+                                    : "grid-cols-2"
+                                  : "grid-cols-1"
                               } gap-2`}
                             >
-                              {media.slice(0, 4).map((item) => (
-                                <div
-                                  key={item.id}
-                                  className="relative rounded-md overflow-hidden"
-                                >
-                                  <Image
-                                    src={item.url}
-                                    alt={item.name}
-                                    width={300}
-                                    height={200}
-                                    className="w-full h-auto object-cover"
-                                  />
-                                </div>
-                              ))}
+                              {media
+                                .slice(
+                                  0,
+                                  deviceView === "mobile" || isMobile ? 2 : 4
+                                )
+                                .map((item) => (
+                                  <div
+                                    key={item.id}
+                                    className="relative rounded-md overflow-hidden"
+                                  >
+                                    <Image
+                                      src={item.url}
+                                      alt={item.name}
+                                      width={300}
+                                      height={200}
+                                      className="w-full h-auto object-cover"
+                                    />
+                                  </div>
+                                ))}
                             </div>
-                            {media.length > 4 && (
+                            {media.length >
+                              (deviceView === "mobile" || isMobile ? 2 : 4) && (
                               <div className="text-xs text-gray-500 mt-1">
-                                +{media.length - 4} more
+                                +
+                                {media.length -
+                                  (deviceView === "mobile" || isMobile
+                                    ? 2
+                                    : 4)}{" "}
+                                more
                               </div>
                             )}
                           </div>

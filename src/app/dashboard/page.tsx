@@ -3,7 +3,15 @@
 import MainLayout from "@/components/layout/MainLayout";
 import { mockPosts, mockCategories, mockTags, mockUser } from "@/lib/mock-data";
 import { formatDistanceToNow } from "date-fns";
-import { Edit, Trash, ExternalLink, Filter, X, Clock } from "lucide-react";
+import {
+  Edit,
+  Trash,
+  ExternalLink,
+  Filter,
+  X,
+  Clock,
+  ChevronRight,
+} from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,13 +29,32 @@ import {
 } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function DashboardPage() {
   // Client component with state for filters
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedPlatform, setSelectedPlatform] = useState<string>("all");
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check for mobile screen size
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkIfMobile();
+
+    // Add event listener
+    window.addEventListener("resize", checkIfMobile);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("resize", checkIfMobile);
+    };
+  }, []);
 
   // Count posts pending approval
   const pendingApprovalCount = mockPosts.filter(
@@ -82,15 +109,18 @@ export default function DashboardPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex justify-between items-center mb-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
           <h1 className="text-2xl font-bold text-gray-800">
             Content Dashboard
           </h1>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3 w-full sm:w-auto">
             {canApprove && pendingApprovalCount > 0 && (
-              <Link href="/dashboard/approvals">
-                <Button variant="outline" className="flex items-center gap-2">
+              <Link href="/dashboard/approvals" className="w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 w-full sm:w-auto"
+                >
                   <Clock className="w-4 h-4 text-amber-500" />
                   <span>Pending Approvals</span>
                   <Badge className="ml-1 bg-amber-100 text-amber-800 hover:bg-amber-100">
@@ -99,8 +129,8 @@ export default function DashboardPage() {
                 </Button>
               </Link>
             )}
-            <Link href="/create">
-              <Button>Create New Post</Button>
+            <Link href="/create" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto">Create New Post</Button>
             </Link>
           </div>
         </div>
@@ -228,126 +258,253 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <div className="grid grid-cols-12 gap-4 p-4 border-b bg-gray-50 font-medium text-gray-600">
-            <div className="col-span-4">Content</div>
-            <div className="col-span-2">Category & Tags</div>
-            <div className="col-span-2">Created</div>
-            <div className="col-span-2">Platforms</div>
-            <div className="col-span-2">Actions</div>
-          </div>
-
-          {filteredPosts.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">
-              No posts match your filter criteria. Try adjusting your filters.
+        {/* Desktop Table View */}
+        {!isMobile && (
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden hidden md:block">
+            <div className="grid grid-cols-12 gap-4 p-4 border-b bg-gray-50 font-medium text-gray-600">
+              <div className="col-span-4">Content</div>
+              <div className="col-span-2">Category & Tags</div>
+              <div className="col-span-2">Created</div>
+              <div className="col-span-2">Platforms</div>
+              <div className="col-span-2">Actions</div>
             </div>
-          ) : (
-            filteredPosts.map((post) => {
-              const createdDate = new Date(post.createdAt);
-              const timeAgo = formatDistanceToNow(createdDate, {
-                addSuffix: true,
-              });
 
-              // Find category details
-              const category = post.category
-                ? mockCategories.find((c) => c.id === post.category)
-                : null;
+            {filteredPosts.length === 0 ? (
+              <div className="p-8 text-center text-gray-500">
+                No posts match your filter criteria. Try adjusting your filters.
+              </div>
+            ) : (
+              filteredPosts.map((post) => {
+                const createdDate = new Date(post.createdAt);
+                const timeAgo = formatDistanceToNow(createdDate, {
+                  addSuffix: true,
+                });
 
-              // Find tag details
-              const tags = post.tags
-                ? post.tags
-                    .map((tagId) => mockTags.find((t) => t.id === tagId))
-                    .filter(Boolean)
-                : [];
+                // Find category details
+                const category = post.category
+                  ? mockCategories.find((c) => c.id === post.category)
+                  : null;
 
-              return (
-                <div
-                  key={post.id}
-                  className="grid grid-cols-12 gap-4 p-4 border-b hover:bg-gray-50"
-                >
-                  <div className="col-span-4">
-                    <p className="text-gray-800 line-clamp-2">{post.content}</p>
-                  </div>
-                  <div className="col-span-2">
-                    {category && (
-                      <Badge
-                        className="mb-1 mr-1"
-                        style={{
-                          backgroundColor: category.color,
-                          color: "white",
-                        }}
-                      >
-                        {category.name}
-                      </Badge>
-                    )}
-                    {tags.map(
-                      (tag) =>
-                        tag && (
-                          <Badge
-                            key={tag.id}
-                            variant="outline"
-                            className="mb-1 mr-1"
-                            style={{
-                              borderColor: tag.color,
-                              color: tag.color,
-                            }}
+                // Find tag details
+                const tags = post.tags
+                  ? post.tags
+                      .map((tagId) => mockTags.find((t) => t.id === tagId))
+                      .filter(Boolean)
+                  : [];
+
+                return (
+                  <div
+                    key={post.id}
+                    className="grid grid-cols-12 gap-4 p-4 border-b hover:bg-gray-50"
+                  >
+                    <div className="col-span-4">
+                      <p className="text-gray-800 line-clamp-2">
+                        {post.content}
+                      </p>
+                    </div>
+                    <div className="col-span-2">
+                      {category && (
+                        <Badge
+                          className="mb-1 mr-1"
+                          style={{
+                            backgroundColor: category.color,
+                            color: "white",
+                          }}
+                        >
+                          {category.name}
+                        </Badge>
+                      )}
+                      {tags.map(
+                        (tag) =>
+                          tag && (
+                            <Badge
+                              key={tag.id}
+                              variant="outline"
+                              className="mb-1 mr-1"
+                              style={{
+                                borderColor: tag.color,
+                                color: tag.color,
+                              }}
+                            >
+                              {tag.name}
+                            </Badge>
+                          )
+                      )}
+                    </div>
+                    <div className="col-span-2 text-gray-600 text-sm self-center">
+                      {timeAgo}
+                    </div>
+                    <div className="col-span-2 self-center">
+                      <div className="flex space-x-2">
+                        {post.platforms.linkedin && (
+                          <div
+                            className={`px-2 py-1 text-xs rounded-full ${
+                              post.platforms.linkedin.published
+                                ? "bg-green-100 text-green-800"
+                                : "bg-yellow-100 text-yellow-800"
+                            }`}
                           >
-                            {tag.name}
-                          </Badge>
-                        )
-                    )}
-                  </div>
-                  <div className="col-span-2 text-gray-600 text-sm self-center">
-                    {timeAgo}
-                  </div>
-                  <div className="col-span-2 self-center">
-                    <div className="flex space-x-2">
-                      {post.platforms.linkedin && (
-                        <div
-                          className={`px-2 py-1 text-xs rounded-full ${
-                            post.platforms.linkedin.published
-                              ? "bg-green-100 text-green-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}
-                        >
-                          {post.platforms.linkedin.published
-                            ? "LinkedIn"
-                            : "LinkedIn (Draft)"}
-                        </div>
-                      )}
-                      {post.platforms.twitter && (
-                        <div
-                          className={`px-2 py-1 text-xs rounded-full ${
-                            post.platforms.twitter.published
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}
-                        >
-                          {post.platforms.twitter.published
-                            ? "Twitter"
-                            : "Twitter (Draft)"}
-                        </div>
-                      )}
+                            {post.platforms.linkedin.published
+                              ? "LinkedIn"
+                              : "LinkedIn (Draft)"}
+                          </div>
+                        )}
+                        {post.platforms.twitter && (
+                          <div
+                            className={`px-2 py-1 text-xs rounded-full ${
+                              post.platforms.twitter.published
+                                ? "bg-blue-100 text-blue-800"
+                                : "bg-yellow-100 text-yellow-800"
+                            }`}
+                          >
+                            {post.platforms.twitter.published
+                              ? "Twitter"
+                              : "Twitter (Draft)"}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="col-span-2 self-center">
+                      <div className="flex space-x-2">
+                        <button className="p-1 text-gray-500 hover:text-gray-700">
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button className="p-1 text-gray-500 hover:text-red-600">
+                          <Trash className="h-4 w-4" />
+                        </button>
+                        <button className="p-1 text-gray-500 hover:text-blue-600">
+                          <ExternalLink className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <div className="col-span-2 self-center">
-                    <div className="flex space-x-2">
-                      <button className="p-1 text-gray-500 hover:text-gray-700">
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button className="p-1 text-gray-500 hover:text-red-600">
-                        <Trash className="h-4 w-4" />
-                      </button>
+                );
+              })
+            )}
+          </div>
+        )}
+
+        {/* Mobile Card View */}
+        {isMobile && (
+          <div className="space-y-4 md:hidden">
+            {filteredPosts.length === 0 ? (
+              <div className="p-8 text-center text-gray-500 bg-white rounded-lg shadow-sm">
+                No posts match your filter criteria. Try adjusting your filters.
+              </div>
+            ) : (
+              filteredPosts.map((post) => {
+                const createdDate = new Date(post.createdAt);
+                const timeAgo = formatDistanceToNow(createdDate, {
+                  addSuffix: true,
+                });
+
+                // Find category details
+                const category = post.category
+                  ? mockCategories.find((c) => c.id === post.category)
+                  : null;
+
+                // Find tag details
+                const tags = post.tags
+                  ? post.tags
+                      .map((tagId) => mockTags.find((t) => t.id === tagId))
+                      .filter(Boolean)
+                  : [];
+
+                return (
+                  <div
+                    key={post.id}
+                    className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-teal-500"
+                  >
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="text-xs text-gray-500">{timeAgo}</div>
+                      <div className="flex space-x-2">
+                        <button className="p-1 text-gray-500 hover:text-gray-700">
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button className="p-1 text-gray-500 hover:text-red-600">
+                          <Trash className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <p className="text-gray-800 mb-3 line-clamp-3">
+                      {post.content}
+                    </p>
+
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {category && (
+                        <Badge
+                          className="mb-1 mr-1"
+                          style={{
+                            backgroundColor: category.color,
+                            color: "white",
+                          }}
+                        >
+                          {category.name}
+                        </Badge>
+                      )}
+                      {tags.slice(0, 2).map(
+                        (tag) =>
+                          tag && (
+                            <Badge
+                              key={tag.id}
+                              variant="outline"
+                              className="mb-1 mr-1"
+                              style={{
+                                borderColor: tag.color,
+                                color: tag.color,
+                              }}
+                            >
+                              {tag.name}
+                            </Badge>
+                          )
+                      )}
+                      {tags.length > 2 && (
+                        <Badge variant="outline" className="mb-1">
+                          +{tags.length - 2} more
+                        </Badge>
+                      )}
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <div className="flex space-x-2">
+                        {post.platforms.linkedin && (
+                          <div
+                            className={`px-2 py-1 text-xs rounded-full ${
+                              post.platforms.linkedin.published
+                                ? "bg-green-100 text-green-800"
+                                : "bg-yellow-100 text-yellow-800"
+                            }`}
+                          >
+                            {post.platforms.linkedin.published
+                              ? "LinkedIn"
+                              : "LinkedIn (Draft)"}
+                          </div>
+                        )}
+                        {post.platforms.twitter && (
+                          <div
+                            className={`px-2 py-1 text-xs rounded-full ${
+                              post.platforms.twitter.published
+                                ? "bg-blue-100 text-blue-800"
+                                : "bg-yellow-100 text-yellow-800"
+                            }`}
+                          >
+                            {post.platforms.twitter.published
+                              ? "Twitter"
+                              : "Twitter (Draft)"}
+                          </div>
+                        )}
+                      </div>
                       <button className="p-1 text-gray-500 hover:text-blue-600">
-                        <ExternalLink className="h-4 w-4" />
+                        <ChevronRight className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
-                </div>
-              );
-            })
-          )}
-        </div>
+                );
+              })
+            )}
+          </div>
+        )}
       </div>
     </MainLayout>
   );
