@@ -12,6 +12,7 @@ import {
   LogOut,
   Eye,
   Calendar,
+  BarChart2,
 } from "lucide-react";
 import { mockUser } from "@/lib/mock-data";
 
@@ -55,6 +56,13 @@ export default function MainLayout({ children }: MainLayoutProps) {
             >
               <Calendar className="w-5 h-5 mr-3" />
               <span>Schedule</span>
+            </Link>
+            <Link
+              href="/analytics"
+              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+            >
+              <BarChart2 className="w-5 h-5 mr-3" />
+              <span>Analytics</span>
             </Link>
             <Link
               href="/preview"
@@ -136,6 +144,14 @@ export default function MainLayout({ children }: MainLayoutProps) {
             >
               <Calendar className="w-5 h-5 mr-3" />
               <span>Schedule</span>
+            </Link>
+            <Link
+              href="/analytics"
+              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              onClick={toggleMobileMenu}
+            >
+              <BarChart2 className="w-5 h-5 mr-3" />
+              <span>Analytics</span>
             </Link>
             <Link
               href="/preview"

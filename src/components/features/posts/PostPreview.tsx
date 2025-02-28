@@ -8,13 +8,23 @@ interface PostPreviewProps {
     twitter?: string;
   };
   showDeviceToggle?: boolean;
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
 }
 
 export default function PostPreview({
   content,
   showDeviceToggle = true,
+  activeTab = "linkedin",
+  onTabChange,
 }: PostPreviewProps) {
   const [deviceView, setDeviceView] = useState<"mobile" | "desktop">("desktop");
+
+  const handleTabChange = (value: string) => {
+    if (onTabChange) {
+      onTabChange(value);
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
@@ -49,7 +59,11 @@ export default function PostPreview({
         )}
       </div>
 
-      <Tabs defaultValue="linkedin" className="w-full">
+      <Tabs
+        value={activeTab}
+        onValueChange={handleTabChange}
+        className="w-full"
+      >
         <TabsList className="grid w-full grid-cols-2 mb-4">
           <TabsTrigger value="linkedin" className="flex items-center space-x-2">
             <Linkedin className="w-4 h-4" />

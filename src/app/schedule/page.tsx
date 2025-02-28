@@ -6,11 +6,12 @@ import ScheduleCalendar from "@/components/features/posts/ScheduleCalendar";
 import ScheduleForm from "@/components/features/posts/ScheduleForm";
 import ScheduleTimeline from "@/components/features/posts/ScheduleTimeline";
 import { mockScheduledPosts, mockPosts } from "@/lib/mock-data";
+import { useNotification } from "@/context/NotificationContext";
 
 export default function SchedulePage() {
   const [scheduledPosts, setScheduledPosts] = useState(mockScheduledPosts);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const { addNotification } = useNotification();
 
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
@@ -53,21 +54,39 @@ export default function SchedulePage() {
     // Add the new scheduled posts to the existing ones
     setScheduledPosts([...scheduledPosts, ...newScheduledPosts]);
 
-    // Show success message
-    setShowSuccessMessage(true);
-    setTimeout(() => {
-      setShowSuccessMessage(false);
-    }, 3000);
+    // Show success notification
+    addNotification({
+      type: "success",
+      title: "Post Scheduled",
+      message: `Your post has been scheduled for ${data.date.toLocaleDateString()} at ${
+        data.time
+      }.`,
+      duration: 5000,
+    });
   };
 
   const handleEdit = (postId: string) => {
     // In a real app, this would open an edit modal or navigate to an edit page
     console.log(`Edit post ${postId}`);
+    addNotification({
+      type: "info",
+      title: "Edit Mode",
+      message: "Post editing functionality will be available soon.",
+      duration: 3000,
+    });
   };
 
   const handleDelete = (postId: string) => {
     // Remove the post from the scheduled posts
     setScheduledPosts(scheduledPosts.filter((post) => post.id !== postId));
+
+    // Show success notification
+    addNotification({
+      type: "success",
+      title: "Post Removed",
+      message: "The scheduled post has been removed successfully.",
+      duration: 3000,
+    });
   };
 
   // Convert string dates to Date objects for the calendar component
@@ -82,14 +101,6 @@ export default function SchedulePage() {
         <h1 className="text-2xl font-bold text-gray-800 mb-8">
           Schedule Posts
         </h1>
-
-        {showSuccessMessage && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6">
-            <span className="block sm:inline">
-              Post scheduled successfully!
-            </span>
-          </div>
-        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">

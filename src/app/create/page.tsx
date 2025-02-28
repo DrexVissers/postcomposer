@@ -5,24 +5,44 @@ import MainLayout from "@/components/layout/MainLayout";
 import { mockTemplates } from "@/lib/mock-data";
 import { Mic, Image as ImageIcon, Send, RefreshCw } from "lucide-react";
 import PostPreview from "@/components/features/posts/PostPreview";
+import { useNotification } from "@/context/NotificationContext";
 
 export default function CreatePostPage() {
   const [content, setContent] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [activeTab] = useState("linkedin");
+  const [activeTab, setActiveTab] = useState("linkedin");
   const [generatedContent, setGeneratedContent] = useState({
     linkedin: "",
     twitter: "",
   });
+  const { addNotification } = useNotification();
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
   };
 
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+  };
+
   const handleGenerate = () => {
-    if (!content.trim()) return;
+    if (!content.trim()) {
+      addNotification({
+        type: "warning",
+        title: "Empty Content",
+        message: "Please enter some content before generating posts.",
+        duration: 3000,
+      });
+      return;
+    }
 
     setIsGenerating(true);
+    addNotification({
+      type: "info",
+      title: "Generating Content",
+      message: "Optimizing your content for different platforms...",
+      duration: 2000,
+    });
 
     // Simulate AI generation with a timeout
     setTimeout(() => {
@@ -45,7 +65,49 @@ export default function CreatePostPage() {
       });
 
       setIsGenerating(false);
+
+      addNotification({
+        type: "success",
+        title: "Content Generated",
+        message: "Your content has been optimized for LinkedIn and Twitter.",
+        duration: 4000,
+      });
     }, 1500);
+  };
+
+  const handlePublish = () => {
+    if (!generatedContent[activeTab as keyof typeof generatedContent]) {
+      addNotification({
+        type: "error",
+        title: "Cannot Publish",
+        message: "Please generate content before publishing.",
+        duration: 3000,
+      });
+      return;
+    }
+
+    // Simulate publishing with a notification
+    addNotification({
+      type: "success",
+      title: "Post Published",
+      message: `Your post has been published to ${
+        activeTab.charAt(0).toUpperCase() + activeTab.slice(1)
+      }.`,
+      duration: 5000,
+    });
+  };
+
+  const handleTemplateSelect = (templateId: string) => {
+    const template = mockTemplates.find((t) => t.id === templateId);
+    if (template) {
+      setContent(template.structure);
+      addNotification({
+        type: "info",
+        title: "Template Applied",
+        message: `The "${template.name}" template has been applied.`,
+        duration: 3000,
+      });
+    }
   };
 
   return (
@@ -73,12 +135,29 @@ export default function CreatePostPage() {
                 <button
                   className="p-2 text-gray-500 hover:text-teal-600 border border-gray-300 rounded-lg hover:border-teal-600 transition-colors"
                   aria-label="Record voice"
+                  onClick={() =>
+                    addNotification({
+                      type: "info",
+                      title: "Voice Recording",
+                      message:
+                        "Voice recording feature will be available soon.",
+                      duration: 3000,
+                    })
+                  }
                 >
                   <Mic className="w-5 h-5" />
                 </button>
                 <button
                   className="p-2 text-gray-500 hover:text-teal-600 border border-gray-300 rounded-lg hover:border-teal-600 transition-colors"
                   aria-label="Upload image"
+                  onClick={() =>
+                    addNotification({
+                      type: "info",
+                      title: "Image Upload",
+                      message: "Image upload feature will be available soon.",
+                      duration: 3000,
+                    })
+                  }
                 >
                   <ImageIcon className="w-5 h-5" />
                 </button>
@@ -112,6 +191,7 @@ export default function CreatePostPage() {
                   <div
                     key={template.id}
                     className="p-3 border border-gray-200 rounded-lg hover:border-teal-500 cursor-pointer text-sm"
+                    onClick={() => handleTemplateSelect(template.id)}
                   >
                     <p className="font-medium text-gray-800">{template.name}</p>
                     <p className="text-gray-500 text-xs mt-1">
@@ -123,9 +203,13 @@ export default function CreatePostPage() {
             </div>
           </div>
 
-          {/* Preview Section - Using the new PostPreview component */}
+          {/* Preview Section - Using the PostPreview component */}
           <div>
-            <PostPreview content={generatedContent} />
+            <PostPreview
+              content={generatedContent}
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+            />
 
             <div className="mt-6 flex justify-end">
               <button
@@ -133,6 +217,7 @@ export default function CreatePostPage() {
                 disabled={
                   !generatedContent[activeTab as keyof typeof generatedContent]
                 }
+                onClick={handlePublish}
               >
                 <Send className="w-4 h-4" />
                 <span>
