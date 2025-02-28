@@ -6,6 +6,10 @@ import { mockTemplates } from "@/lib/mock-data";
 import { Mic, Image as ImageIcon, Send, RefreshCw } from "lucide-react";
 import PostPreview from "@/components/features/posts/PostPreview";
 import { useNotification } from "@/context/NotificationContext";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { MediaProvider } from "@/context/MediaContext";
+import MediaLibrary from "@/components/features/media/MediaLibrary";
+import { MediaItem } from "@/lib/mock-data";
 
 export default function CreatePostPage() {
   const [content, setContent] = useState("");
@@ -15,6 +19,8 @@ export default function CreatePostPage() {
     linkedin: "",
     twitter: "",
   });
+  const [showMediaLibrary, setShowMediaLibrary] = useState(false);
+  const [selectedMedia, setSelectedMedia] = useState<MediaItem[]>([]);
   const { addNotification } = useNotification();
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -110,6 +116,20 @@ export default function CreatePostPage() {
     }
   };
 
+  const handleMediaSelect = (media: MediaItem) => {
+    setSelectedMedia([...selectedMedia, media]);
+    // Insert media reference at cursor position or at the end of content
+    const mediaText = `[Image: ${media.name}] `;
+    setContent(content + mediaText);
+    setShowMediaLibrary(false);
+    addNotification({
+      type: "success",
+      title: "Media Added",
+      message: `${media.name} has been added to your post.`,
+      duration: 3000,
+    });
+  };
+
   return (
     <MainLayout>
       <div className="max-w-6xl mx-auto">
@@ -150,14 +170,7 @@ export default function CreatePostPage() {
                 <button
                   className="p-2 text-gray-500 hover:text-teal-600 border border-gray-300 rounded-lg hover:border-teal-600 transition-colors"
                   aria-label="Upload image"
-                  onClick={() =>
-                    addNotification({
-                      type: "info",
-                      title: "Image Upload",
-                      message: "Image upload feature will be available soon.",
-                      duration: 3000,
-                    })
-                  }
+                  onClick={() => setShowMediaLibrary(true)}
                 >
                   <ImageIcon className="w-5 h-5" />
                 </button>
@@ -228,6 +241,16 @@ export default function CreatePostPage() {
             </div>
           </div>
         </div>
+
+        {/* Media Library Dialog */}
+        <Dialog open={showMediaLibrary} onOpenChange={setShowMediaLibrary}>
+          <DialogContent className="sm:max-w-5xl max-h-[90vh] overflow-y-auto">
+            <DialogTitle>Media Library</DialogTitle>
+            <MediaProvider>
+              <MediaLibrary onSelectMedia={handleMediaSelect} />
+            </MediaProvider>
+          </DialogContent>
+        </Dialog>
       </div>
     </MainLayout>
   );

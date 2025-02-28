@@ -65,6 +65,19 @@ export interface PostAnalytics {
   }[];
 }
 
+export interface MediaItem {
+  id: string;
+  type: "image" | "video";
+  name: string;
+  url: string;
+  thumbnailUrl: string;
+  size: number; // in bytes
+  dimensions?: { width: number; height: number };
+  duration?: number; // for videos, in seconds
+  createdAt: string;
+  tags: string[];
+}
+
 // Mock data for posts
 export const mockPosts: Post[] = [
   {
@@ -434,5 +447,69 @@ export const mockTemplates: Template[] = [
     platform: "linkedin",
     structure:
       "[TOPIC] tips:\n\n1. [POINT1]\n2. [POINT2]\n3. [POINT3]\n4. [POINT4]\n5. [POINT5]\n\n#[HASHTAG1] #[HASHTAG2]",
+  },
+];
+
+export const mockMediaItems: MediaItem[] = [
+  {
+    id: "1",
+    type: "image",
+    name: "company-logo.png",
+    url: "https://images.unsplash.com/photo-1567446537708-ac4aa75c9c28?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=800",
+    thumbnailUrl:
+      "https://images.unsplash.com/photo-1567446537708-ac4aa75c9c28?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&h=200",
+    size: 245000,
+    dimensions: { width: 800, height: 800 },
+    createdAt: "2023-10-15T14:30:00Z",
+    tags: ["logo", "branding"],
+  },
+  {
+    id: "2",
+    type: "image",
+    name: "product-showcase.jpg",
+    url: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&h=800",
+    thumbnailUrl:
+      "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&h=133",
+    size: 1250000,
+    dimensions: { width: 1200, height: 800 },
+    createdAt: "2023-11-05T09:45:00Z",
+    tags: ["product", "marketing"],
+  },
+  {
+    id: "3",
+    type: "image",
+    name: "team-photo.jpg",
+    url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&h=800",
+    thumbnailUrl:
+      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&h=133",
+    size: 1850000,
+    dimensions: { width: 1200, height: 800 },
+    createdAt: "2023-12-12T16:20:00Z",
+    tags: ["team", "people"],
+  },
+  {
+    id: "4",
+    type: "video",
+    name: "product-demo.mp4",
+    url: "https://example.com/videos/product-demo.mp4",
+    thumbnailUrl:
+      "https://images.unsplash.com/photo-1611162616475-46b635cb6868?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&h=113",
+    size: 15000000,
+    dimensions: { width: 1920, height: 1080 },
+    duration: 145,
+    createdAt: "2024-01-20T11:15:00Z",
+    tags: ["demo", "product", "video"],
+  },
+  {
+    id: "5",
+    type: "image",
+    name: "office-space.jpg",
+    url: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&h=800",
+    thumbnailUrl:
+      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&h=133",
+    size: 2100000,
+    dimensions: { width: 1200, height: 800 },
+    createdAt: "2024-02-05T13:40:00Z",
+    tags: ["office", "workspace"],
   },
 ];

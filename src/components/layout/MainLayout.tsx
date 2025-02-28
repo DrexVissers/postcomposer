@@ -13,6 +13,7 @@ import {
   Eye,
   Calendar,
   BarChart2,
+  Image as ImageIcon,
 } from "lucide-react";
 import { mockUser } from "@/lib/mock-data";
 
@@ -63,6 +64,13 @@ export default function MainLayout({ children }: MainLayoutProps) {
             >
               <BarChart2 className="w-5 h-5 mr-3" />
               <span>Analytics</span>
+            </Link>
+            <Link
+              href="/media"
+              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+            >
+              <ImageIcon className="w-5 h-5 mr-3" />
+              <span>Media Library</span>
             </Link>
             <Link
               href="/preview"
@@ -152,6 +160,14 @@ export default function MainLayout({ children }: MainLayoutProps) {
             >
               <BarChart2 className="w-5 h-5 mr-3" />
               <span>Analytics</span>
+            </Link>
+            <Link
+              href="/media"
+              className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
+              onClick={toggleMobileMenu}
+            >
+              <ImageIcon className="w-5 h-5 mr-3" />
+              <span>Media Library</span>
             </Link>
             <Link
               href="/preview"
