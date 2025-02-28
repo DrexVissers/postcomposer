@@ -8,7 +8,6 @@ import {
   Trash,
   ExternalLink,
   Filter,
-  X,
   Clock,
   ChevronRight,
 } from "lucide-react";
@@ -112,7 +111,7 @@ export default function DashboardPage() {
     <MainLayout>
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
-          <h1 className="text-2xl font-bold text-gray-800">
+          <h1 className="text-2xl font-bold text-muted-foreground">
             Content Dashboard
           </h1>
           <div className="flex flex-wrap gap-3 w-full sm:w-auto">
@@ -131,7 +130,9 @@ export default function DashboardPage() {
               </Link>
             )}
             <Link href="/create" className="w-full sm:w-auto">
-              <Button className="w-full sm:w-auto">Create New Post</Button>
+              <Button className="w-full sm:w-auto bg-card-lighter hover:bg-card text-muted-foreground hover:text-foreground/80">
+                Create New Post
+              </Button>
             </Link>
           </div>
         </div>
@@ -142,19 +143,17 @@ export default function DashboardPage() {
         </div>
 
         {/* Filter Section */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+        <div className="bg-card-lighter dark:bg-card-lighter rounded-lg border border-border shadow-sm p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium text-gray-700 flex items-center">
-              <Filter className="h-4 w-4 mr-2" /> Filters
+            <h2 className="text-lg font-medium text-foreground/90 flex items-center">
+              <Filter className="h-4 w-4 mr-2 text-muted-foreground" /> Filters
             </h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-gray-500"
+            <button
+              className="text-sm text-muted-foreground hover:text-primary transition-colors"
               onClick={clearFilters}
             >
-              <X className="h-4 w-4 mr-1" /> Clear All
-            </Button>
+              Clear All
+            </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -162,7 +161,7 @@ export default function DashboardPage() {
             <div>
               <Label
                 htmlFor="category-filter"
-                className="text-sm font-medium mb-1 block"
+                className="text-sm font-medium mb-1 block text-foreground/90"
               >
                 Category
               </Label>
@@ -194,7 +193,7 @@ export default function DashboardPage() {
             <div>
               <Label
                 htmlFor="tags-filter"
-                className="text-sm font-medium mb-1 block"
+                className="text-sm font-medium mb-1 block text-foreground/90"
               >
                 Tags
               </Label>
@@ -210,7 +209,7 @@ export default function DashboardPage() {
                       : `${selectedTags.length} tag${
                           selectedTags.length > 1 ? "s" : ""
                         } selected`}
-                    <Filter className="h-4 w-4 ml-2 opacity-50" />
+                    <Filter className="h-4 w-4 ml-2 opacity-50 text-muted-foreground" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-full p-4">
@@ -224,7 +223,7 @@ export default function DashboardPage() {
                         />
                         <Label
                           htmlFor={`tag-${tag.id}`}
-                          className="flex items-center cursor-pointer"
+                          className="flex items-center cursor-pointer text-foreground/90"
                         >
                           <div
                             className="w-3 h-3 rounded-full mr-2"
@@ -243,7 +242,7 @@ export default function DashboardPage() {
             <div>
               <Label
                 htmlFor="platform-filter"
-                className="text-sm font-medium mb-1 block"
+                className="text-sm font-medium mb-1 block text-foreground/90"
               >
                 Platform
               </Label>
@@ -266,17 +265,17 @@ export default function DashboardPage() {
 
         {/* Desktop Table View */}
         {!isMobile && (
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden hidden md:block">
-            <div className="grid grid-cols-12 gap-4 p-4 border-b bg-gray-50 font-medium text-gray-600">
-              <div className="col-span-4">Content</div>
+          <div className="bg-card-lighter dark:bg-card-lighter rounded-lg border border-border shadow-sm overflow-hidden hidden md:block">
+            <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-muted/30 dark:bg-muted/10 font-medium text-foreground/90">
+              <div className="col-span-5">Content</div>
               <div className="col-span-2">Category & Tags</div>
               <div className="col-span-2">Created</div>
               <div className="col-span-2">Platforms</div>
-              <div className="col-span-2">Actions</div>
+              <div className="col-span-1">Actions</div>
             </div>
 
             {filteredPosts.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-8 text-center text-foreground/50">
                 No posts match your filter criteria. Try adjusting your filters.
               </div>
             ) : (
@@ -301,10 +300,10 @@ export default function DashboardPage() {
                 return (
                   <div
                     key={post.id}
-                    className="grid grid-cols-12 gap-4 p-4 border-b hover:bg-gray-50"
+                    className="grid grid-cols-12 gap-4 p-4 border-b border-border hover:bg-muted/10 transition-colors"
                   >
-                    <div className="col-span-4">
-                      <p className="text-gray-800 line-clamp-2">
+                    <div className="col-span-5">
+                      <p className="text-foreground/90 line-clamp-2">
                         {post.content}
                       </p>
                     </div>
@@ -337,7 +336,7 @@ export default function DashboardPage() {
                           )
                       )}
                     </div>
-                    <div className="col-span-2 text-gray-600 text-sm self-center">
+                    <div className="col-span-2 text-sm text-foreground/90 self-center">
                       {timeAgo}
                     </div>
                     <div className="col-span-2 self-center">
@@ -346,8 +345,8 @@ export default function DashboardPage() {
                           <div
                             className={`px-2 py-1 text-xs rounded-full ${
                               post.platforms.linkedin.published
-                                ? "bg-green-100 text-green-800"
-                                : "bg-yellow-100 text-yellow-800"
+                                ? "bg-primary/10 text-primary"
+                                : "bg-yellow-500/10 text-yellow-500"
                             }`}
                           >
                             {post.platforms.linkedin.published
@@ -359,8 +358,8 @@ export default function DashboardPage() {
                           <div
                             className={`px-2 py-1 text-xs rounded-full ${
                               post.platforms.twitter.published
-                                ? "bg-blue-100 text-blue-800"
-                                : "bg-yellow-100 text-yellow-800"
+                                ? "bg-blue-500/10 text-blue-500"
+                                : "bg-yellow-500/10 text-yellow-500"
                             }`}
                           >
                             {post.platforms.twitter.published
@@ -370,15 +369,15 @@ export default function DashboardPage() {
                         )}
                       </div>
                     </div>
-                    <div className="col-span-2 self-center">
+                    <div className="col-span-1 self-center">
                       <div className="flex space-x-2">
-                        <button className="p-1 text-gray-500 hover:text-gray-700">
+                        <button className="p-1 text-foreground/90 hover:text-primary transition-colors">
                           <Edit className="h-4 w-4" />
                         </button>
-                        <button className="p-1 text-gray-500 hover:text-red-600">
+                        <button className="p-1 text-foreground/90 hover:text-primary transition-colors">
                           <Trash className="h-4 w-4" />
                         </button>
-                        <button className="p-1 text-gray-500 hover:text-blue-600">
+                        <button className="p-1 text-foreground/90 hover:text-primary transition-colors">
                           <ExternalLink className="h-4 w-4" />
                         </button>
                       </div>
@@ -394,7 +393,7 @@ export default function DashboardPage() {
         {isMobile && (
           <div className="space-y-4 md:hidden">
             {filteredPosts.length === 0 ? (
-              <div className="p-8 text-center text-gray-500 bg-white rounded-lg shadow-sm">
+              <div className="p-8 text-center text-foreground/50 bg-card-lighter dark:bg-card-lighter rounded-lg shadow-sm">
                 No posts match your filter criteria. Try adjusting your filters.
               </div>
             ) : (
@@ -419,21 +418,23 @@ export default function DashboardPage() {
                 return (
                   <div
                     key={post.id}
-                    className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-teal-500"
+                    className="bg-card-lighter dark:bg-card-lighter rounded-lg shadow-sm p-4 border-l-4 border-primary"
                   >
                     <div className="flex justify-between items-start mb-3">
-                      <div className="text-xs text-gray-500">{timeAgo}</div>
+                      <div className="text-xs text-foreground/50">
+                        {timeAgo}
+                      </div>
                       <div className="flex space-x-2">
-                        <button className="p-1 text-gray-500 hover:text-gray-700">
+                        <button className="p-1 text-foreground/90 hover:text-primary transition-colors">
                           <Edit className="h-4 w-4" />
                         </button>
-                        <button className="p-1 text-gray-500 hover:text-red-600">
+                        <button className="p-1 text-foreground/90 hover:text-primary transition-colors">
                           <Trash className="h-4 w-4" />
                         </button>
                       </div>
                     </div>
 
-                    <p className="text-gray-800 mb-3 line-clamp-3">
+                    <p className="text-foreground/90 mb-3 line-clamp-3">
                       {post.content}
                     </p>
 
@@ -478,8 +479,8 @@ export default function DashboardPage() {
                           <div
                             className={`px-2 py-1 text-xs rounded-full ${
                               post.platforms.linkedin.published
-                                ? "bg-green-100 text-green-800"
-                                : "bg-yellow-100 text-yellow-800"
+                                ? "bg-primary/10 text-primary"
+                                : "bg-yellow-500/10 text-yellow-500"
                             }`}
                           >
                             {post.platforms.linkedin.published
@@ -491,8 +492,8 @@ export default function DashboardPage() {
                           <div
                             className={`px-2 py-1 text-xs rounded-full ${
                               post.platforms.twitter.published
-                                ? "bg-blue-100 text-blue-800"
-                                : "bg-yellow-100 text-yellow-800"
+                                ? "bg-blue-500/10 text-blue-500"
+                                : "bg-yellow-500/10 text-yellow-500"
                             }`}
                           >
                             {post.platforms.twitter.published
@@ -501,7 +502,7 @@ export default function DashboardPage() {
                           </div>
                         )}
                       </div>
-                      <button className="p-1 text-gray-500 hover:text-blue-600">
+                      <button className="p-1 text-foreground/90 hover:text-primary transition-colors">
                         <ChevronRight className="h-4 w-4" />
                       </button>
                     </div>

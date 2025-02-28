@@ -112,7 +112,7 @@ export default function MobileMediaGallery({
                   <button
                     className={`absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center ${
                       isSelected(item)
-                        ? "bg-teal-500 text-white"
+                        ? "bg-primary text-primary-foreground"
                         : "bg-black bg-opacity-50 text-white"
                     }`}
                     onClick={(e) => {
@@ -164,8 +164,8 @@ export default function MobileMediaGallery({
               <button
                 className={`absolute bottom-4 right-4 px-4 py-2 rounded-full flex items-center ${
                   isSelected(media[currentIndex])
-                    ? "bg-teal-500 text-white"
-                    : "bg-white text-black"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-background text-foreground"
                 }`}
                 onClick={() => toggleMediaSelection(media[currentIndex])}
               >
@@ -184,7 +184,9 @@ export default function MobileMediaGallery({
           {/* Image info */}
           <div className="p-4 bg-black bg-opacity-75 text-white">
             <p className="font-medium">{media[currentIndex].name}</p>
-            <p className="text-sm text-gray-300">{media[currentIndex].size}</p>
+            <p className="text-sm text-muted-foreground">
+              {media[currentIndex].size}
+            </p>
           </div>
         </div>
       )}
@@ -195,7 +197,7 @@ export default function MobileMediaGallery({
           <div className="flex justify-between items-center">
             <p className="text-white">{selectedMedia.length} selected</p>
             <button
-              className="bg-teal-500 text-white px-4 py-2 rounded-md"
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-md"
               onClick={() => {
                 if (onSelect) {
                   onSelect(selectedMedia);

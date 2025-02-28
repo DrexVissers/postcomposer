@@ -32,7 +32,7 @@ export function Fab({ actions }: FabProps) {
               className="flex items-center animate-slide-up"
               style={{ animationDelay: `${index * 0.05}s` }}
             >
-              <div className="bg-white shadow-md rounded-lg py-1 px-3 mr-2 text-sm">
+              <div className="bg-background dark:bg-background shadow-md rounded-lg py-1 px-3 mr-2 text-sm text-foreground">
                 {action.label}
               </div>
               <Button
@@ -51,7 +51,7 @@ export function Fab({ actions }: FabProps) {
       <Button
         size="icon"
         className={`h-14 w-14 rounded-full shadow-lg ${
-          isOpen ? "bg-gray-700" : "bg-teal-600"
+          isOpen ? "bg-muted dark:bg-muted" : "bg-primary"
         }`}
         onClick={toggleOpen}
       >

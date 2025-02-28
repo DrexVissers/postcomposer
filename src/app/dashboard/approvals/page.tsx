@@ -132,13 +132,13 @@ export default function ApprovalsPage() {
   const getStatusBadgeColor = (status: string | undefined) => {
     switch (status) {
       case "approved":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300";
       case "pending_approval":
-        return "bg-amber-100 text-amber-800";
+        return "bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300";
       case "rejected":
-        return "bg-red-100 text-red-800";
+        return "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted dark:bg-muted text-muted-foreground dark:text-muted-foreground";
     }
   };
 
@@ -151,7 +151,7 @@ export default function ApprovalsPage() {
     <MainLayout>
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">
+          <h1 className="text-2xl font-bold text-foreground/90 dark:text-foreground/90">
             Content Approvals
           </h1>
 
@@ -211,7 +211,7 @@ export default function ApprovalsPage() {
             {filteredPosts.map((post) => (
               <div
                 key={post.id}
-                className="bg-white rounded-lg shadow-sm p-6 border-l-4 hover:shadow-md transition-shadow"
+                className="bg-card dark:bg-card rounded-lg shadow-sm p-6 border-l-4 hover:shadow-md transition-shadow"
                 style={{
                   borderLeftColor:
                     post.status === "pending_approval"
@@ -225,12 +225,12 @@ export default function ApprovalsPage() {
               >
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h2 className="font-medium text-gray-800">
+                    <h2 className="font-medium text-foreground/90 dark:text-foreground/90">
                       {post.content.length > 60
                         ? post.content.substring(0, 60) + "..."
                         : post.content}
                     </h2>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-1">
                       Created {formatDate(post.createdAt)}
                     </p>
                   </div>
@@ -244,12 +244,18 @@ export default function ApprovalsPage() {
 
                 <div className="flex flex-wrap gap-2 mb-4">
                   {post.platforms.linkedin && (
-                    <Badge variant="outline" className="bg-blue-50">
+                    <Badge
+                      variant="outline"
+                      className="bg-blue-50 dark:bg-blue-900/20"
+                    >
                       LinkedIn
                     </Badge>
                   )}
                   {post.platforms.twitter && (
-                    <Badge variant="outline" className="bg-sky-50">
+                    <Badge
+                      variant="outline"
+                      className="bg-sky-50 dark:bg-sky-900/20"
+                    >
                       Twitter
                     </Badge>
                   )}
@@ -274,7 +280,7 @@ export default function ApprovalsPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="flex items-center gap-1 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="flex items-center gap-1 text-red-600 dark:text-red-500"
                         onClick={() => handleReject(post)}
                       >
                         <XCircle className="w-4 h-4" />
@@ -282,8 +288,9 @@ export default function ApprovalsPage() {
                       </Button>
 
                       <Button
+                        variant="outline"
                         size="sm"
-                        className="flex items-center gap-1 bg-green-600 hover:bg-green-700"
+                        className="flex items-center gap-1 text-green-600 dark:text-green-500"
                         onClick={() => handleApprove(post)}
                       >
                         <CheckCircle className="w-4 h-4" />
@@ -324,7 +331,11 @@ export default function ApprovalsPage() {
                   </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="linkedin" className="mt-4">
+                <TabsContent
+                  value="linkedin"
+                  key="approval-linkedin"
+                  className="mt-4"
+                >
                   {selectedPost.platforms.linkedin ? (
                     <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
                       <p className="whitespace-pre-wrap">
@@ -338,7 +349,11 @@ export default function ApprovalsPage() {
                   )}
                 </TabsContent>
 
-                <TabsContent value="twitter" className="mt-4">
+                <TabsContent
+                  value="twitter"
+                  key="approval-twitter"
+                  className="mt-4"
+                >
                   {selectedPost.platforms.twitter ? (
                     <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
                       <p className="whitespace-pre-wrap">
@@ -357,7 +372,7 @@ export default function ApprovalsPage() {
                 <DialogFooter className="gap-2">
                   <Button
                     variant="outline"
-                    className="flex items-center gap-1 text-red-600 hover:text-red-700 hover:bg-red-50"
+                    className="flex items-center gap-1 text-red-600 dark:text-red-500"
                     onClick={() => handleReject(selectedPost)}
                   >
                     <XCircle className="w-4 h-4" />
@@ -365,7 +380,8 @@ export default function ApprovalsPage() {
                   </Button>
 
                   <Button
-                    className="flex items-center gap-1 bg-green-600 hover:bg-green-700"
+                    variant="outline"
+                    className="flex items-center gap-1 text-green-600 dark:text-green-500"
                     onClick={() => handleApprove(selectedPost)}
                   >
                     <CheckCircle className="w-4 h-4" />

@@ -38,10 +38,10 @@ export default function SchedulePage() {
     // Create new scheduled posts based on the form data
     const newScheduledPosts = [];
 
-    // Get a random post for demo purposes, or use the selected post if provided
+    // Get the first post instead of a random one for demo purposes, or use the selected post if provided
     const selectedPost = data.postId
       ? mockPosts.find((post) => post.id === data.postId)
-      : mockPosts[Math.floor(Math.random() * mockPosts.length)];
+      : mockPosts[0];
 
     if (!selectedPost) {
       addNotification({
@@ -53,15 +53,16 @@ export default function SchedulePage() {
       return;
     }
 
+    // Create a new scheduled post for each selected platform
     if (data.platforms.linkedin) {
       newScheduledPosts.push({
-        id: `sched${Date.now()}-linkedin`,
+        id: `sched-${Date.now()}-linkedin`,
         content:
           selectedPost.platforms.linkedin?.content || selectedPost.content,
-        scheduledDate: data.date.toISOString(),
+        scheduledDate: new Date(
+          `${data.date.toISOString().split("T")[0]}T${data.time}`
+        ).toISOString(),
         platform: "linkedin" as const,
-        postId: selectedPost.id,
-        repeat: data.repeat as "none" | "daily" | "weekly" | "monthly",
         category: selectedPost.category,
         tags: selectedPost.tags,
       });
@@ -69,40 +70,40 @@ export default function SchedulePage() {
 
     if (data.platforms.twitter) {
       newScheduledPosts.push({
-        id: `sched${Date.now()}-twitter`,
+        id: `sched-${Date.now()}-twitter`,
         content:
           selectedPost.platforms.twitter?.content || selectedPost.content,
-        scheduledDate: data.date.toISOString(),
+        scheduledDate: new Date(
+          `${data.date.toISOString().split("T")[0]}T${data.time}`
+        ).toISOString(),
         platform: "twitter" as const,
-        postId: selectedPost.id,
-        repeat: data.repeat as "none" | "daily" | "weekly" | "monthly",
         category: selectedPost.category,
         tags: selectedPost.tags,
       });
     }
 
-    // Add the new scheduled posts to the existing ones
+    // Add the new scheduled posts to the state
     setScheduledPosts([...scheduledPosts, ...newScheduledPosts]);
 
     // Show a success notification
     addNotification({
       type: "success",
       title: "Post Scheduled",
-      message: `Post scheduled for ${data.date.toLocaleDateString()} at ${
+      message: `Your post has been scheduled for ${data.date.toLocaleDateString()} at ${
         data.time
-      }`,
+      }.`,
       duration: 3000,
     });
   };
 
-  const handleEdit = (postId: string) => {
-    // In a real app, this would open an edit form
-    addNotification({
-      type: "info",
-      title: "Edit Scheduled Post",
-      message: "Editing scheduled posts will be available soon.",
-      duration: 3000,
-    });
+  const handleEdit = (id: string) => {
+    // Find the post to edit
+    const postToEdit = scheduledPosts.find((post) => post.id === id);
+    if (!postToEdit) return;
+
+    // Set the form data for editing
+    setSelectedDate(new Date(postToEdit.scheduledDate));
+    // Additional edit logic would go here
   };
 
   const handleDelete = (postId: string) => {
@@ -120,8 +121,8 @@ export default function SchedulePage() {
 
   return (
     <MainLayout>
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-800 mb-8">
+      <div className="max-w-6xl mx-auto px-4">
+        <h1 className="text-2xl font-bold text-foreground/90 dark:text-foreground/90 mb-8">
           Schedule Posts
         </h1>
 
@@ -131,6 +132,9 @@ export default function SchedulePage() {
               scheduledPosts={calendarPosts}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              className="bg-card-lighter dark:bg-card-lighter border border-border"
+              textClassName="text-foreground/90 dark:text-foreground/90"
+              subtextClassName="text-muted-foreground"
             />
           </div>
           <div>
@@ -139,12 +143,21 @@ export default function SchedulePage() {
                 scheduledPosts={calendarPosts}
                 onDateSelect={handleDateSelect}
                 selectedDate={selectedDate}
+                className="bg-card-lighter dark:bg-card-lighter border border-border mb-6"
+                textClassName="text-foreground/90 dark:text-foreground/90"
+                subtextClassName="text-muted-foreground"
+                selectedClassName="bg-primary/20 text-primary"
+                todayClassName="border-primary"
               />
               <div className="mt-6">
                 <ScheduleForm
                   selectedDate={selectedDate}
                   onSchedule={handleSchedule}
                   posts={mockPosts}
+                  className="bg-card-lighter dark:bg-card-lighter border border-border"
+                  textClassName="text-foreground/90 dark:text-foreground/90"
+                  subtextClassName="text-muted-foreground"
+                  buttonClassName="bg-card-lighter hover:bg-card text-muted-foreground hover:text-foreground/80"
                 />
               </div>
             </div>

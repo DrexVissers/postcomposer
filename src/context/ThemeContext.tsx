@@ -3,9 +3,23 @@
 import { useEffect, useState } from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+interface ThemeProviderProps {
+  children: React.ReactNode;
+  defaultTheme?: string;
+  enableSystem?: boolean;
+}
+
+export function ThemeProvider({
+  children,
+  defaultTheme = "system",
+  enableSystem = true,
+}: ThemeProviderProps) {
   return (
-    <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
+    <NextThemesProvider
+      attribute="class"
+      defaultTheme={defaultTheme}
+      enableSystem={enableSystem}
+    >
       {children}
     </NextThemesProvider>
   );

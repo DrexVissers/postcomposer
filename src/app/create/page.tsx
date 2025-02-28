@@ -52,7 +52,13 @@ export default function CreatePostPage() {
   const { templates } = useTemplates();
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setContent(e.target.value);
+    const newContent = e.target.value;
+    setContent(newContent);
+    // Also update the generated content for the active platform
+    setGeneratedContent({
+      ...generatedContent,
+      [activeTab]: newContent,
+    });
   };
 
   const handleTabChange = (tab: string) => {
@@ -60,72 +66,35 @@ export default function CreatePostPage() {
   };
 
   const handlePublish = () => {
-    // Create a new post object
-    const newPost = {
-      id: `post-${Date.now()}`,
-      content: content,
-      createdAt: new Date().toISOString(),
-      category: selectedCategory || undefined,
-      tags: selectedTags.length > 0 ? selectedTags : undefined,
-      platforms: {
-        ...(generatedContent.linkedin
-          ? {
-              linkedin: {
-                content: generatedContent.linkedin,
-                published: !requiresApproval,
-                publishedAt: !requiresApproval
-                  ? new Date().toISOString()
-                  : undefined,
-              },
-            }
-          : {}),
-        ...(generatedContent.twitter
-          ? {
-              twitter: {
-                content: generatedContent.twitter,
-                published: !requiresApproval,
-                publishedAt: !requiresApproval
-                  ? new Date().toISOString()
-                  : undefined,
-              },
-            }
-          : {}),
-      },
-      status: requiresApproval ? "pending_approval" : "approved",
-      createdBy: mockUser.id,
-      approvedBy: !requiresApproval ? mockUser.id : undefined,
-    };
-
-    // In a real app, this would save to a database
-    console.log("New post created:", newPost);
-
-    // Show notification
-    if (requiresApproval) {
+    // Simulate publishing or submitting for approval
+    setTimeout(() => {
       addNotification({
-        title: "Post Submitted for Approval",
-        message: "Your post has been submitted and is awaiting approval.",
-        type: "info",
+        type: requiresApproval ? "info" : "success",
+        title: requiresApproval ? "Submitted for Approval" : "Post Published",
+        message: requiresApproval
+          ? "Your post has been submitted for approval."
+          : "Your post has been published successfully.",
+        duration: 5000,
       });
-    } else {
-      addNotification({
-        title: "Post Published",
-        message: "Your post has been published successfully.",
-        type: "success",
-      });
-    }
 
-    // Reset form
-    setContent("");
-    setGeneratedContent({ linkedin: "", twitter: "" });
-    setSelectedCategory("");
-    setSelectedTags([]);
-    setSelectedMedia([]);
+      // Clear the form
+      setContent("");
+      setSelectedMedia([]);
+      setSelectedCategory("");
+      setSelectedTags([]);
+    }, 1000);
   };
 
+  // Handle template selection
   const handleTemplateSelect = (templateId: string) => {
     const template = templates.find((t) => t.id === templateId);
     if (template) {
       setContent(template.structure);
+      // Also update the generated content for the active platform
+      setGeneratedContent({
+        ...generatedContent,
+        [activeTab]: template.structure,
+      });
       addNotification({
         type: "success",
         title: "Template Applied",
@@ -135,15 +104,12 @@ export default function CreatePostPage() {
     }
   };
 
+  // Handle media selection
   const handleMediaSelect = (media: MediaItem) => {
-    setSelectedMedia((prev) => [...prev, media]);
-    setShowMediaLibrary(false);
-    addNotification({
-      type: "success",
-      title: "Media Added",
-      message: `${media.name} has been added to your post.`,
-      duration: 3000,
-    });
+    // Check if media is already selected
+    if (!selectedMedia.some((m) => m.id === media.id)) {
+      setSelectedMedia([...selectedMedia, media]);
+    }
   };
 
   // Toggle tag selection
@@ -161,15 +127,15 @@ export default function CreatePostPage() {
         <div className="flex flex-col md:flex-row gap-8">
           {/* Left Column - Content Creation */}
           <div className="flex-1 space-y-6">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h1 className="text-2xl font-bold text-gray-800 mb-6">
+            <div className="bg-card-lighter dark:bg-card-lighter rounded-lg border border-border shadow-sm p-6">
+              <h1 className="text-2xl font-bold text-foreground/90 dark:text-foreground/90 mb-6">
                 Create New Post
               </h1>
 
               {/* Content Input */}
               <div className="mb-6">
                 <textarea
-                  className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent min-h-[200px]"
+                  className="w-full p-4 bg-background dark:bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent min-h-[200px] text-foreground/80 dark:text-foreground/80"
                   placeholder="What do you want to share today?"
                   value={content}
                   onChange={handleContentChange}
@@ -192,7 +158,7 @@ export default function CreatePostPage() {
                         className="object-cover"
                       />
                       <button
-                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                         onClick={() =>
                           setSelectedMedia(
                             selectedMedia.filter((m) => m.id !== media.id)
@@ -218,7 +184,7 @@ export default function CreatePostPage() {
                   ))}
                 </div>
                 <button
-                  className="flex items-center gap-2 text-teal-600 hover:text-teal-700"
+                  className="flex items-center gap-2 text-primary hover:text-primary/80"
                   onClick={() => setShowMediaLibrary(true)}
                 >
                   <ImageIcon className="w-5 h-5" />
@@ -274,7 +240,7 @@ export default function CreatePostPage() {
                           />
                           <Label
                             htmlFor={`tag-${tag.id}`}
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-foreground/90 dark:text-foreground/90"
                           >
                             {tag.name}
                           </Label>
@@ -287,13 +253,13 @@ export default function CreatePostPage() {
 
               {/* Approval Requirement Notice */}
               {requiresApproval && (
-                <div className="mb-6 p-3 bg-amber-50 border border-amber-200 rounded-md flex items-start gap-3">
+                <div className="mb-6 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-md flex items-start gap-3">
                   <Clock className="w-5 h-5 text-amber-500 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-amber-800">
+                    <p className="text-sm font-medium text-amber-800 dark:text-amber-400">
                       Approval Required
                     </p>
-                    <p className="text-xs text-amber-700">
+                    <p className="text-xs text-amber-700 dark:text-amber-500">
                       Based on your role, this post will require approval from
                       an admin or owner before it&apos;s published.
                     </p>
@@ -304,14 +270,14 @@ export default function CreatePostPage() {
               {/* Action Buttons */}
               <div className="flex justify-between">
                 <button
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors"
                   onClick={() => setContent("")}
                 >
                   <RefreshCw className="w-4 h-4" />
                   <span>Clear</span>
                 </button>
                 <button
-                  className="flex items-center gap-2 px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+                  className="flex items-center gap-2 px-6 py-2 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors"
                   onClick={handlePublish}
                   disabled={!content.trim()}
                 >
@@ -325,18 +291,20 @@ export default function CreatePostPage() {
 
             {/* Templates Section */}
             <div className="mt-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">
+              <h3 className="text-sm font-medium text-foreground/90 dark:text-foreground/90 mb-2">
                 Templates
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {templates.map((template) => (
                   <div
                     key={template.id}
-                    className="p-3 border border-gray-200 rounded-lg hover:border-teal-500 cursor-pointer text-sm"
+                    className="p-3 border border-border bg-card-lighter dark:bg-card-lighter rounded-lg hover:border-primary cursor-pointer text-sm"
                     onClick={() => handleTemplateSelect(template.id)}
                   >
-                    <p className="font-medium text-gray-800">{template.name}</p>
-                    <p className="text-gray-500 text-xs mt-1">
+                    <p className="font-medium text-foreground/90 dark:text-foreground/90">
+                      {template.name}
+                    </p>
+                    <p className="text-muted-foreground text-xs mt-1">
                       For {template.platform}
                     </p>
                   </div>
@@ -345,7 +313,7 @@ export default function CreatePostPage() {
               <div className="mt-2 text-right">
                 <Link
                   href="/templates"
-                  className="text-sm text-teal-600 hover:text-teal-700"
+                  className="text-sm text-primary hover:text-primary/80"
                 >
                   Manage Templates →
                 </Link>
@@ -368,6 +336,11 @@ export default function CreatePostPage() {
                 .map((tagId) => mockTags.find((t) => t.id === tagId))
                 .filter(Boolean)}
               media={selectedMedia}
+              className="bg-card-lighter dark:bg-card-lighter rounded-lg shadow-sm p-4 sm:p-6 border border-border"
+              textClassName="text-foreground/90 dark:text-foreground/90"
+              subtextClassName="text-muted-foreground dark:text-muted-foreground"
+              tabClassName="text-muted-foreground hover:text-foreground/80"
+              selectedTabClassName="bg-background dark:bg-background shadow-sm text-primary"
             />
           </div>
         </div>

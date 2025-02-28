@@ -98,7 +98,7 @@ export default function TemplateEditor({
             return (
               <span
                 key={index}
-                className="bg-teal-100 text-teal-800 px-1 rounded"
+                className="bg-primary/20 text-primary px-1 rounded"
               >
                 {part}
               </span>
@@ -172,7 +172,7 @@ export default function TemplateEditor({
           <div>
             <Label htmlFor="template-structure">
               Template Structure
-              <span className="text-sm text-gray-500 ml-2">
+              <span className="text-sm text-muted-foreground ml-2">
                 (Use [PLACEHOLDER] for dynamic content)
               </span>
             </Label>
@@ -183,7 +183,7 @@ export default function TemplateEditor({
                 setStructure(e.target.value)
               }
               placeholder="I'm excited to share that [MAIN_POINT]. This represents [SIGNIFICANCE]. #[HASHTAG1] #[HASHTAG2]"
-              className={`min-h-[200px] w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent ${
+              className={`min-h-[200px] w-full p-4 border border-border bg-background text-foreground rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
                 errors.structure ? "border-red-500" : ""
               }`}
             />

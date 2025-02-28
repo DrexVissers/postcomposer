@@ -96,7 +96,11 @@ export default function MobilePostEditor({
           </TabsList>
         </div>
 
-        <TabsContent value="linkedin" className="flex-1 flex flex-col p-0 m-0">
+        <TabsContent
+          value="linkedin"
+          key="mobile-linkedin"
+          className="flex-1 flex flex-col p-0 m-0"
+        >
           <textarea
             className="flex-1 p-4 w-full resize-none border-0 focus:ring-0 focus:outline-none"
             placeholder="What do you want to share on LinkedIn?"
@@ -105,7 +109,11 @@ export default function MobilePostEditor({
           ></textarea>
         </TabsContent>
 
-        <TabsContent value="twitter" className="flex-1 flex flex-col p-0 m-0">
+        <TabsContent
+          value="twitter"
+          key="mobile-twitter"
+          className="flex-1 flex flex-col p-0 m-0"
+        >
           <textarea
             className="flex-1 p-4 w-full resize-none border-0 focus:ring-0 focus:outline-none"
             placeholder="What's happening?"

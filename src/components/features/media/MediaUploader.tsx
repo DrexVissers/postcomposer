@@ -2,9 +2,9 @@
 
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { Upload, X, FileImage, FileVideo } from "lucide-react";
+import { Upload, X, File } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 import { useMedia } from "@/context/MediaContext";
 
 interface MediaUploaderProps {
@@ -65,64 +65,74 @@ export default function MediaUploader({
     <div className="space-y-4">
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+        className={`border rounded-lg p-8 text-center cursor-pointer transition-colors ${
           isDragActive
-            ? "border-teal-500 bg-teal-50"
-            : "border-gray-300 hover:border-teal-500 hover:bg-gray-50"
+            ? "border-primary bg-primary/5"
+            : "border-border hover:border-primary/50 hover:bg-background/80"
         }`}
       >
         <input {...getInputProps()} />
         <div className="flex flex-col items-center justify-center space-y-2">
-          <Upload className="h-10 w-10 text-gray-400" />
-          <p className="text-lg font-medium">
+          <Upload className="h-10 w-10 text-muted-foreground" />
+          <p className="text-lg font-medium text-foreground/90 dark:text-foreground/90">
             {isDragActive
               ? "Drop the files here..."
               : "Drag & drop files here, or click to select files"}
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             Supports images and videos up to 100MB
           </p>
         </div>
       </div>
 
       {error && (
-        <div className="text-red-500 text-sm p-2 bg-red-50 rounded-md">
+        <div className="text-destructive text-sm p-2 bg-destructive/10 dark:bg-destructive/20 rounded-md">
           {error}
         </div>
       )}
 
       {files.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium">
-            Selected Files ({files.length})
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-foreground/90 dark:text-foreground/90">
+            Files to upload:
+          </p>
+          <div className="space-y-2">
             {files.map((file, index) => (
-              <Card key={index} className="overflow-hidden">
-                <CardContent className="p-3">
-                  <div className="flex items-center space-x-3">
-                    {file.type.startsWith("image/") ? (
-                      <FileImage className="h-8 w-8 text-blue-500" />
-                    ) : (
-                      <FileVideo className="h-8 w-8 text-purple-500" />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">
-                        {file.name}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {(file.size / (1024 * 1024)).toFixed(2)} MB
-                      </p>
+              <div
+                key={index}
+                className="flex items-center justify-between p-2 bg-background dark:bg-background rounded-md border border-border"
+              >
+                <div className="flex items-center space-x-2">
+                  {file.type.startsWith("image/") ? (
+                    <div className="h-10 w-10 rounded overflow-hidden relative">
+                      <Image
+                        src={URL.createObjectURL(file)}
+                        alt={file.name}
+                        width={40}
+                        height={40}
+                        className="object-cover"
+                      />
                     </div>
-                    <button
-                      onClick={() => removeFile(index)}
-                      className="text-gray-400 hover:text-red-500"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
+                  ) : (
+                    <File className="h-10 w-10 text-muted-foreground p-2" />
+                  )}
+                  <div className="overflow-hidden">
+                    <p className="text-sm font-medium truncate text-foreground/90 dark:text-foreground/90">
+                      {file.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {(file.size / (1024 * 1024)).toFixed(2)} MB
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+                <button
+                  onClick={() => removeFile(index)}
+                  className="text-muted-foreground hover:text-destructive"
+                  aria-label="Remove file"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
             ))}
           </div>
         </div>
@@ -130,13 +140,13 @@ export default function MediaUploader({
 
       {isUploading ? (
         <div className="space-y-2">
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
+          <div className="w-full bg-muted rounded-full h-2.5">
             <div
-              className="bg-teal-600 h-2.5 rounded-full"
+              className="bg-primary h-2.5 rounded-full"
               style={{ width: `${uploadProgress}%` }}
             ></div>
           </div>
-          <p className="text-sm text-gray-500 text-center">
+          <p className="text-sm text-muted-foreground text-center">
             Uploading... {uploadProgress}%
           </p>
         </div>

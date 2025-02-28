@@ -124,7 +124,7 @@ export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
       for (const file of files) {
         // Create a new media item from the file
         const newItem: MediaItem = {
-          id: Math.random().toString(36).substring(2, 9),
+          id: `media-${Date.now()}-${mediaItems.length + 1}`,
           name: file.name,
           type: file.type.startsWith("image/") ? "image" : "video",
           url: URL.createObjectURL(file),

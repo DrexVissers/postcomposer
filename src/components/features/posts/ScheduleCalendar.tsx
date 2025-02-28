@@ -13,12 +13,22 @@ interface ScheduleCalendarProps {
   scheduledPosts: ScheduledPost[];
   onDateSelect?: (date: Date) => void;
   selectedDate?: Date;
+  className?: string;
+  textClassName?: string;
+  subtextClassName?: string;
+  selectedClassName?: string;
+  todayClassName?: string;
 }
 
 export default function ScheduleCalendar({
   scheduledPosts,
   onDateSelect,
   selectedDate,
+  className = "bg-card dark:bg-card rounded-lg shadow-sm p-6",
+  textClassName = "text-foreground/90 dark:text-foreground/90",
+  subtextClassName = "text-muted-foreground dark:text-muted-foreground",
+  selectedClassName = "border-primary bg-primary/10",
+  todayClassName = "bg-muted/50 dark:bg-muted/30",
 }: ScheduleCalendarProps) {
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(new Date(), { weekStartsOn: 1 })
@@ -43,26 +53,28 @@ export default function ScheduleCalendar({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className={className}>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-lg font-medium text-gray-800 flex items-center">
+        <h2
+          className={`text-lg font-medium flex items-center ${textClassName}`}
+        >
           <Calendar className="w-5 h-5 mr-2" />
           <span>Schedule Calendar</span>
         </h2>
         <div className="flex space-x-2">
           <button
             onClick={handlePreviousWeek}
-            className="p-2 text-gray-500 hover:text-teal-600 border border-gray-300 rounded-lg hover:border-teal-600 transition-colors"
+            className={`p-2 hover:text-primary border border-border rounded-lg hover:border-primary transition-colors ${subtextClassName}`}
           >
             &larr;
           </button>
-          <div className="p-2 font-medium">
+          <div className={`p-2 font-medium ${textClassName}`}>
             {format(currentWeekStart, "MMM d")} -{" "}
             {format(days[6], "MMM d, yyyy")}
           </div>
           <button
             onClick={handleNextWeek}
-            className="p-2 text-gray-500 hover:text-teal-600 border border-gray-300 rounded-lg hover:border-teal-600 transition-colors"
+            className={`p-2 hover:text-primary border border-border rounded-lg hover:border-primary transition-colors ${subtextClassName}`}
           >
             &rarr;
           </button>
@@ -73,10 +85,14 @@ export default function ScheduleCalendar({
         {/* Day headers */}
         {days.map((day) => (
           <div key={day.toString()} className="text-center">
-            <div className="text-xs font-medium text-gray-500 uppercase mb-1">
+            <div
+              className={`text-xs font-medium uppercase mb-1 ${subtextClassName}`}
+            >
               {format(day, "EEE")}
             </div>
-            <div className="text-sm font-medium">{format(day, "d")}</div>
+            <div className={`text-sm font-medium ${textClassName}`}>
+              {format(day, "d")}
+            </div>
           </div>
         ))}
 
@@ -91,9 +107,9 @@ export default function ScheduleCalendar({
               key={day.toString() + "-cell"}
               className={`border rounded-lg p-2 min-h-[100px] cursor-pointer transition-colors ${
                 isSelected
-                  ? "border-teal-500 bg-teal-50"
-                  : "border-gray-200 hover:border-teal-300"
-              } ${isToday ? "bg-blue-50" : ""}`}
+                  ? selectedClassName
+                  : "border-border hover:border-primary/50"
+              } ${isToday ? todayClassName : ""}`}
               onClick={() => onDateSelect && onDateSelect(day)}
             >
               {postsForDay.length > 0 ? (
@@ -113,7 +129,9 @@ export default function ScheduleCalendar({
                   ))}
                 </div>
               ) : (
-                <div className="h-full flex items-center justify-center text-gray-400 text-xs">
+                <div
+                  className={`h-full flex items-center justify-center text-xs ${subtextClassName}`}
+                >
                   No posts
                 </div>
               )}

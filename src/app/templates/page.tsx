@@ -147,9 +147,9 @@ export default function TemplatesPage() {
   // Render platform icon
   const renderPlatformIcon = (platform: "linkedin" | "twitter") => {
     if (platform === "linkedin") {
-      return <Linkedin className="h-4 w-4 text-blue-600" />;
+      return <Linkedin className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
     } else {
-      return <Twitter className="h-4 w-4 text-sky-500" />;
+      return <Twitter className="h-4 w-4 text-sky-500 dark:text-sky-400" />;
     }
   };
 
@@ -163,7 +163,7 @@ export default function TemplatesPage() {
     <MainLayout>
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">
+          <h1 className="text-2xl font-bold text-foreground/90 dark:text-foreground/90">
             Template Management
           </h1>
           <Button
@@ -180,23 +180,23 @@ export default function TemplatesPage() {
           value={activeCategory}
           onValueChange={setActiveCategory}
         >
-          <div className="border-b mb-6">
+          <div className="border-b border-border mb-6">
             <TabsList className="bg-transparent">
               <TabsTrigger
                 value="all"
-                className="data-[state=active]:bg-teal-50 data-[state=active]:text-teal-700"
+                className="data-[state=active]:bg-background data-[state=active]:text-primary"
               >
                 All Templates
               </TabsTrigger>
               <TabsTrigger
                 value="linkedin"
-                className="data-[state=active]:bg-teal-50 data-[state=active]:text-teal-700"
+                className="data-[state=active]:bg-background data-[state=active]:text-primary"
               >
                 LinkedIn
               </TabsTrigger>
               <TabsTrigger
                 value="twitter"
-                className="data-[state=active]:bg-teal-50 data-[state=active]:text-teal-700"
+                className="data-[state=active]:bg-background data-[state=active]:text-primary"
               >
                 Twitter
               </TabsTrigger>
@@ -204,7 +204,7 @@ export default function TemplatesPage() {
                 <TabsTrigger
                   key={category.id}
                   value={category.id}
-                  className="data-[state=active]:bg-teal-50 data-[state=active]:text-teal-700"
+                  className="data-[state=active]:bg-background data-[state=active]:text-primary"
                 >
                   {category.name}
                 </TabsTrigger>
@@ -212,10 +212,17 @@ export default function TemplatesPage() {
             </TabsList>
           </div>
 
-          <TabsContent value={activeCategory} className="mt-0">
+          <TabsContent
+            value={activeCategory}
+            key={`template-${activeCategory}`}
+            className="mt-0"
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {getDisplayTemplates().map((template) => (
-                <Card key={template.id} className="overflow-hidden">
+                <Card
+                  key={template.id}
+                  className="overflow-hidden border-border bg-card dark:bg-card"
+                >
                   <CardHeader className="pb-3">
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2">
@@ -249,7 +256,7 @@ export default function TemplatesPage() {
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => confirmDeleteTemplate(template)}
-                            className="text-red-600"
+                            className="text-destructive hover:text-destructive/90"
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
                             <span>Delete</span>
@@ -264,15 +271,15 @@ export default function TemplatesPage() {
                         </Badge>
                       )}
                       {template.isCustom && (
-                        <Badge className="ml-2 mt-1 bg-teal-100 text-teal-800 hover:bg-teal-100">
+                        <Badge className="ml-2 mt-1 bg-primary/10 text-primary hover:bg-primary/20">
                           Custom
                         </Badge>
                       )}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="text-sm">
-                    <div className="border border-gray-100 rounded-md p-3 bg-gray-50 max-h-32 overflow-y-auto">
-                      <p className="whitespace-pre-wrap text-gray-600">
+                    <div className="border border-border rounded-md p-3 bg-background dark:bg-background max-h-32 overflow-y-auto">
+                      <p className="whitespace-pre-wrap text-foreground/80 dark:text-foreground/80">
                         {template.structure}
                       </p>
                     </div>
@@ -282,7 +289,7 @@ export default function TemplatesPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleEditTemplate(template)}
-                      className="text-teal-600 hover:text-teal-700 hover:bg-teal-50"
+                      className="text-primary hover:text-primary/80 hover:bg-primary/10"
                     >
                       <Pencil className="mr-2 h-4 w-4" />
                       <span>Edit Template</span>
@@ -293,8 +300,8 @@ export default function TemplatesPage() {
             </div>
 
             {getDisplayTemplates().length === 0 && (
-              <div className="text-center py-12 border border-dashed border-gray-200 rounded-lg">
-                <p className="text-gray-500 mb-4">
+              <div className="text-center py-12 border border-dashed border-border rounded-lg">
+                <p className="text-muted-foreground mb-4">
                   No templates found in this category
                 </p>
                 <Button onClick={handleAddTemplate} variant="outline">
@@ -327,7 +334,7 @@ export default function TemplatesPage() {
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogTitle>Confirm Deletion</DialogTitle>
-          <p className="py-4">
+          <p className="py-4 text-foreground/80 dark:text-foreground/80">
             Are you sure you want to delete the template &quot;
             {templateToDelete?.name}&quot;? This action cannot be undone.
           </p>

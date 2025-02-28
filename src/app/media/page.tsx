@@ -10,7 +10,7 @@ export default function MediaPage() {
     <MediaProvider>
       <MainLayout>
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl font-bold text-gray-800 mb-8">
+          <h1 className="text-2xl font-bold text-foreground/90 dark:text-foreground/90 mb-8">
             Media Management
           </h1>
           <MediaLibrary />

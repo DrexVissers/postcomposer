@@ -15,12 +15,22 @@ interface PlatformComparisonProps {
   data: PlatformData[];
   selectedMetric: keyof PlatformData["metrics"];
   onSelectMetric: (metric: keyof PlatformData["metrics"]) => void;
+  className?: string;
+  textClassName?: string;
+  subtextClassName?: string;
+  buttonClassName?: string;
+  selectedButtonClassName?: string;
 }
 
 export default function PlatformComparison({
   data,
   selectedMetric,
   onSelectMetric,
+  className = "bg-card-lighter dark:bg-card-lighter shadow-md",
+  textClassName = "text-foreground/90 dark:text-foreground/90",
+  subtextClassName = "text-muted-foreground dark:text-muted-foreground",
+  buttonClassName = "bg-muted/50 dark:bg-muted/30 text-foreground/80 dark:text-foreground/80",
+  selectedButtonClassName = "bg-primary/20 text-primary border-primary/50",
 }: PlatformComparisonProps) {
   // Get the maximum value for the selected metric across all platforms
   const maxValue = Math.max(...data.map((d) => d.metrics[selectedMetric]));
@@ -88,8 +98,8 @@ export default function PlatformComparison({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h3 className="text-lg font-medium text-gray-800 mb-4">
+    <div className={`rounded-lg shadow-sm p-6 ${className}`}>
+      <h3 className={`text-lg font-medium mb-4 ${textClassName}`}>
         Platform Comparison
       </h3>
 
@@ -104,8 +114,8 @@ export default function PlatformComparison({
             key={metric}
             className={`px-3 py-1.5 rounded-full text-sm font-medium ${
               selectedMetric === metric
-                ? "bg-teal-100 text-teal-800 border border-teal-300"
-                : "bg-gray-100 text-gray-600 border border-gray-200"
+                ? selectedButtonClassName
+                : buttonClassName
             }`}
             onClick={() => onSelectMetric(metric)}
           >
@@ -122,14 +132,14 @@ export default function PlatformComparison({
               <div className="mr-2">
                 {getPlatformIcon(platformData.platform)}
               </div>
-              <span className="text-sm font-medium">
+              <span className={`text-sm font-medium ${textClassName}`}>
                 {getPlatformName(platformData.platform)}
               </span>
-              <span className="ml-auto text-sm font-medium">
+              <span className={`ml-auto text-sm font-medium ${textClassName}`}>
                 {formatNumber(platformData.metrics[selectedMetric])}
               </span>
             </div>
-            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-2 bg-muted rounded-full overflow-hidden">
               <div
                 className={`h-full ${getPlatformColor(platformData.platform)}`}
                 style={{
@@ -139,6 +149,10 @@ export default function PlatformComparison({
                 }}
               ></div>
             </div>
+            <p className={`text-xs mt-1 ${subtextClassName}`}>
+              {platformData.metrics[selectedMetric]}{" "}
+              {getMetricName(selectedMetric).toLowerCase()}
+            </p>
           </div>
         ))}
       </div>

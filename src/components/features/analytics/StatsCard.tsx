@@ -7,6 +7,10 @@ interface StatsCardProps {
   icon: React.ReactNode;
   formatter?: (value: number) => string;
   onClick?: () => void;
+  className?: string;
+  textClassName?: string;
+  subtextClassName?: string;
+  iconClassName?: string;
 }
 
 export default function StatsCard({
@@ -16,24 +20,30 @@ export default function StatsCard({
   icon,
   formatter = (val) => val.toString(),
   onClick,
+  className = "bg-card-lighter dark:bg-card-lighter shadow-md",
+  textClassName = "text-foreground/90 dark:text-foreground/90",
+  subtextClassName = "text-muted-foreground dark:text-muted-foreground",
+  iconClassName = "bg-muted/50 dark:bg-muted/30",
 }: StatsCardProps) {
   const isPositive = change >= 0;
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-sm p-6 transition-all duration-200 ${
+      className={`rounded-lg shadow-sm p-6 transition-all duration-200 ${className} ${
         onClick
-          ? "cursor-pointer hover:shadow-md hover:border-teal-500 hover:border"
+          ? "cursor-pointer hover:shadow-md hover:border-primary hover:border"
           : ""
       }`}
       onClick={onClick}
     >
       <div className="flex justify-between items-start">
         <div>
-          <p className="text-sm font-medium text-gray-500">{title}</p>
-          <h3 className="text-2xl font-bold mt-1">{formatter(value)}</h3>
+          <p className={`text-sm font-medium ${subtextClassName}`}>{title}</p>
+          <h3 className={`text-2xl font-bold mt-1 ${textClassName}`}>
+            {formatter(value)}
+          </h3>
         </div>
-        <div className="p-2 bg-gray-100 rounded-lg">{icon}</div>
+        <div className={`p-2 rounded-lg ${iconClassName}`}>{icon}</div>
       </div>
       <div className="mt-4 flex items-center">
         <div
@@ -48,7 +58,9 @@ export default function StatsCard({
           )}
           <span className="text-sm font-medium">{Math.abs(change)}%</span>
         </div>
-        <span className="text-sm text-gray-500 ml-2">vs. last week</span>
+        <span className={`text-sm ml-2 ${subtextClassName}`}>
+          vs. last week
+        </span>
       </div>
     </div>
   );

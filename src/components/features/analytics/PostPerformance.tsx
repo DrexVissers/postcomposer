@@ -25,9 +25,21 @@ interface PostWithAnalytics {
 
 interface PostPerformanceProps {
   posts: PostWithAnalytics[];
+  className?: string;
+  textClassName?: string;
+  subtextClassName?: string;
+  headerClassName?: string;
+  rowClassName?: string;
 }
 
-export default function PostPerformance({ posts }: PostPerformanceProps) {
+export default function PostPerformance({
+  posts,
+  className = "bg-card-lighter dark:bg-card-lighter rounded-lg shadow-md p-6",
+  textClassName = "text-foreground/90 dark:text-foreground/90",
+  subtextClassName = "text-muted-foreground dark:text-muted-foreground",
+  headerClassName = "border-border text-muted-foreground bg-muted/30 dark:bg-muted/10",
+  rowClassName = "hover:bg-muted/20 dark:hover:bg-muted/10",
+}: PostPerformanceProps) {
   // Format numbers with k for thousands
   const formatNumber = (num: number) => {
     if (num >= 1000) {
@@ -62,66 +74,66 @@ export default function PostPerformance({ posts }: PostPerformanceProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h3 className="text-lg font-medium text-gray-800 mb-4">
+    <div className={className}>
+      <h3 className={`text-lg font-medium mb-4 ${textClassName}`}>
         Top Performing Posts
       </h3>
 
       <div className="overflow-x-auto">
         <table className="min-w-full">
           <thead>
-            <tr className="border-b border-gray-200">
-              <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <tr className={`border-b ${headerClassName}`}>
+              <th className="py-3 text-left text-xs font-medium uppercase tracking-wider">
                 Post
               </th>
-              <th className="py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="py-3 text-center text-xs font-medium uppercase tracking-wider">
                 <Eye className="w-4 h-4 inline" />
               </th>
-              <th className="py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="py-3 text-center text-xs font-medium uppercase tracking-wider">
                 <Heart className="w-4 h-4 inline" />
               </th>
-              <th className="py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="py-3 text-center text-xs font-medium uppercase tracking-wider">
                 <Share2 className="w-4 h-4 inline" />
               </th>
-              <th className="py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="py-3 text-center text-xs font-medium uppercase tracking-wider">
                 <MessageSquare className="w-4 h-4 inline" />
               </th>
-              <th className="py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="py-3 text-center text-xs font-medium uppercase tracking-wider">
                 <ExternalLink className="w-4 h-4 inline" />
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-border">
             {posts.map((post) => (
-              <tr key={post.id + post.platform} className="hover:bg-gray-50">
+              <tr key={post.id + post.platform} className={rowClassName}>
                 <td className="py-4 pr-4">
                   <div className="flex items-start">
                     <div className="mr-2 mt-1">
                       {getPlatformIcon(post.platform)}
                     </div>
                     <div>
-                      <p className="text-sm text-gray-800 line-clamp-2">
+                      <p className={`text-sm line-clamp-2 ${textClassName}`}>
                         {post.content}
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className={`text-xs mt-1 ${subtextClassName}`}>
                         {formatDate(post.createdAt)}
                       </p>
                     </div>
                   </div>
                 </td>
-                <td className="py-4 text-center text-sm text-gray-700">
+                <td className={`py-4 text-center text-sm ${textClassName}`}>
                   {formatNumber(post.metrics.views)}
                 </td>
-                <td className="py-4 text-center text-sm text-gray-700">
+                <td className={`py-4 text-center text-sm ${textClassName}`}>
                   {formatNumber(post.metrics.likes)}
                 </td>
-                <td className="py-4 text-center text-sm text-gray-700">
+                <td className={`py-4 text-center text-sm ${textClassName}`}>
                   {formatNumber(post.metrics.shares)}
                 </td>
-                <td className="py-4 text-center text-sm text-gray-700">
+                <td className={`py-4 text-center text-sm ${textClassName}`}>
                   {formatNumber(post.metrics.comments)}
                 </td>
-                <td className="py-4 text-center text-sm text-gray-700">
+                <td className={`py-4 text-center text-sm ${textClassName}`}>
                   {formatNumber(post.metrics.clicks)}
                 </td>
               </tr>

@@ -16,6 +16,11 @@ interface PostPreviewProps {
   category?: Category;
   tags?: (Tag | undefined)[];
   media?: MediaItem[];
+  className?: string;
+  textClassName?: string;
+  subtextClassName?: string;
+  tabClassName?: string;
+  selectedTabClassName?: string;
 }
 
 export default function PostPreview({
@@ -26,6 +31,11 @@ export default function PostPreview({
   category,
   tags = [],
   media = [],
+  className = "bg-card-lighter dark:bg-card-lighter rounded-lg shadow-sm p-4 sm:p-6",
+  textClassName = "text-foreground/90 dark:text-foreground/90",
+  subtextClassName = "text-muted-foreground dark:text-muted-foreground",
+  tabClassName = "text-muted-foreground hover:text-foreground/80",
+  selectedTabClassName = "bg-card dark:bg-card shadow-sm text-primary",
 }: PostPreviewProps) {
   const [deviceView, setDeviceView] = useState<"mobile" | "desktop">("desktop");
   const [isMobile, setIsMobile] = useState(false);
@@ -60,22 +70,20 @@ export default function PostPreview({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+    <div className={className}>
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
-        <h2 className="text-lg font-medium text-gray-800">Preview</h2>
+        <h2 className={`text-lg font-medium ${textClassName}`}>Preview</h2>
 
         {showDeviceToggle && (
           <div
-            className={`flex items-center space-x-2 bg-gray-100 p-1 rounded-md self-start ${
+            className={`flex items-center space-x-2 bg-muted/50 dark:bg-muted/30 p-1 rounded-md self-start ${
               isMobile ? "w-full justify-center" : ""
             }`}
           >
             <button
               onClick={() => setDeviceView("mobile")}
               className={`p-1.5 rounded-md flex items-center ${
-                deviceView === "mobile"
-                  ? "bg-white shadow-sm text-teal-600"
-                  : "text-gray-500 hover:text-gray-700"
+                deviceView === "mobile" ? selectedTabClassName : tabClassName
               }`}
               aria-label="Mobile view"
             >
@@ -85,9 +93,7 @@ export default function PostPreview({
             <button
               onClick={() => setDeviceView("desktop")}
               className={`p-1.5 rounded-md flex items-center ${
-                deviceView === "desktop"
-                  ? "bg-white shadow-sm text-teal-600"
-                  : "text-gray-500 hover:text-gray-700"
+                deviceView === "desktop" ? selectedTabClassName : tabClassName
               }`}
               aria-label="Desktop view"
             >
@@ -114,29 +120,33 @@ export default function PostPreview({
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="linkedin" className="mt-0">
+        <TabsContent value="linkedin" key="preview-linkedin" className="mt-0">
           <div
-            className={`border border-gray-200 rounded-lg overflow-hidden ${
+            className={`border border-border rounded-lg overflow-hidden ${
               deviceView === "mobile" || isMobile
                 ? "max-w-[375px] mx-auto"
                 : "w-full"
             }`}
           >
-            <div className="bg-[#f3f2ef] p-2 border-b border-gray-300">
+            <div className="bg-background dark:bg-background p-2 border-b border-border">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                <div className="w-8 h-8 bg-muted/50 dark:bg-muted/30 rounded-full"></div>
                 <div>
-                  <div className="text-sm font-medium">Jane Smith</div>
-                  <div className="text-xs text-gray-500">
+                  <div className={`text-sm font-medium ${textClassName}`}>
+                    Jane Smith
+                  </div>
+                  <div className={`text-xs ${subtextClassName}`}>
                     Product Manager • Just now
                   </div>
                 </div>
               </div>
             </div>
-            <div className="p-4 bg-white">
+            <div className="p-4 bg-background dark:bg-background">
               {content.linkedin ? (
                 <div className="space-y-3">
-                  <div className="whitespace-pre-line text-sm">
+                  <div
+                    className={`whitespace-pre-line text-sm ${textClassName}`}
+                  >
                     {content.linkedin}
                   </div>
 
@@ -226,7 +236,7 @@ export default function PostPreview({
                       </div>
                       {media.length >
                         (deviceView === "mobile" || isMobile ? 2 : 4) && (
-                        <div className="text-xs text-gray-500 mt-1">
+                        <div className={`text-xs ${subtextClassName} mt-1`}>
                           +
                           {media.length -
                             (deviceView === "mobile" || isMobile ? 2 : 4)}{" "}
@@ -237,53 +247,57 @@ export default function PostPreview({
                   )}
                 </div>
               ) : (
-                <div className="text-gray-400 italic text-sm">
+                <div className={`italic text-sm ${subtextClassName}`}>
                   LinkedIn preview will appear here.
                 </div>
               )}
             </div>
-            <div className="bg-white border-t border-gray-200 p-2 flex space-x-4">
-              <div className="text-xs text-gray-500 flex items-center">
-                <span className="w-4 h-4 bg-gray-200 rounded-full mr-1"></span>
+            <div className="bg-background dark:bg-background border-t border-border p-2 flex space-x-4">
+              <div className={`text-xs ${subtextClassName} flex items-center`}>
+                <span className="w-4 h-4 bg-muted/50 dark:bg-muted/30 rounded-full mr-1"></span>
                 Like
               </div>
-              <div className="text-xs text-gray-500 flex items-center">
-                <span className="w-4 h-4 bg-gray-200 rounded-full mr-1"></span>
+              <div className={`text-xs ${subtextClassName} flex items-center`}>
+                <span className="w-4 h-4 bg-muted/50 dark:bg-muted/30 rounded-full mr-1"></span>
                 Comment
               </div>
-              <div className="text-xs text-gray-500 flex items-center">
-                <span className="w-4 h-4 bg-gray-200 rounded-full mr-1"></span>
+              <div className={`text-xs ${subtextClassName} flex items-center`}>
+                <span className="w-4 h-4 bg-muted/50 dark:bg-muted/30 rounded-full mr-1"></span>
                 Share
               </div>
             </div>
           </div>
         </TabsContent>
 
-        <TabsContent value="twitter" className="mt-0">
+        <TabsContent value="twitter" key="preview-twitter" className="mt-0">
           <div
-            className={`border border-gray-200 rounded-lg overflow-hidden ${
+            className={`border border-border rounded-lg overflow-hidden ${
               deviceView === "mobile" || isMobile
                 ? "max-w-[375px] mx-auto"
                 : "w-full"
             }`}
           >
-            <div className="bg-white p-3 border-b border-gray-200">
+            <div className="bg-background dark:bg-background p-3 border-b border-border">
               <div className="flex items-start space-x-3">
-                <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+                <div className="w-10 h-10 bg-muted/50 dark:bg-muted/30 rounded-full"></div>
                 <div className="flex-1">
                   <div className="flex items-center">
-                    <span className="font-bold text-sm">Jane Smith</span>
-                    <span className="text-gray-500 text-sm ml-1">
+                    <span className={`font-bold text-sm ${textClassName}`}>
+                      Jane Smith
+                    </span>
+                    <span className={`text-sm ml-1 ${subtextClassName}`}>
                       @janesmith
                     </span>
-                    <span className="text-gray-500 text-sm ml-1">
+                    <span className={`text-sm ml-1 ${subtextClassName}`}>
                       • Just now
                     </span>
                   </div>
                   <div className="mt-1 space-y-3">
                     {content.twitter ? (
                       <>
-                        <div className="text-sm">{content.twitter}</div>
+                        <div className={`text-sm ${textClassName}`}>
+                          {content.twitter}
+                        </div>
 
                         {/* Category and Tags */}
                         <div className="flex flex-wrap gap-1 pt-1">
@@ -374,7 +388,9 @@ export default function PostPreview({
                             </div>
                             {media.length >
                               (deviceView === "mobile" || isMobile ? 2 : 4) && (
-                              <div className="text-xs text-gray-500 mt-1">
+                              <div
+                                className={`text-xs ${subtextClassName} mt-1`}
+                              >
                                 +
                                 {media.length -
                                   (deviceView === "mobile" || isMobile
@@ -387,7 +403,7 @@ export default function PostPreview({
                         )}
                       </>
                     ) : (
-                      <div className="text-gray-400 italic">
+                      <div className={`italic ${subtextClassName}`}>
                         Twitter preview will appear here.
                       </div>
                     )}
@@ -395,21 +411,21 @@ export default function PostPreview({
                 </div>
               </div>
             </div>
-            <div className="bg-white border-t border-gray-200 p-2 flex justify-around">
-              <div className="text-xs text-gray-500 flex items-center">
-                <span className="w-4 h-4 bg-gray-200 rounded-full mr-1"></span>
+            <div className="bg-background dark:bg-background border-t border-border p-2 flex justify-around">
+              <div className={`text-xs ${subtextClassName} flex items-center`}>
+                <span className="w-4 h-4 bg-muted/50 dark:bg-muted/30 rounded-full mr-1"></span>
                 Reply
               </div>
-              <div className="text-xs text-gray-500 flex items-center">
-                <span className="w-4 h-4 bg-gray-200 rounded-full mr-1"></span>
+              <div className={`text-xs ${subtextClassName} flex items-center`}>
+                <span className="w-4 h-4 bg-muted/50 dark:bg-muted/30 rounded-full mr-1"></span>
                 Retweet
               </div>
-              <div className="text-xs text-gray-500 flex items-center">
-                <span className="w-4 h-4 bg-gray-200 rounded-full mr-1"></span>
+              <div className={`text-xs ${subtextClassName} flex items-center`}>
+                <span className="w-4 h-4 bg-muted/50 dark:bg-muted/30 rounded-full mr-1"></span>
                 Like
               </div>
-              <div className="text-xs text-gray-500 flex items-center">
-                <span className="w-4 h-4 bg-gray-200 rounded-full mr-1"></span>
+              <div className={`text-xs ${subtextClassName} flex items-center`}>
+                <span className="w-4 h-4 bg-muted/50 dark:bg-muted/30 rounded-full mr-1"></span>
                 Share
               </div>
             </div>

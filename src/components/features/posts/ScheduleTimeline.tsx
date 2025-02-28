@@ -17,12 +17,18 @@ interface ScheduleTimelineProps {
   scheduledPosts: ScheduledPost[];
   onEdit?: (postId: string) => void;
   onDelete?: (postId: string) => void;
+  className?: string;
+  textClassName?: string;
+  subtextClassName?: string;
 }
 
 export default function ScheduleTimeline({
   scheduledPosts,
   onEdit,
   onDelete,
+  className = "bg-card dark:bg-card rounded-lg shadow-sm p-4 sm:p-6",
+  textClassName = "text-foreground/90 dark:text-foreground/90",
+  subtextClassName = "text-muted-foreground dark:text-muted-foreground",
 }: ScheduleTimelineProps) {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -67,8 +73,10 @@ export default function ScheduleTimeline({
   const dateKeys = Object.keys(groupedPosts).sort();
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
-      <h2 className="text-lg font-medium text-gray-800 mb-4 sm:mb-6 flex items-center">
+    <div className={className}>
+      <h2
+        className={`text-lg font-medium mb-4 sm:mb-6 flex items-center ${textClassName}`}
+      >
         <Clock className="w-5 h-5 mr-2" />
         <span>Scheduled Posts</span>
       </h2>
@@ -82,13 +90,13 @@ export default function ScheduleTimeline({
             return (
               <div key={dateKey}>
                 <div className="flex items-center mb-2">
-                  <div className="w-2 h-2 bg-teal-500 rounded-full mr-2"></div>
-                  <h3 className="text-sm font-medium text-gray-700">
+                  <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+                  <h3 className={`text-sm font-medium ${subtextClassName}`}>
                     {isToday ? "Today" : format(date, "EEEE, MMMM d")}
                   </h3>
                 </div>
 
-                <div className="ml-2 sm:ml-4 border-l-2 border-gray-200 pl-2 sm:pl-4 space-y-4">
+                <div className="ml-2 sm:ml-4 border-l-2 border-border pl-2 sm:pl-4 space-y-4">
                   {groupedPosts[dateKey].map((post) => {
                     // Find category details
                     const category = post.category
@@ -104,7 +112,7 @@ export default function ScheduleTimeline({
 
                     return (
                       <div key={post.id} className="relative">
-                        <div className="absolute -left-3 top-1 w-2 h-2 bg-gray-300 rounded-full"></div>
+                        <div className="absolute -left-3 top-1 w-2 h-2 bg-muted rounded-full"></div>
                         <div
                           className={`flex ${
                             isMobile ? "flex-col" : "items-start"
@@ -113,12 +121,12 @@ export default function ScheduleTimeline({
                           <div
                             className={`${
                               isMobile ? "mb-2" : "min-w-[60px]"
-                            } text-xs text-gray-500`}
+                            } text-xs ${subtextClassName}`}
                           >
                             {format(new Date(post.scheduledDate), "h:mm a")}
                           </div>
                           <div
-                            className={`flex-1 bg-gray-50 rounded-lg p-3 border border-gray-200 ${
+                            className={`flex-1 bg-muted/30 rounded-lg p-3 border border-border ${
                               isMobile ? "w-full" : ""
                             }`}
                           >
@@ -139,7 +147,7 @@ export default function ScheduleTimeline({
                                 {onEdit && (
                                   <button
                                     onClick={() => onEdit(post.id)}
-                                    className="text-gray-400 hover:text-teal-600"
+                                    className="text-muted-foreground hover:text-primary"
                                   >
                                     <Edit className="w-3.5 h-3.5" />
                                   </button>
@@ -147,14 +155,16 @@ export default function ScheduleTimeline({
                                 {onDelete && (
                                   <button
                                     onClick={() => onDelete(post.id)}
-                                    className="text-gray-400 hover:text-red-600"
+                                    className="text-muted-foreground hover:text-destructive"
                                   >
                                     <Trash className="w-3.5 h-3.5" />
                                   </button>
                                 )}
                               </div>
                             </div>
-                            <p className="text-sm text-gray-700 line-clamp-2 mb-2">
+                            <p
+                              className={`text-sm line-clamp-2 mb-2 ${textClassName}`}
+                            >
                               {post.content}
                             </p>
 
@@ -228,7 +238,7 @@ export default function ScheduleTimeline({
           })}
         </div>
       ) : (
-        <div className="text-center py-8 text-gray-500">
+        <div className={`text-center py-8 ${subtextClassName}`}>
           No scheduled posts yet
         </div>
       )}

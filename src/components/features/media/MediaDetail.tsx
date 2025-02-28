@@ -1,13 +1,14 @@
 "use client";
 
+import React from "react";
 import { useState } from "react";
 import Image from "next/image";
-import { X, Edit2, Trash2, Tag, Download } from "lucide-react";
+import { X, Edit2, Trash2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useMedia } from "@/context/MediaContext";
-import { formatFileSize, formatDuration } from "@/lib/media-utils";
+import { formatFileSize } from "@/lib/media-utils";
 import ImageEditor from "./ImageEditor";
 
 export default function MediaDetail() {
@@ -20,9 +21,14 @@ export default function MediaDetail() {
     selectMedia(null);
   };
 
+  const handleEdit = () => {
+    setShowImageEditor(true);
+  };
+
   const handleDelete = () => {
-    if (confirm("Are you sure you want to delete this media item?")) {
+    if (window.confirm("Are you sure you want to delete this media?")) {
       removeMedia(selectedMedia.id);
+      selectMedia(null);
     }
   };
 
@@ -40,13 +46,15 @@ export default function MediaDetail() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
-        <div className="flex justify-between items-center p-4 border-b">
-          <h3 className="text-lg font-medium">Media Details</h3>
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-card dark:bg-card rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+        <div className="flex justify-between items-center p-4 border-b border-border">
+          <h3 className="text-lg font-medium text-foreground/90 dark:text-foreground/90">
+            Media Details
+          </h3>
           <button
             onClick={handleClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-muted-foreground hover:text-foreground"
           >
             <X className="h-5 w-5" />
           </button>
@@ -55,7 +63,7 @@ export default function MediaDetail() {
         <div className="flex-1 overflow-auto p-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <div className="bg-gray-100 rounded-lg overflow-hidden">
+              <div className="bg-background dark:bg-background rounded-lg overflow-hidden">
                 {selectedMedia.type === "image" ? (
                   <AspectRatio ratio={16 / 9}>
                     <Image
@@ -82,7 +90,7 @@ export default function MediaDetail() {
                     variant="outline"
                     size="sm"
                     className="flex items-center"
-                    onClick={() => setShowImageEditor(true)}
+                    onClick={handleEdit}
                   >
                     <Edit2 className="h-4 w-4 mr-1" />
                     Edit
@@ -109,58 +117,79 @@ export default function MediaDetail() {
               </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div>
-                <h4 className="text-lg font-medium mb-2">
-                  {selectedMedia.name}
+                <h4 className="text-sm font-medium text-foreground/90 dark:text-foreground/90 mb-1">
+                  File Information
                 </h4>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                  <div className="text-gray-500">Type</div>
-                  <div className="capitalize">{selectedMedia.type}</div>
-
-                  <div className="text-gray-500">Size</div>
-                  <div>{formatFileSize(selectedMedia.size)}</div>
-
-                  <div className="text-gray-500">Dimensions</div>
-                  <div>
-                    {selectedMedia.dimensions?.width} ×{" "}
-                    {selectedMedia.dimensions?.height} px
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="text-muted-foreground">Name:</div>
+                  <div className="text-foreground/80 dark:text-foreground/80">
+                    {selectedMedia.name}
                   </div>
-
-                  {selectedMedia.type === "video" && selectedMedia.duration && (
-                    <>
-                      <div className="text-gray-500">Duration</div>
-                      <div>{formatDuration(selectedMedia.duration)}</div>
-                    </>
-                  )}
-
-                  <div className="text-gray-500">Created</div>
-                  <div>{formatDate(selectedMedia.createdAt)}</div>
+                  <div className="text-muted-foreground">Type:</div>
+                  <div className="text-foreground/80 dark:text-foreground/80">
+                    {selectedMedia.type.charAt(0).toUpperCase() +
+                      selectedMedia.type.slice(1)}
+                  </div>
+                  <div className="text-muted-foreground">Size:</div>
+                  <div className="text-foreground/80 dark:text-foreground/80">
+                    {formatFileSize(selectedMedia.size)}
+                  </div>
+                  <div className="text-muted-foreground">Dimensions:</div>
+                  <div className="text-foreground/80 dark:text-foreground/80">
+                    {selectedMedia.dimensions?.width || "N/A"} x{" "}
+                    {selectedMedia.dimensions?.height || "N/A"}
+                  </div>
+                  <div className="text-muted-foreground">Uploaded:</div>
+                  <div className="text-foreground/80 dark:text-foreground/80">
+                    {formatDate(selectedMedia.createdAt)}
+                  </div>
                 </div>
               </div>
 
               <div>
-                <h4 className="text-sm font-medium mb-2 flex items-center">
-                  <Tag className="h-4 w-4 mr-1" />
+                <h4 className="text-sm font-medium text-foreground/90 dark:text-foreground/90 mb-1">
                   Tags
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {selectedMedia.tags.length > 0 ? (
-                    selectedMedia.tags.map((tag) => (
+                    selectedMedia.tags.map((tag, index) => (
                       <span
-                        key={tag}
-                        className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-teal-100 text-teal-800"
+                        key={index}
+                        className="px-2 py-1 bg-primary/10 text-primary rounded-md text-xs"
                       >
                         {tag}
                       </span>
                     ))
                   ) : (
-                    <span className="text-sm text-gray-500">No tags</span>
+                    <p className="text-sm text-muted-foreground">No tags</p>
                   )}
                 </div>
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="flex justify-between items-center p-4 border-t border-border">
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDelete}
+              className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleDownload}>
+              <Download className="h-4 w-4 mr-2" />
+              Download
+            </Button>
+          </div>
+          <Button variant="outline" size="sm" onClick={handleClose}>
+            Close
+          </Button>
         </div>
       </div>
 

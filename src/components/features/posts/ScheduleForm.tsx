@@ -13,12 +13,20 @@ interface ScheduleFormProps {
     postId?: string;
   }) => void;
   posts?: Post[];
+  className?: string;
+  textClassName?: string;
+  subtextClassName?: string;
+  buttonClassName?: string;
 }
 
 export default function ScheduleForm({
   selectedDate,
   onSchedule,
   posts = [],
+  className = "bg-card dark:bg-card rounded-lg shadow-sm p-6",
+  textClassName = "text-foreground/90 dark:text-foreground/90",
+  subtextClassName = "text-foreground/80 dark:text-foreground/80",
+  buttonClassName = "bg-muted text-muted-foreground hover:bg-muted/80",
 }: ScheduleFormProps) {
   const [time, setTime] = useState("09:00");
   const [platforms, setPlatforms] = useState({
@@ -55,8 +63,10 @@ export default function ScheduleForm({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-lg font-medium text-gray-800 mb-6 flex items-center">
+    <div className={className}>
+      <h2
+        className={`text-lg font-medium mb-6 flex items-center ${textClassName}`}
+      >
         <Clock className="w-5 h-5 mr-2" />
         <span>Schedule Post</span>
       </h2>
@@ -64,22 +74,28 @@ export default function ScheduleForm({
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              className={`block text-sm font-medium mb-1 ${subtextClassName}`}
+            >
               Selected Date
             </label>
-            <div className="flex items-center p-2 border border-gray-300 rounded-md bg-gray-50">
-              <CalendarIcon className="w-5 h-5 text-gray-500 mr-2" />
-              <span>{format(selectedDate, "EEEE, MMMM d, yyyy")}</span>
+            <div className="flex items-center p-2 border border-border rounded-md bg-muted/30">
+              <CalendarIcon className="w-5 h-5 mr-2" />
+              <span className={textClassName}>
+                {format(selectedDate, "EEEE, MMMM d, yyyy")}
+              </span>
             </div>
           </div>
 
           {posts.length > 0 && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                className={`block text-sm font-medium mb-1 ${subtextClassName}`}
+              >
                 Select Post
               </label>
               <select
-                className="w-full p-2 border border-gray-300 rounded-md"
+                className="w-full p-2 border border-border rounded-md bg-background"
                 value={selectedPostId || ""}
                 onChange={(e) => setSelectedPostId(e.target.value || undefined)}
               >
@@ -94,19 +110,23 @@ export default function ScheduleForm({
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              className={`block text-sm font-medium mb-1 ${subtextClassName}`}
+            >
               Time
             </label>
             <input
               type="time"
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-border rounded-md bg-background"
               value={time}
               onChange={(e) => setTime(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              className={`block text-sm font-medium mb-1 ${subtextClassName}`}
+            >
               Platforms
             </label>
             <div className="flex space-x-2">
@@ -115,7 +135,7 @@ export default function ScheduleForm({
                 className={`px-3 py-2 rounded-md flex items-center ${
                   platforms.linkedin
                     ? "bg-blue-100 text-blue-800 border border-blue-300"
-                    : "bg-gray-100 text-gray-600 border border-gray-300"
+                    : "bg-muted/50 text-muted-foreground border border-border"
                 }`}
                 onClick={() => togglePlatform("linkedin")}
               >
@@ -127,7 +147,7 @@ export default function ScheduleForm({
                 className={`px-3 py-2 rounded-md flex items-center ${
                   platforms.twitter
                     ? "bg-sky-100 text-sky-800 border border-sky-300"
-                    : "bg-gray-100 text-gray-600 border border-gray-300"
+                    : "bg-muted/50 text-muted-foreground border border-border"
                 }`}
                 onClick={() => togglePlatform("twitter")}
               >
@@ -138,11 +158,13 @@ export default function ScheduleForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              className={`block text-sm font-medium mb-1 ${subtextClassName}`}
+            >
               Repeat
             </label>
             <select
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-border rounded-md bg-background"
               value={repeat}
               onChange={(e) => setRepeat(e.target.value)}
             >
@@ -156,7 +178,7 @@ export default function ScheduleForm({
           <div className="pt-4">
             <button
               type="submit"
-              className="w-full px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+              className={`w-full px-4 py-2 rounded-lg transition-colors ${buttonClassName}`}
             >
               Schedule Post
             </button>

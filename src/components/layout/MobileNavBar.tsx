@@ -42,60 +42,74 @@ export default function MobileNavBar() {
   };
 
   return (
-    <div
-      className={`fixed bottom-0 left-0 right-0 bg-card border-t border-border z-20 transition-transform duration-300 lg:hidden ${
+    <nav
+      className={`fixed bottom-0 left-0 right-0 bg-card/90 dark:bg-card/50 border-t border-border z-20 transition-transform duration-300 lg:hidden ${
         isVisible ? "translate-y-0" : "translate-y-full"
       }`}
+      aria-label="Mobile bottom navigation"
     >
       <div className="flex justify-around items-center h-16">
         <Link
           href="/dashboard"
           className={`flex flex-col items-center justify-center w-full h-full ${
-            isActive("/dashboard") ? "text-primary" : "text-muted-foreground"
+            isActive("/dashboard")
+              ? "text-primary"
+              : "text-muted-foreground dark:text-foreground/70"
           }`}
+          aria-current={isActive("/dashboard") ? "page" : undefined}
         >
-          <LayoutDashboard className="w-5 h-5" />
+          <LayoutDashboard className="w-5 h-5" aria-hidden="true" />
           <span className="text-xs mt-1">Posts</span>
         </Link>
 
         <Link
           href="/create"
           className={`flex flex-col items-center justify-center w-full h-full ${
-            isActive("/create") ? "text-primary" : "text-muted-foreground"
+            isActive("/create")
+              ? "text-primary"
+              : "text-muted-foreground dark:text-foreground/70"
           }`}
+          aria-current={isActive("/create") ? "page" : undefined}
         >
-          <PlusCircle className="w-5 h-5" />
+          <PlusCircle className="w-5 h-5" aria-hidden="true" />
           <span className="text-xs mt-1">Create</span>
         </Link>
 
         <Link
           href="/schedule"
           className={`flex flex-col items-center justify-center w-full h-full ${
-            isActive("/schedule") ? "text-primary" : "text-muted-foreground"
+            isActive("/schedule")
+              ? "text-primary"
+              : "text-muted-foreground dark:text-foreground/70"
           }`}
+          aria-current={isActive("/schedule") ? "page" : undefined}
         >
-          <Calendar className="w-5 h-5" />
+          <Calendar className="w-5 h-5" aria-hidden="true" />
           <span className="text-xs mt-1">Schedule</span>
         </Link>
 
         <Link
           href="/settings"
           className={`flex flex-col items-center justify-center w-full h-full ${
-            isActive("/settings") ? "text-primary" : "text-muted-foreground"
+            isActive("/settings")
+              ? "text-primary"
+              : "text-muted-foreground dark:text-foreground/70"
           }`}
+          aria-current={isActive("/settings") ? "page" : undefined}
         >
-          <Settings className="w-5 h-5" />
+          <Settings className="w-5 h-5" aria-hidden="true" />
           <span className="text-xs mt-1">Settings</span>
         </Link>
 
         <button
-          className="flex flex-col items-center justify-center w-full h-full text-muted-foreground"
+          className="flex flex-col items-center justify-center w-full h-full text-muted-foreground dark:text-foreground/70"
           aria-label="More options"
+          aria-haspopup="true"
         >
-          <Menu className="w-5 h-5" />
+          <Menu className="w-5 h-5" aria-hidden="true" />
           <span className="text-xs mt-1">More</span>
         </button>
       </div>
-    </div>
+    </nav>
   );
 }

@@ -36,22 +36,22 @@ export default function PreviewPage() {
   return (
     <MainLayout>
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-800 mb-8">
+        <h1 className="text-2xl font-bold text-foreground/90 dark:text-foreground/90 mb-8">
           Post Preview Tool
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-medium text-gray-800 mb-4">
+          <div className="bg-card-lighter dark:bg-card-lighter rounded-lg shadow-sm p-6 border border-border">
+            <h2 className="text-lg font-medium text-foreground/90 dark:text-foreground/90 mb-4">
               Preview Settings
             </h2>
 
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-foreground/80 dark:text-foreground/80 mb-2">
                 Select Post
               </label>
               <select
-                className="w-full p-2 border border-gray-300 rounded-md"
+                className="w-full p-2 bg-background dark:bg-background border border-border rounded-md text-foreground"
                 value={selectedPost.id}
                 onChange={(e) => handlePostChange(e.target.value)}
               >
@@ -66,11 +66,11 @@ export default function PreviewPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground/80 dark:text-foreground/80 mb-2">
                   LinkedIn Content
                 </label>
                 <textarea
-                  className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  className="w-full h-32 p-3 bg-background dark:bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
                   value={customContent.linkedin}
                   onChange={(e) =>
                     handleContentChange("linkedin", e.target.value)
@@ -79,11 +79,11 @@ export default function PreviewPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground/80 dark:text-foreground/80 mb-2">
                   Twitter Content
                 </label>
                 <textarea
-                  className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  className="w-full h-32 p-3 bg-background dark:bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
                   value={customContent.twitter}
                   onChange={(e) =>
                     handleContentChange("twitter", e.target.value)
@@ -93,7 +93,14 @@ export default function PreviewPage() {
             </div>
           </div>
 
-          <PostPreview content={customContent} />
+          <PostPreview
+            content={customContent}
+            className="bg-card-lighter dark:bg-card-lighter rounded-lg shadow-sm p-4 sm:p-6 border border-border"
+            textClassName="text-foreground/90 dark:text-foreground/90"
+            subtextClassName="text-muted-foreground dark:text-muted-foreground"
+            tabClassName="text-muted-foreground hover:text-foreground/80"
+            selectedTabClassName="bg-background dark:bg-background shadow-sm text-primary"
+          />
         </div>
       </div>
     </MainLayout>

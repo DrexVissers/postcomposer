@@ -29,9 +29,6 @@ import {
   UserPlus,
   Users,
   Shield,
-  Check,
-  AlertCircle,
-  Clock,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -256,22 +253,22 @@ export default function SettingsPage() {
   const getRoleBadgeColor = (role: UserRole) => {
     switch (role) {
       case "owner":
-        return "bg-purple-100 text-purple-800 hover:bg-purple-100";
+        return "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/40";
       case "admin":
-        return "bg-blue-100 text-blue-800 hover:bg-blue-100";
+        return "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/40";
       case "editor":
-        return "bg-green-100 text-green-800 hover:bg-green-100";
+        return "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/40";
       case "viewer":
-        return "bg-gray-100 text-gray-800 hover:bg-gray-100";
+        return "bg-gray-100 dark:bg-gray-800/50 text-gray-800 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/60";
       default:
-        return "bg-gray-100 text-gray-800 hover:bg-gray-100";
+        return "bg-gray-100 dark:bg-gray-800/50 text-gray-800 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/60";
     }
   };
 
   return (
     <MainLayout>
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-800 mb-8">
+        <h1 className="text-2xl font-bold text-foreground/90 dark:text-foreground/90 mb-8">
           Account Settings
         </h1>
 
@@ -287,39 +284,40 @@ export default function SettingsPage() {
 
           {/* Profile Tab */}
           <TabsContent value="profile" className="mt-0">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-medium text-gray-800 mb-6 flex items-center">
+            <div className="bg-card dark:bg-card rounded-lg shadow-sm p-6 border border-border">
+              <h2 className="text-lg font-medium text-foreground/90 dark:text-foreground/90 mb-6 flex items-center">
                 <User className="w-5 h-5 mr-2" />
                 <span>Profile Information</span>
               </h2>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground/80 dark:text-foreground/80 mb-1">
                     Name
                   </label>
                   <input
                     type="text"
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="w-full p-2 border border-border rounded-md bg-background dark:bg-background text-foreground"
                     defaultValue={mockUser.name}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground/80 dark:text-foreground/80 mb-1">
                     Email
                   </label>
                   <input
                     type="email"
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="w-full p-2 border border-border rounded-md bg-background dark:bg-background text-foreground"
                     defaultValue={mockUser.email}
                   />
                 </div>
 
                 <div className="pt-4">
-                  <button className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors">
+                  <Button className="flex items-center gap-2">
+                    <Save className="w-4 h-4" />
                     Save Changes
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -327,31 +325,35 @@ export default function SettingsPage() {
 
           {/* Subscription Tab */}
           <TabsContent value="subscription" className="mt-0">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-medium text-gray-800 mb-6 flex items-center">
+            <div className="bg-card dark:bg-card rounded-lg shadow-sm p-6 border border-border">
+              <h2 className="text-lg font-medium text-foreground/90 dark:text-foreground/90 mb-6 flex items-center">
                 <CreditCard className="w-5 h-5 mr-2" />
                 <span>Subscription Details</span>
               </h2>
 
               <div className="mb-8">
-                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <div className="bg-card-lighter dark:bg-card-lighter p-4 rounded-lg border border-border">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="font-medium text-gray-700">
+                    <span className="font-medium text-foreground/90 dark:text-foreground/90">
                       Current Plan
                     </span>
-                    <span className="px-2 py-1 bg-teal-100 text-teal-800 text-xs rounded-full">
+                    <span className="px-2 py-1 bg-primary/20 text-primary text-xs rounded-full">
                       {mockUser.subscription.plan.toUpperCase()}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Status</span>
-                    <span className="text-gray-800 font-medium capitalize">
+                    <span className="text-muted-foreground dark:text-muted-foreground">
+                      Status
+                    </span>
+                    <span className="text-foreground/80 dark:text-foreground/80 font-medium capitalize">
                       {mockUser.subscription.status}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm mt-1">
-                    <span className="text-gray-600">Renewal Date</span>
-                    <span className="text-gray-800 font-medium">
+                    <span className="text-muted-foreground dark:text-muted-foreground">
+                      Renewal Date
+                    </span>
+                    <span className="text-foreground/80 dark:text-foreground/80 font-medium">
                       {new Date(
                         mockUser.subscription.renewalDate
                       ).toLocaleDateString()}
@@ -360,73 +362,73 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              <h3 className="font-medium text-gray-800 mb-4">
+              <h3 className="font-medium text-foreground/90 dark:text-foreground/90 mb-4">
                 Available Plans
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div className="border border-gray-200 rounded-lg p-4 hover:border-teal-500 cursor-pointer">
+                <div className="border border-border rounded-lg p-4 hover:border-primary cursor-pointer bg-card dark:bg-card">
                   <h4 className="font-medium mb-2">Free</h4>
                   <p className="text-2xl font-bold mb-4">
                     $0
-                    <span className="text-sm font-normal text-gray-500">
+                    <span className="text-sm font-normal text-muted-foreground dark:text-muted-foreground">
                       /mo
                     </span>
                   </p>
-                  <ul className="text-sm text-gray-600 space-y-2 mb-4">
+                  <ul className="text-sm text-foreground/80 dark:text-foreground/80 space-y-2 mb-4">
                     <li>• 5 posts per month</li>
                     <li>• Basic templates</li>
                     <li>• Single platform</li>
                   </ul>
-                  <button className="w-full py-1 border border-teal-600 text-teal-600 rounded-lg text-sm hover:bg-teal-50">
+                  <button className="w-full py-1 border border-primary text-primary rounded-lg text-sm hover:bg-primary/10">
                     Current Plan
                   </button>
                 </div>
 
-                <div className="border-2 border-teal-500 rounded-lg p-4 relative">
-                  <div className="absolute top-0 right-0 bg-teal-500 text-white text-xs px-2 py-1 rounded-bl-lg">
+                <div className="border-2 border-primary rounded-lg p-4 relative bg-card dark:bg-card">
+                  <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-bl-lg">
                     POPULAR
                   </div>
                   <h4 className="font-medium mb-2">Pro</h4>
                   <p className="text-2xl font-bold mb-4">
                     $19
-                    <span className="text-sm font-normal text-gray-500">
+                    <span className="text-sm font-normal text-muted-foreground dark:text-muted-foreground">
                       /mo
                     </span>
                   </p>
-                  <ul className="text-sm text-gray-600 space-y-2 mb-4">
+                  <ul className="text-sm text-foreground/80 dark:text-foreground/80 space-y-2 mb-4">
                     <li>• Unlimited posts</li>
                     <li>• All templates</li>
                     <li>• Multiple platforms</li>
                     <li>• Analytics</li>
                   </ul>
-                  <button className="w-full py-1 bg-teal-600 text-white rounded-lg text-sm hover:bg-teal-700">
+                  <button className="w-full py-1 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90">
                     Current Plan
                   </button>
                 </div>
 
-                <div className="border border-gray-200 rounded-lg p-4 hover:border-teal-500 cursor-pointer">
+                <div className="border border-border rounded-lg p-4 hover:border-teal-500 cursor-pointer bg-card dark:bg-card">
                   <h4 className="font-medium mb-2">Enterprise</h4>
                   <p className="text-2xl font-bold mb-4">
                     $49
-                    <span className="text-sm font-normal text-gray-500">
+                    <span className="text-sm font-normal text-muted-foreground dark:text-muted-foreground">
                       /mo
                     </span>
                   </p>
-                  <ul className="text-sm text-gray-600 space-y-2 mb-4">
+                  <ul className="text-sm text-foreground/80 dark:text-foreground/80 space-y-2 mb-4">
                     <li>• Everything in Pro</li>
                     <li>• Team collaboration</li>
                     <li>• Custom templates</li>
                     <li>• Priority support</li>
                   </ul>
-                  <button className="w-full py-1 border border-gray-300 text-gray-600 rounded-lg text-sm hover:bg-gray-50">
+                  <button className="w-full py-1 border border-border text-foreground/80 rounded-lg text-sm hover:bg-muted/50 dark:hover:bg-muted/30">
                     Upgrade
                   </button>
                 </div>
               </div>
 
               <div className="border-t pt-6">
-                <button className="px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition-colors">
+                <button className="px-4 py-2 text-destructive border border-destructive rounded-lg hover:bg-destructive/10 transition-colors">
                   Cancel Subscription
                 </button>
               </div>
@@ -435,19 +437,21 @@ export default function SettingsPage() {
 
           {/* Connected Accounts Tab */}
           <TabsContent value="connections" className="mt-0">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-medium text-gray-800 mb-6 flex items-center">
-                <Bell className="w-5 h-5 mr-2" />
+            <div className="bg-card dark:bg-card rounded-lg shadow-sm p-6 border border-border">
+              <h2 className="text-lg font-medium text-foreground/90 dark:text-foreground/90 mb-6 flex items-center">
+                <Linkedin className="w-5 h-5 mr-2" />
                 <span>Connected Social Accounts</span>
               </h2>
 
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                <div className="flex justify-between items-center p-4 border border-border rounded-lg bg-card-lighter dark:bg-card-lighter">
                   <div className="flex items-center">
-                    <Linkedin className="w-6 h-6 text-blue-700 mr-3" />
+                    <Linkedin className="w-6 h-6 text-blue-600 mr-3" />
                     <div>
-                      <h3 className="font-medium">LinkedIn</h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="font-medium text-foreground/90 dark:text-foreground/90">
+                        LinkedIn
+                      </p>
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                         {mockUser.connectedAccounts.linkedin
                           ? "Connected"
                           : "Not connected"}
@@ -457,8 +461,8 @@ export default function SettingsPage() {
                   <button
                     className={`px-3 py-1 rounded-lg text-sm ${
                       mockUser.connectedAccounts.linkedin
-                        ? "bg-red-50 text-red-600 hover:bg-red-100"
-                        : "bg-teal-50 text-teal-600 hover:bg-teal-100"
+                        ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
+                        : "bg-primary/10 text-primary hover:bg-primary/20"
                     }`}
                   >
                     {mockUser.connectedAccounts.linkedin
@@ -467,12 +471,14 @@ export default function SettingsPage() {
                   </button>
                 </div>
 
-                <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                <div className="flex justify-between items-center p-4 border border-border rounded-lg bg-card-lighter dark:bg-card-lighter">
                   <div className="flex items-center">
-                    <Twitter className="w-6 h-6 text-blue-400 mr-3" />
+                    <Twitter className="w-6 h-6 text-sky-500 mr-3" />
                     <div>
-                      <h3 className="font-medium">Twitter</h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="font-medium text-foreground/90 dark:text-foreground/90">
+                        Twitter
+                      </p>
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                         {mockUser.connectedAccounts.twitter
                           ? "Connected"
                           : "Not connected"}
@@ -482,8 +488,8 @@ export default function SettingsPage() {
                   <button
                     className={`px-3 py-1 rounded-lg text-sm ${
                       mockUser.connectedAccounts.twitter
-                        ? "bg-red-50 text-red-600 hover:bg-red-100"
-                        : "bg-teal-50 text-teal-600 hover:bg-teal-100"
+                        ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
+                        : "bg-primary/10 text-primary hover:bg-primary/20"
                     }`}
                   >
                     {mockUser.connectedAccounts.twitter
@@ -492,167 +498,103 @@ export default function SettingsPage() {
                   </button>
                 </div>
               </div>
-
-              <div className="mt-6 text-sm text-gray-500">
-                <p>
-                  Connecting your social accounts allows Levercast to publish
-                  posts directly to your profiles. We use OAuth for secure
-                  authentication and never store your passwords.
-                </p>
-              </div>
             </div>
           </TabsContent>
 
           {/* Notifications Tab */}
           <TabsContent value="notifications" className="mt-0">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-medium text-gray-800 mb-6 flex items-center">
+            <div className="bg-card dark:bg-card rounded-lg shadow-sm p-6 border border-border">
+              <h2 className="text-lg font-medium text-foreground/90 dark:text-foreground/90 mb-6 flex items-center">
                 <Bell className="w-5 h-5 mr-2" />
                 <span>Notification Preferences</span>
               </h2>
 
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-4">
-                    Notification Types
-                  </h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <Check className="w-5 h-5 text-green-500 mr-3" />
-                        <div>
-                          <p className="font-medium">Post Status Updates</p>
-                          <p className="text-sm text-gray-500">
-                            Get notified when your post status changes
-                          </p>
-                        </div>
-                      </div>
-                      <Checkbox id="post-status" defaultChecked />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <AlertCircle className="w-5 h-5 text-amber-500 mr-3" />
-                        <div>
-                          <p className="font-medium">Approval Requests</p>
-                          <p className="text-sm text-gray-500">
-                            Get notified when posts need your approval
-                          </p>
-                        </div>
-                      </div>
-                      <Checkbox id="approval-requests" defaultChecked />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <Clock className="w-5 h-5 text-blue-500 mr-3" />
-                        <div>
-                          <p className="font-medium">Scheduled Posts</p>
-                          <p className="text-sm text-gray-500">
-                            Get notified about scheduled post updates
-                          </p>
-                        </div>
-                      </div>
-                      <Checkbox id="scheduled-posts" defaultChecked />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <Bell className="w-5 h-5 text-gray-500 mr-3" />
-                        <div>
-                          <p className="font-medium">System Notifications</p>
-                          <p className="text-sm text-gray-500">
-                            Get notified about system updates and maintenance
-                          </p>
-                        </div>
-                      </div>
-                      <Checkbox id="system-notifications" defaultChecked />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border-t pt-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-4">
-                    Notification Delivery
+                  <h3 className="text-sm font-medium text-foreground/90 dark:text-foreground/90 mb-3">
+                    Email Notifications
                   </h3>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-medium">In-app Notifications</p>
-                        <p className="text-sm text-gray-500">
-                          Show notifications in the app
+                        <p className="text-foreground/80 dark:text-foreground/80">
+                          Post Approvals
+                        </p>
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground">
+                          Receive emails when your posts are approved or
+                          rejected
                         </p>
                       </div>
-                      <Checkbox id="in-app" defaultChecked />
+                      <Checkbox defaultChecked id="post-approvals" />
                     </div>
 
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-medium">Email Notifications</p>
-                        <p className="text-sm text-gray-500">
-                          Send notifications to your email
+                        <p className="text-foreground/80 dark:text-foreground/80">
+                          Post Performance
+                        </p>
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground">
+                          Weekly summary of your post performance
                         </p>
                       </div>
-                      <Checkbox id="email" defaultChecked />
+                      <Checkbox defaultChecked id="post-performance" />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-foreground/80 dark:text-foreground/80">
+                          Team Updates
+                        </p>
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground">
+                          Notifications about team member changes
+                        </p>
+                      </div>
+                      <Checkbox id="team-updates" />
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t pt-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-4">
-                    Notification Display
+                <div>
+                  <h3 className="text-sm font-medium text-foreground/90 dark:text-foreground/90 mb-3">
+                    In-App Notifications
                   </h3>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="notification-display-limit">
-                        Maximum notifications to display
-                      </Label>
-                      <Select defaultValue="10">
-                        <SelectTrigger
-                          id="notification-display-limit"
-                          className="w-full"
-                        >
-                          <SelectValue placeholder="Select a limit" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="5">5 notifications</SelectItem>
-                          <SelectItem value="10">10 notifications</SelectItem>
-                          <SelectItem value="20">20 notifications</SelectItem>
-                          <SelectItem value="50">50 notifications</SelectItem>
-                        </SelectContent>
-                      </Select>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-foreground/80 dark:text-foreground/80">
+                          Post Scheduled
+                        </p>
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground">
+                          Notification when a post is scheduled
+                        </p>
+                      </div>
+                      <Checkbox defaultChecked id="post-scheduled" />
                     </div>
 
-                    <div>
-                      <Label htmlFor="notification-retention">
-                        Notification retention period
-                      </Label>
-                      <Select defaultValue="30">
-                        <SelectTrigger
-                          id="notification-retention"
-                          className="w-full"
-                        >
-                          <SelectValue placeholder="Select a period" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="7">7 days</SelectItem>
-                          <SelectItem value="14">14 days</SelectItem>
-                          <SelectItem value="30">30 days</SelectItem>
-                          <SelectItem value="90">90 days</SelectItem>
-                        </SelectContent>
-                      </Select>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-foreground/80 dark:text-foreground/80">
+                          Post Published
+                        </p>
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground">
+                          Notification when a post is published
+                        </p>
+                      </div>
+                      <Checkbox defaultChecked id="post-published" />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-foreground/80 dark:text-foreground/80">
+                          Comments and Mentions
+                        </p>
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground">
+                          Notification for comments and mentions on your posts
+                        </p>
+                      </div>
+                      <Checkbox defaultChecked id="comments-mentions" />
                     </div>
                   </div>
-                </div>
-
-                <div className="pt-4">
-                  <Button className="mr-2">Save Preferences</Button>
-                  <Button
-                    variant="outline"
-                    className="text-red-600 border-red-600 hover:bg-red-50"
-                  >
-                    Clear All Notifications
-                  </Button>
                 </div>
               </div>
             </div>
@@ -660,9 +602,9 @@ export default function SettingsPage() {
 
           {/* Categories & Tags Tab */}
           <TabsContent value="categories" className="mt-0">
-            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div className="bg-card dark:bg-card rounded-lg shadow-sm p-6 mb-6 border border-border">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg font-medium text-gray-800 flex items-center">
+                <h2 className="text-lg font-medium text-foreground/90 dark:text-foreground/90 flex items-center">
                   <TagIcon className="w-5 h-5 mr-2" />
                   <span>Categories</span>
                 </h2>
@@ -676,31 +618,48 @@ export default function SettingsPage() {
               </div>
 
               {isEditingCategory && (
-                <div className="mb-6 p-4 border border-gray-200 rounded-lg">
-                  <h3 className="text-md font-medium mb-4">
+                <div className="mb-6 p-4 border border-border rounded-lg bg-card-lighter dark:bg-card-lighter">
+                  <h3 className="text-md font-medium mb-4 text-foreground/90 dark:text-foreground/90">
                     {currentCategory ? "Edit Category" : "Add New Category"}
                   </h3>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="category-name">Name</Label>
+                      <Label
+                        htmlFor="category-name"
+                        className="text-foreground/80 dark:text-foreground/80"
+                      >
+                        Name
+                      </Label>
                       <Input
                         id="category-name"
                         value={categoryName}
                         onChange={(e) => setCategoryName(e.target.value)}
                         placeholder="Category name"
+                        className="bg-background dark:bg-background text-foreground"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="category-description">Description</Label>
+                      <Label
+                        htmlFor="category-description"
+                        className="text-foreground/80 dark:text-foreground/80"
+                      >
+                        Description
+                      </Label>
                       <Input
                         id="category-description"
                         value={categoryDescription}
                         onChange={(e) => setCategoryDescription(e.target.value)}
                         placeholder="Category description"
+                        className="bg-background dark:bg-background text-foreground"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="category-color">Color</Label>
+                      <Label
+                        htmlFor="category-color"
+                        className="text-foreground/80 dark:text-foreground/80"
+                      >
+                        Color
+                      </Label>
                       <div className="flex items-center space-x-2">
                         <input
                           type="color"
@@ -712,7 +671,7 @@ export default function SettingsPage() {
                         <Input
                           value={categoryColor}
                           onChange={(e) => setCategoryColor(e.target.value)}
-                          className="w-32"
+                          className="w-32 bg-background dark:bg-background text-foreground"
                         />
                       </div>
                     </div>
@@ -733,14 +692,14 @@ export default function SettingsPage() {
 
               <div className="space-y-2">
                 {categories.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">
+                  <p className="text-muted-foreground dark:text-muted-foreground text-center py-4">
                     No categories yet. Add your first category.
                   </p>
                 ) : (
                   categories.map((category) => (
                     <div
                       key={category.id}
-                      className="flex items-center justify-between p-3 border border-gray-200 rounded-lg"
+                      className="flex items-center justify-between p-3 border border-border rounded-lg bg-card-lighter dark:bg-card-lighter"
                     >
                       <div className="flex items-center">
                         <div
@@ -748,9 +707,11 @@ export default function SettingsPage() {
                           style={{ backgroundColor: category.color }}
                         ></div>
                         <div>
-                          <h3 className="font-medium">{category.name}</h3>
+                          <h3 className="font-medium text-foreground/90 dark:text-foreground/90">
+                            {category.name}
+                          </h3>
                           {category.description && (
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                               {category.description}
                             </p>
                           )}
@@ -767,7 +728,7 @@ export default function SettingsPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-red-500 hover:text-red-700"
+                          className="text-destructive hover:text-destructive/90"
                           onClick={() => deleteCategory(category.id)}
                         >
                           <Trash className="w-4 h-4" />
@@ -779,9 +740,9 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-card dark:bg-card rounded-lg shadow-sm p-6 border border-border">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg font-medium text-gray-800 flex items-center">
+                <h2 className="text-lg font-medium text-foreground/90 dark:text-foreground/90 flex items-center">
                   <TagIcon className="w-5 h-5 mr-2" />
                   <span>Tags</span>
                 </h2>
@@ -795,22 +756,33 @@ export default function SettingsPage() {
               </div>
 
               {isEditingTag && (
-                <div className="mb-6 p-4 border border-gray-200 rounded-lg">
-                  <h3 className="text-md font-medium mb-4">
+                <div className="mb-6 p-4 border border-border rounded-lg bg-card-lighter dark:bg-card-lighter">
+                  <h3 className="text-md font-medium mb-4 text-foreground/90 dark:text-foreground/90">
                     {currentTag ? "Edit Tag" : "Add New Tag"}
                   </h3>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="tag-name">Name</Label>
+                      <Label
+                        htmlFor="tag-name"
+                        className="text-foreground/80 dark:text-foreground/80"
+                      >
+                        Name
+                      </Label>
                       <Input
                         id="tag-name"
                         value={tagName}
                         onChange={(e) => setTagName(e.target.value)}
                         placeholder="Tag name"
+                        className="bg-background dark:bg-background text-foreground"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="tag-color">Color</Label>
+                      <Label
+                        htmlFor="tag-color"
+                        className="text-foreground/80 dark:text-foreground/80"
+                      >
+                        Color
+                      </Label>
                       <div className="flex items-center space-x-2">
                         <input
                           type="color"
@@ -822,7 +794,7 @@ export default function SettingsPage() {
                         <Input
                           value={tagColor}
                           onChange={(e) => setTagColor(e.target.value)}
-                          className="w-32"
+                          className="w-32 bg-background dark:bg-background text-foreground"
                         />
                       </div>
                     </div>
@@ -843,30 +815,35 @@ export default function SettingsPage() {
 
               <div className="flex flex-wrap gap-2">
                 {tags.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4 w-full">
+                  <p className="text-muted-foreground dark:text-muted-foreground text-center py-4 w-full">
                     No tags yet. Add your first tag.
                   </p>
                 ) : (
                   tags.map((tag) => (
                     <div
                       key={tag.id}
-                      className="flex items-center space-x-2 p-2 border border-gray-200 rounded-lg"
+                      className="flex items-center space-x-2 p-2 border rounded-lg bg-card-lighter dark:bg-card-lighter"
                       style={{ borderColor: tag.color }}
                     >
                       <div
                         className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: tag.color }}
                       ></div>
-                      <span style={{ color: tag.color }}>{tag.name}</span>
+                      <span
+                        className="text-foreground/90 dark:text-foreground/90"
+                        style={{ color: tag.color }}
+                      >
+                        {tag.name}
+                      </span>
                       <div className="flex space-x-1">
                         <button
-                          className="text-gray-400 hover:text-gray-600"
+                          className="text-muted-foreground hover:text-foreground/80"
                           onClick={() => editTag(tag)}
                         >
                           <Pencil className="w-3 h-3" />
                         </button>
                         <button
-                          className="text-gray-400 hover:text-red-600"
+                          className="text-muted-foreground hover:text-destructive"
                           onClick={() => deleteTag(tag.id)}
                         >
                           <X className="w-3 h-3" />
@@ -881,9 +858,9 @@ export default function SettingsPage() {
 
           {/* Team Tab */}
           <TabsContent value="team" className="mt-0">
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-card dark:bg-card rounded-lg shadow-sm p-6 border border-border">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg font-medium text-gray-800 flex items-center">
+                <h2 className="text-lg font-medium text-foreground/90 dark:text-foreground/90 flex items-center">
                   <Users className="w-5 h-5 mr-2" />
                   <span>Team Management</span>
                 </h2>
@@ -950,16 +927,18 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-6">
-                <div className="bg-gray-50 p-4 rounded-md">
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">
+                <div className="bg-card-lighter dark:bg-card-lighter p-4 rounded-md border border-border">
+                  <h3 className="text-sm font-medium text-foreground/90 dark:text-foreground/90 mb-2">
                     Role Permissions
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex items-start gap-2">
                       <Shield className="w-4 h-4 text-purple-600 mt-0.5" />
                       <div>
-                        <p className="text-sm font-medium">Owner</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-sm font-medium text-foreground/90 dark:text-foreground/90">
+                          Owner
+                        </p>
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                           Full access to all settings and billing
                         </p>
                       </div>
@@ -967,8 +946,10 @@ export default function SettingsPage() {
                     <div className="flex items-start gap-2">
                       <Shield className="w-4 h-4 text-blue-600 mt-0.5" />
                       <div>
-                        <p className="text-sm font-medium">Admin</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-sm font-medium text-foreground/90 dark:text-foreground/90">
+                          Admin
+                        </p>
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                           Can manage team members and content
                         </p>
                       </div>
@@ -976,17 +957,21 @@ export default function SettingsPage() {
                     <div className="flex items-start gap-2">
                       <Shield className="w-4 h-4 text-green-600 mt-0.5" />
                       <div>
-                        <p className="text-sm font-medium">Editor</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-sm font-medium text-foreground/90 dark:text-foreground/90">
+                          Editor
+                        </p>
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                           Can create and edit content
                         </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
-                      <Shield className="w-4 h-4 text-gray-600 mt-0.5" />
+                      <Shield className="w-4 h-4 text-muted-foreground mt-0.5" />
                       <div>
-                        <p className="text-sm font-medium">Viewer</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-sm font-medium text-foreground/90 dark:text-foreground/90">
+                          Viewer
+                        </p>
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                           Can view content but not edit
                         </p>
                       </div>
@@ -995,14 +980,14 @@ export default function SettingsPage() {
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-4">
+                  <h3 className="text-sm font-medium text-foreground/90 dark:text-foreground/90 mb-4">
                     Team Members
                   </h3>
                   <div className="space-y-4">
                     {teamMembers.map((member) => (
                       <div
                         key={member.id}
-                        className="flex items-center justify-between p-4 border border-gray-200 rounded-md"
+                        className="flex items-center justify-between p-4 border border-border rounded-md bg-card-lighter dark:bg-card-lighter"
                       >
                         <div className="flex items-center gap-3">
                           <Avatar>
@@ -1012,8 +997,10 @@ export default function SettingsPage() {
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="font-medium">{member.name}</p>
-                            <p className="text-sm text-gray-500">
+                            <p className="font-medium text-foreground/90 dark:text-foreground/90">
+                              {member.name}
+                            </p>
+                            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                               {member.email}
                             </p>
                           </div>
@@ -1095,7 +1082,7 @@ export default function SettingsPage() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-8 w-8 p-0 text-red-500 hover:text-red-600"
+                                className="h-8 w-8 p-0 text-destructive hover:text-destructive/90"
                                 onClick={() => handleRemoveMember(member.id)}
                               >
                                 <Trash className="h-4 w-4" />
