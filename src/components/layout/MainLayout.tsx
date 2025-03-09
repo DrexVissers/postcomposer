@@ -19,6 +19,7 @@ import { mockUser } from "@/lib/mock-data";
 import MobileNavBar from "./MobileNavBar";
 import NotificationCenter from "@/components/features/notifications/NotificationCenter";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { UserButton, useUser } from "@clerk/nextjs";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -28,6 +29,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { user, isLoaded } = useUser();
 
   // Check for mobile screen size
   useEffect(() => {
@@ -48,6 +50,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   }, []);
 
   // Check if user has permission to approve posts
+  // TODO: Replace with actual role check from Clerk user metadata
   const canApprove = mockUser.role === "owner" || mockUser.role === "admin";
 
   // Prevent body scroll when mobile menu is open
@@ -155,19 +158,37 @@ export default function MainLayout({ children }: MainLayoutProps) {
           </nav>
           <div className="px-6 py-4 border-t border-border">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary-foreground">
-                  {mockUser.name.charAt(0)}
+              {isLoaded && user ? (
+                <>
+                  <UserButton
+                    afterSignOutUrl="/"
+                    appearance={{
+                      elements: {
+                        userButtonAvatarBox: "w-8 h-8",
+                      },
+                    }}
+                  />
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-foreground/90 dark:text-foreground/90">
+                      {user.fullName ||
+                        user.username ||
+                        user.primaryEmailAddress?.emailAddress}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {/* TODO: Replace with actual subscription plan from user metadata */}
+                      {mockUser.subscription.plan} plan
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-center">
+                  <div className="w-8 h-8 rounded-full bg-primary/20 animate-pulse"></div>
+                  <div className="ml-3">
+                    <div className="h-4 w-24 bg-primary/20 rounded animate-pulse"></div>
+                    <div className="h-3 w-16 bg-primary/10 rounded mt-1 animate-pulse"></div>
+                  </div>
                 </div>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-foreground/90 dark:text-foreground/90">
-                  {mockUser.name}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {mockUser.subscription.plan} plan
-                </p>
-              </div>
+              )}
             </div>
           </div>
         </div>

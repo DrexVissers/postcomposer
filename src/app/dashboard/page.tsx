@@ -29,7 +29,6 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useState, useEffect } from "react";
-import NotificationDemo from "@/components/features/notifications/NotificationDemo";
 
 export default function DashboardPage() {
   // Client component with state for filters
@@ -149,11 +148,6 @@ export default function DashboardPage() {
               </Button>
             </Link>
           </div>
-        </div>
-
-        {/* Notification Demo */}
-        <div className="mb-6">
-          <NotificationDemo />
         </div>
 
         {/* Filter Section */}

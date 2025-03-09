@@ -1,0 +1,27 @@
+---
+description: This designed to help the AI to learn from its mistakes in coding.
+globs: 
+---
+
+# Lessons
+
+## User Specified Lessons
+- Record any errors encountered along with the corresponding fixes.
+- Include details that can help diagnose and resolve recurring issues.
+- This file serves as a repository of bug fixes and lessons learned from mistakes.
+
+## Cursor Learned
+- Document any error, bug, or unexpected behavior the AI encounters.
+- After encountering the same error three consecutive times:
+  - **Action:** Check this file for a recorded solution.
+  - **If a solution is found:** Apply the solution and log an update.
+  - **If no solution is found:** Respond with a specific request for additional documentation or guidance.
+- Continue to update this section with new fixes and insights as issues are resolved.
+
+## Update History
+- **Update:** YYYY-MM-DD - Initial version of lessons file.
+
+ **Action Required:**  
+ Whenever I add the line "CHECK UPDATES" to this file, please review the current content.  
+ - If there are new lessons or updates that need to be recorded, add them under the relevant section with a timestamp and reply "Update added: [brief description]."  
+ - If no updates are necessary, respond with "No new updates needed."
