@@ -6,6 +6,7 @@ import { TemplateProvider } from "@/context/TemplateContext";
 import { SystemNotificationProvider } from "@/context/SystemNotificationContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { ClerkProvider } from "@clerk/nextjs";
+import { clerkAppearance } from "@/lib/clerk-theme";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,11 +30,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en" className="dark" suppressHydrationWarning>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <ClerkProvider appearance={clerkAppearance}>
           <ThemeProvider defaultTheme="dark" enableSystem={false}>
             <NotificationProvider>
               <SystemNotificationProvider>
@@ -41,8 +42,8 @@ export default function RootLayout({
               </SystemNotificationProvider>
             </NotificationProvider>
           </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
