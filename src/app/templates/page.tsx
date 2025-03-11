@@ -22,7 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { useNotification } from "@/context/NotificationContext";
+import { toast } from "sonner";
 import TemplateEditor from "@/components/features/templates/TemplateEditor";
 import {
   Pencil,
@@ -30,20 +30,25 @@ import {
   MoreVertical,
   Trash2,
   Copy,
-  Twitter,
+  Twitter as BlueskyIcon,
   Linkedin,
   Instagram,
   Globe,
+  Loader2,
+  RefreshCw,
 } from "lucide-react";
 
 export default function TemplatesPage() {
   const {
     templates,
     templateCategories,
+    loading,
     addTemplate,
     updateTemplate,
     deleteTemplate,
     getTemplatesByCategory,
+    refreshTemplates,
+    refreshCategories,
   } = useTemplates();
 
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -55,7 +60,7 @@ export default function TemplatesPage() {
   const [templateToDelete, setTemplateToDelete] = useState<Template | null>(
     null
   );
-  const { addNotification } = useNotification();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Get templates to display based on active category
   const getDisplayTemplates = () => {
@@ -63,7 +68,7 @@ export default function TemplatesPage() {
       return templates;
     } else if (
       activeCategory === "linkedin" ||
-      activeCategory === "twitter" ||
+      activeCategory === "bluesky" ||
       activeCategory === "threads" ||
       activeCategory === "mastodon"
     ) {
@@ -86,30 +91,36 @@ export default function TemplatesPage() {
   };
 
   // Handle template save
-  const handleSaveTemplate = (templateData: Omit<Template, "id">) => {
-    if (currentTemplate) {
-      // Update existing template
-      updateTemplate({
-        ...templateData,
-        id: currentTemplate.id,
-      });
-      addNotification({
-        type: "success",
-        title: "Template Updated",
-        message: `"${templateData.name}" has been updated successfully.`,
-        duration: 3000,
-      });
-    } else {
-      // Add new template
-      addTemplate(templateData);
-      addNotification({
-        type: "success",
-        title: "Template Created",
-        message: `"${templateData.name}" has been created successfully.`,
-        duration: 3000,
+  const handleSaveTemplate = async (templateData: Omit<Template, "id">) => {
+    try {
+      if (currentTemplate) {
+        // Update existing template
+        await updateTemplate({
+          ...templateData,
+          id: currentTemplate.id,
+        });
+        toast.success("Template Updated", {
+          description: `"${templateData.name}" has been updated successfully.`,
+          duration: 3000,
+        });
+      } else {
+        // Add new template
+        await addTemplate(templateData);
+        toast.success("Template Created", {
+          description: `"${templateData.name}" has been created successfully.`,
+          duration: 3000,
+        });
+      }
+      setIsEditorOpen(false);
+    } catch (error) {
+      toast.error("Error", {
+        description:
+          error instanceof Error
+            ? error.message
+            : "An error occurred. Please try again.",
+        duration: 5000,
       });
     }
-    setIsEditorOpen(false);
   };
 
   // Confirm template deletion
@@ -119,46 +130,82 @@ export default function TemplatesPage() {
   };
 
   // Handle template deletion
-  const handleDeleteTemplate = () => {
+  const handleDeleteTemplate = async () => {
     if (templateToDelete) {
-      deleteTemplate(templateToDelete.id);
-      addNotification({
-        type: "success",
-        title: "Template Deleted",
-        message: `"${templateToDelete.name}" has been deleted.`,
-        duration: 3000,
-      });
-      setIsDeleteDialogOpen(false);
-      setTemplateToDelete(null);
+      try {
+        await deleteTemplate(templateToDelete.id);
+        toast.success("Template Deleted", {
+          description: `"${templateToDelete.name}" has been deleted.`,
+          duration: 3000,
+        });
+        setIsDeleteDialogOpen(false);
+        setTemplateToDelete(null);
+      } catch (error) {
+        toast.error("Error", {
+          description:
+            error instanceof Error
+              ? error.message
+              : "Failed to delete template. Please try again.",
+          duration: 5000,
+        });
+      }
     }
   };
 
   // Duplicate a template
-  const handleDuplicateTemplate = (template: Template) => {
-    // Create a new template without the id property
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, ...templateWithoutId } = template;
-    addTemplate({
-      ...templateWithoutId,
-      name: `${template.name} (Copy)`,
-      isCustom: true,
-    });
-    addNotification({
-      type: "success",
-      title: "Template Duplicated",
-      message: `A copy of "${template.name}" has been created.`,
-      duration: 3000,
-    });
+  const handleDuplicateTemplate = async (template: Template) => {
+    try {
+      // Create a new template without the id property
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, ...templateWithoutId } = template;
+      await addTemplate({
+        ...templateWithoutId,
+        name: `${template.name} (Copy)`,
+        isCustom: true,
+      });
+      toast.success("Template Duplicated", {
+        description: `A copy of "${template.name}" has been created.`,
+        duration: 3000,
+      });
+    } catch (error) {
+      toast.error("Error", {
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to duplicate template. Please try again.",
+        duration: 5000,
+      });
+    }
+  };
+
+  // Handle refresh
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await Promise.all([refreshTemplates(), refreshCategories()]);
+      toast.success("Refreshed", {
+        description: "Templates and categories have been refreshed.",
+        duration: 3000,
+      });
+    } catch (error) {
+      toast.error("Error", {
+        description: "Failed to refresh data. Please try again.",
+        duration: 5000,
+      });
+      console.error(error);
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   // Render platform icon
   const renderPlatformIcon = (
-    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+    platform: "linkedin" | "bluesky" | "threads" | "mastodon"
   ) => {
     if (platform === "linkedin") {
       return <Linkedin className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
-    } else if (platform === "twitter") {
-      return <Twitter className="h-4 w-4 text-sky-500 dark:text-sky-400" />;
+    } else if (platform === "bluesky") {
+      return <BlueskyIcon className="h-4 w-4 text-sky-500 dark:text-sky-400" />;
     } else if (platform === "threads") {
       return (
         <Instagram className="h-4 w-4 text-purple-600 dark:text-purple-400" />
@@ -181,13 +228,28 @@ export default function TemplatesPage() {
           <h1 className="text-2xl font-bold text-foreground/90 dark:text-foreground/90">
             Template Management
           </h1>
-          <Button
-            onClick={handleAddTemplate}
-            className="flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Create Template</span>
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="flex items-center gap-2"
+            >
+              {isRefreshing ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4" />
+              )}
+              <span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
+            </Button>
+            <Button
+              onClick={handleAddTemplate}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Create Template</span>
+            </Button>
+          </div>
         </div>
 
         <Tabs
@@ -210,10 +272,10 @@ export default function TemplatesPage() {
                 LinkedIn
               </TabsTrigger>
               <TabsTrigger
-                value="twitter"
+                value="bluesky"
                 className="data-[state=active]:bg-background data-[state=active]:text-primary"
               >
-                Twitter
+                Bluesky
               </TabsTrigger>
               <TabsTrigger
                 value="threads"
@@ -244,103 +306,123 @@ export default function TemplatesPage() {
             key={`template-${activeCategory}`}
             className="mt-0"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {getDisplayTemplates().map((template) => (
-                <Card
-                  key={template.id}
-                  className="overflow-hidden border-border bg-card dark:bg-card"
-                >
-                  <CardHeader className="pb-3">
-                    <div className="flex justify-between items-start">
-                      <div className="flex items-center gap-2">
-                        {renderPlatformIcon(
-                          template.platform as
-                            | "linkedin"
-                            | "twitter"
-                            | "threads"
-                            | "mastodon"
-                        )}
-                        <CardTitle className="text-lg">
-                          {template.name}
-                        </CardTitle>
+            {loading ? (
+              <div className="flex justify-center items-center h-64">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <span className="ml-2 text-lg">Loading templates...</span>
+              </div>
+            ) : getDisplayTemplates().length === 0 ? (
+              <div className="text-center py-12 border border-dashed rounded-lg">
+                <p className="text-muted-foreground mb-4">No templates found</p>
+                <Button onClick={handleAddTemplate} variant="outline">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create your first template
+                </Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {getDisplayTemplates().map((template) => (
+                  <Card
+                    key={template.id}
+                    className="overflow-hidden border border-border hover:shadow-md transition-shadow"
+                  >
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between items-start">
+                        <div className="flex items-center gap-2">
+                          {renderPlatformIcon(
+                            template.platform as
+                              | "linkedin"
+                              | "bluesky"
+                              | "threads"
+                              | "mastodon"
+                          )}
+                          <CardTitle className="text-lg">
+                            {template.name}
+                          </CardTitle>
+                        </div>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              className="h-8 w-8 p-0"
+                              aria-label="More options"
+                            >
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => handleEditTemplate(template)}
+                            >
+                              <Pencil className="h-4 w-4 mr-2" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleDuplicateTemplate(template)}
+                            >
+                              <Copy className="h-4 w-4 mr-2" />
+                              Duplicate
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => confirmDeleteTemplate(template)}
+                              className="text-destructive focus:text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                          >
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => handleEditTemplate(template)}
-                          >
-                            <Pencil className="mr-2 h-4 w-4" />
-                            <span>Edit</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleDuplicateTemplate(template)}
-                          >
-                            <Copy className="mr-2 h-4 w-4" />
-                            <span>Duplicate</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => confirmDeleteTemplate(template)}
-                            className="text-destructive hover:text-destructive/90"
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            <span>Delete</span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                    <CardDescription>
                       {template.category && (
-                        <Badge variant="outline" className="mt-1">
+                        <Badge
+                          variant="outline"
+                          className="mt-1 text-xs font-normal"
+                        >
                           {getCategoryName(template.category)}
                         </Badge>
                       )}
-                      {template.isCustom && (
-                        <Badge className="ml-2 mt-1 bg-primary/10 text-primary hover:bg-primary/20">
-                          Custom
-                        </Badge>
-                      )}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="text-sm">
-                    <div className="border border-border rounded-md p-3 bg-background dark:bg-background max-h-32 overflow-y-auto">
-                      <p className="whitespace-pre-wrap text-foreground/80 dark:text-foreground/80">
-                        {template.structure}
-                      </p>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="pt-1 flex justify-end">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEditTemplate(template)}
-                      className="text-primary hover:text-primary/80 hover:bg-primary/10"
-                    >
-                      <Pencil className="mr-2 h-4 w-4" />
-                      <span>Edit Template</span>
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-
-            {getDisplayTemplates().length === 0 && (
-              <div className="text-center py-12 border border-dashed border-border rounded-lg">
-                <p className="text-muted-foreground mb-4">
-                  No templates found in this category
-                </p>
-                <Button onClick={handleAddTemplate} variant="outline">
-                  <Plus className="mr-2 h-4 w-4" />
-                  <span>Create Template</span>
-                </Button>
+                      <CardDescription className="mt-2 line-clamp-2">
+                        {template.description || "No description provided"}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pb-2">
+                      <div className="bg-muted/50 rounded p-2 text-sm max-h-24 overflow-hidden">
+                        <p className="line-clamp-3 text-muted-foreground">
+                          {template.content ||
+                            template.structure ||
+                            "No content available"}
+                        </p>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="pt-2 flex justify-between">
+                      <div className="flex gap-1">
+                        {template.tags &&
+                          template.tags.slice(0, 3).map((tag, i) => (
+                            <Badge
+                              key={i}
+                              variant="secondary"
+                              className="text-xs"
+                            >
+                              {tag}
+                            </Badge>
+                          ))}
+                        {template.tags && template.tags.length > 3 && (
+                          <Badge variant="secondary" className="text-xs">
+                            +{template.tags.length - 3}
+                          </Badge>
+                        )}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditTemplate(template)}
+                      >
+                        <Pencil className="h-3.5 w-3.5 mr-1" />
+                        Edit
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
               </div>
             )}
           </TabsContent>
@@ -349,16 +431,15 @@ export default function TemplatesPage() {
 
       {/* Template Editor Dialog */}
       <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-        <DialogContent className="sm:max-w-4xl">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogTitle>
-            {currentTemplate ? "Edit Template" : "Create New Template"}
+            {currentTemplate ? "Edit Template" : "Create Template"}
           </DialogTitle>
           <TemplateEditor
             template={currentTemplate}
-            categories={templateCategories}
             onSave={handleSaveTemplate}
             onCancel={() => setIsEditorOpen(false)}
-            isEditing={!!currentTemplate}
+            categories={templateCategories}
           />
         </DialogContent>
       </Dialog>
@@ -367,11 +448,11 @@ export default function TemplatesPage() {
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogTitle>Confirm Deletion</DialogTitle>
-          <p className="py-4 text-foreground/80 dark:text-foreground/80">
+          <p className="py-4">
             Are you sure you want to delete the template &quot;
             {templateToDelete?.name}&quot;? This action cannot be undone.
           </p>
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2 mt-4">
             <Button
               variant="outline"
               onClick={() => setIsDeleteDialogOpen(false)}

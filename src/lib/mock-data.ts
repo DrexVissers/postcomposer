@@ -75,6 +75,8 @@ export interface Template {
   name: string;
   platform: "linkedin" | "bluesky" | "threads" | "mastodon";
   structure: string;
+  content?: string;
+  description?: string;
   category?: string; // Category of the template
   isCustom?: boolean; // Whether this is a custom user-created template
   tags?: string[];

@@ -28,6 +28,7 @@ model User {
   updatedAt         DateTime            @updatedAt
   posts             Post[]
   socialAccounts    SocialAccount[]
+  templates         Template[]
 }
 
 model Post {
@@ -72,4 +73,28 @@ model PostPlatform {
   updatedAt     DateTime  @updatedAt
 
   @@unique([postId, platform])
+}
+
+model Template {
+  id            String    @id @default(uuid())
+  name          String
+  description   String?
+  content       String
+  platform      String    // "linkedin", "bluesky", "threads", "mastodon"
+  isDefault     Boolean   @default(false)
+  isCustom      Boolean   @default(true)
+  category      String?   // Category ID
+  tags          String[]  // Array of tags
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  userId        String?   // User who created the template (null for system templates)
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model TemplateCategory {
+  id            String    @id @default(uuid())
+  name          String
+  description   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }

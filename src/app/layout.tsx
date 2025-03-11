@@ -7,6 +7,7 @@ import { SystemNotificationProvider } from "@/context/SystemNotificationContext"
 import { ThemeProvider } from "@/context/ThemeContext";
 import { ClerkProvider } from "@clerk/nextjs";
 import { clerkAppearance } from "@/lib/clerk-theme";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +39,10 @@ export default function RootLayout({
           <ThemeProvider defaultTheme="dark" enableSystem={false}>
             <NotificationProvider>
               <SystemNotificationProvider>
-                <TemplateProvider>{children}</TemplateProvider>
+                <TemplateProvider>
+                  {children}
+                  <Toaster richColors closeButton position="top-right" />
+                </TemplateProvider>
               </SystemNotificationProvider>
             </NotificationProvider>
           </ThemeProvider>
