@@ -74,8 +74,7 @@ export interface Template {
   id: string;
   name: string;
   platform: "linkedin" | "bluesky" | "threads" | "mastodon";
-  structure: string;
-  content?: string;
+  content: string;
   description?: string;
   category?: string; // Category of the template
   isCustom?: boolean; // Whether this is a custom user-created template
@@ -694,7 +693,7 @@ export const mockTemplates: Template[] = [
     id: "template1",
     name: "Professional Announcement",
     platform: "linkedin",
-    structure:
+    content:
       "I'm excited to share that [MAIN_POINT]. This represents [SIGNIFICANCE]. #[HASHTAG1] #[HASHTAG2]",
     category: "cat-announcement",
   },
@@ -702,14 +701,14 @@ export const mockTemplates: Template[] = [
     id: "template2",
     name: "Quick Update",
     platform: "bluesky",
-    structure: "Just [ACTION]! [EMOJI] [BRIEF_DETAIL] #[HASHTAG]",
+    content: "Just [ACTION]! [EMOJI] [BRIEF_DETAIL] #[HASHTAG]",
     category: "cat-announcement",
   },
   {
     id: "template3",
     name: "List Format",
     platform: "linkedin",
-    structure:
+    content:
       "[TOPIC] tips:\n\n1. [POINT1]\n2. [POINT2]\n3. [POINT3]\n4. [POINT4]\n5. [POINT5]\n\n#[HASHTAG1] #[HASHTAG2]",
     category: "cat-list",
   },
@@ -717,7 +716,7 @@ export const mockTemplates: Template[] = [
     id: "template4",
     name: "Question Post",
     platform: "linkedin",
-    structure:
+    content:
       "What's your take on [TOPIC]? [QUESTION]\n\nShare your thoughts in the comments below! #[HASHTAG1] #[HASHTAG2]",
     category: "cat-engagement",
   },
@@ -725,14 +724,14 @@ export const mockTemplates: Template[] = [
     id: "template5",
     name: "Poll Introduction",
     platform: "bluesky",
-    structure: "I'm curious: [QUESTION]\n\nVote in the poll below! [EMOJI]",
+    content: "I'm curious: [QUESTION]\n\nVote in the poll below! [EMOJI]",
     category: "cat-engagement",
   },
   {
     id: "template6",
     name: "Threads Story",
     platform: "threads",
-    structure:
+    content:
       "[OPENING_HOOK]\n\nHere's what happened: [STORY_DETAIL]\n\nThe result? [OUTCOME]\n\n#[HASHTAG1] #[HASHTAG2]",
     category: "cat-engagement",
   },
@@ -740,7 +739,7 @@ export const mockTemplates: Template[] = [
     id: "template7",
     name: "Threads Tips",
     platform: "threads",
-    structure:
+    content:
       "[NUMBER] quick tips for [TOPIC]:\n\n✓ [TIP1]\n✓ [TIP2]\n✓ [TIP3]\n\nSave this for later! #[HASHTAG]",
     category: "cat-list",
   },
@@ -748,7 +747,7 @@ export const mockTemplates: Template[] = [
     id: "template8",
     name: "Mastodon Introduction",
     platform: "mastodon",
-    structure:
+    content:
       "Hello Mastodon! [INTRODUCTION]\n\nI'll be sharing [CONTENT_TYPE] about [TOPIC].\n\n#[HASHTAG1] #[HASHTAG2]",
     category: "cat-announcement",
   },
@@ -756,7 +755,7 @@ export const mockTemplates: Template[] = [
     id: "template9",
     name: "Mastodon Discussion",
     platform: "mastodon",
-    structure:
+    content:
       "Let's discuss: [TOPIC]\n\n[QUESTION]\n\nWhat are your thoughts? Boost to get more perspectives!\n\n#[HASHTAG1] #[HASHTAG2]",
     category: "cat-engagement",
   },

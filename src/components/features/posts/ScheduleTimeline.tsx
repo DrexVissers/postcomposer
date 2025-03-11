@@ -8,7 +8,7 @@ interface ScheduledPost {
   id: string;
   content: string;
   scheduledDate: Date;
-  platform: "linkedin" | "twitter" | "threads" | "mastodon";
+  platform: "linkedin" | "bluesky" | "threads" | "mastodon";
   category?: string; // Category ID
   tags?: string[]; // Array of tag IDs
 }
@@ -82,11 +82,11 @@ export default function ScheduleTimeline({
             <span className="text-xs font-medium">LinkedIn</span>
           </div>
         );
-      case "twitter":
+      case "bluesky":
         return (
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded-full bg-sky-500"></span>
-            <span className="text-xs font-medium">Twitter</span>
+            <span className="text-xs font-medium">Bluesky</span>
           </div>
         );
       case "threads":

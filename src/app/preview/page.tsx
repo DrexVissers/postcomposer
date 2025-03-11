@@ -9,7 +9,7 @@ export default function PreviewPage() {
   const [selectedPost, setSelectedPost] = useState(mockPosts[0]);
   const [customContent, setCustomContent] = useState({
     linkedin: selectedPost.platforms.linkedin?.content || "",
-    twitter: selectedPost.platforms.twitter?.content || "",
+    bluesky: selectedPost.platforms.bluesky?.content || "",
   });
 
   const handlePostChange = (postId: string) => {
@@ -18,13 +18,13 @@ export default function PreviewPage() {
       setSelectedPost(post);
       setCustomContent({
         linkedin: post.platforms.linkedin?.content || "",
-        twitter: post.platforms.twitter?.content || "",
+        bluesky: post.platforms.bluesky?.content || "",
       });
     }
   };
 
   const handleContentChange = (
-    platform: "linkedin" | "twitter",
+    platform: "linkedin" | "bluesky",
     content: string
   ) => {
     setCustomContent({
@@ -80,13 +80,13 @@ export default function PreviewPage() {
 
               <div>
                 <label className="block text-sm font-medium text-foreground/80 dark:text-foreground/80 mb-2">
-                  Twitter Content
+                  Bluesky Content
                 </label>
                 <textarea
                   className="w-full h-32 p-3 bg-background dark:bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
-                  value={customContent.twitter}
+                  value={customContent.bluesky}
                   onChange={(e) =>
-                    handleContentChange("twitter", e.target.value)
+                    handleContentChange("bluesky", e.target.value)
                   }
                 ></textarea>
               </div>

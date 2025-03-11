@@ -385,14 +385,10 @@ export default function TemplatesPage() {
                         {template.description || "No description provided"}
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="pb-2">
-                      <div className="bg-muted/50 rounded p-2 text-sm max-h-24 overflow-hidden">
-                        <p className="line-clamp-3 text-muted-foreground">
-                          {template.content ||
-                            template.structure ||
-                            "No content available"}
-                        </p>
-                      </div>
+                    <CardContent className="pt-2">
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {template.content || "No content"}
+                      </p>
                     </CardContent>
                     <CardFooter className="pt-2 flex justify-between">
                       <div className="flex gap-1">
@@ -431,7 +427,7 @@ export default function TemplatesPage() {
 
       {/* Template Editor Dialog */}
       <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-background text-foreground">
           <DialogTitle>
             {currentTemplate ? "Edit Template" : "Create Template"}
           </DialogTitle>
@@ -446,7 +442,7 @@ export default function TemplatesPage() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
+        <DialogContent className="bg-background text-foreground">
           <DialogTitle>Confirm Deletion</DialogTitle>
           <p className="py-4">
             Are you sure you want to delete the template &quot;

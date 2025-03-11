@@ -9,7 +9,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
-import { Linkedin, Twitter, Instagram, Globe } from "lucide-react";
+import { Linkedin, Instagram, Globe } from "lucide-react";
+import { BlueskyIcon } from "@/components/icons/BlueskyIcon";
 import { useState } from "react";
 
 interface ScheduleFormProps {
@@ -21,7 +22,7 @@ interface ScheduleFormProps {
 interface ScheduleFormData {
   date?: Date;
   time: string;
-  platform: "linkedin" | "twitter" | "threads" | "mastodon";
+  platform: "linkedin" | "twitter" | "threads" | "mastodon" | "bluesky";
   repeat: string;
 }
 
@@ -35,7 +36,7 @@ export default function ScheduleForm({
   );
   const [time, setTime] = useState(initialData?.time || "");
   const [platform, setPlatform] = useState<
-    "linkedin" | "twitter" | "threads" | "mastodon"
+    "linkedin" | "twitter" | "threads" | "mastodon" | "bluesky"
   >(initialData?.platform || "linkedin");
   const [repeat, setRepeat] = useState(initialData?.repeat || "none");
   const [isRecurring, setIsRecurring] = useState(
@@ -63,7 +64,12 @@ export default function ScheduleForm({
             value={platform}
             onValueChange={(value) =>
               setPlatform(
-                value as "linkedin" | "twitter" | "threads" | "mastodon"
+                value as
+                  | "linkedin"
+                  | "twitter"
+                  | "threads"
+                  | "mastodon"
+                  | "bluesky"
               )
             }
           >
@@ -77,10 +83,10 @@ export default function ScheduleForm({
                   LinkedIn
                 </div>
               </SelectItem>
-              <SelectItem value="twitter" className="flex items-center">
+              <SelectItem value="bluesky" className="flex items-center">
                 <div className="flex items-center">
-                  <Twitter className="h-4 w-4 mr-2 text-sky-500" />
-                  Twitter
+                  <BlueskyIcon className="h-4 w-4 mr-2 text-sky-500" />
+                  Bluesky
                 </div>
               </SelectItem>
               <SelectItem value="threads" className="flex items-center">

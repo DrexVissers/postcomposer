@@ -1,23 +1,24 @@
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { Twitter, Linkedin, Instagram, Globe } from "lucide-react";
+import { Linkedin, Instagram, Globe } from "lucide-react";
+import { BlueskyIcon } from "@/components/icons/BlueskyIcon";
 import { ImageUpload } from "@/components/ui/image-upload";
 
 interface PlatformPreviewTabsProps {
-  twitterContent: string;
+  blueskyContent: string;
   linkedinContent: string;
   threadsContent: string;
   mastodonContent: string;
-  onTwitterContentChange?: (content: string) => void;
+  onBlueskyContentChange?: (content: string) => void;
   onLinkedinContentChange?: (content: string) => void;
   onThreadsContentChange?: (content: string) => void;
   onMastodonContentChange?: (content: string) => void;
-  onTwitterImageChange?: (file: File | null) => void;
+  onBlueskyImageChange?: (file: File | null) => void;
   onLinkedinImageChange?: (file: File | null) => void;
   onThreadsImageChange?: (file: File | null) => void;
   onMastodonImageChange?: (file: File | null) => void;
-  twitterImage?: File | string | null;
+  blueskyImage?: File | string | null;
   linkedinImage?: File | string | null;
   threadsImage?: File | string | null;
   mastodonImage?: File | string | null;
@@ -26,32 +27,32 @@ interface PlatformPreviewTabsProps {
 }
 
 export function PlatformPreviewTabs({
-  twitterContent,
+  blueskyContent,
   linkedinContent,
   threadsContent,
   mastodonContent,
-  onTwitterContentChange,
+  onBlueskyContentChange,
   onLinkedinContentChange,
   onThreadsContentChange,
   onMastodonContentChange,
-  onTwitterImageChange,
+  onBlueskyImageChange,
   onLinkedinImageChange,
   onThreadsImageChange,
   onMastodonImageChange,
-  twitterImage,
+  blueskyImage,
   linkedinImage,
   threadsImage,
   mastodonImage,
   readOnly = false,
   className,
 }: PlatformPreviewTabsProps) {
-  const [activeTab, setActiveTab] = useState<string>("twitter");
+  const [activeTab, setActiveTab] = useState<string>("bluesky");
 
-  const handleTwitterContentChange = (
+  const handleBlueskyContentChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
-    if (onTwitterContentChange) {
-      onTwitterContentChange(e.target.value);
+    if (onBlueskyContentChange) {
+      onBlueskyContentChange(e.target.value);
     }
   };
 
@@ -81,15 +82,15 @@ export function PlatformPreviewTabs({
 
   return (
     <Tabs
-      defaultValue="twitter"
+      defaultValue="bluesky"
       value={activeTab}
       onValueChange={setActiveTab}
       className={cn("w-full", className)}
     >
       <TabsList className="grid w-full grid-cols-4 mb-6">
-        <TabsTrigger value="twitter" className="flex items-center gap-2">
-          <Twitter className="w-4 h-4" />
-          <span>Twitter</span>
+        <TabsTrigger value="bluesky" className="flex items-center gap-2">
+          <BlueskyIcon className="w-4 h-4" />
+          <span>Bluesky</span>
         </TabsTrigger>
         <TabsTrigger value="linkedin" className="flex items-center gap-2">
           <Linkedin className="w-4 h-4" />
@@ -105,7 +106,7 @@ export function PlatformPreviewTabs({
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="twitter" key="platform-twitter" className="space-y-4">
+      <TabsContent value="bluesky" key="platform-bluesky" className="space-y-4">
         <div className="bg-background dark:bg-background rounded-lg border border-border p-4 shadow-sm">
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 rounded-full bg-muted/50 dark:bg-muted/30 flex-shrink-0"></div>
@@ -113,37 +114,37 @@ export function PlatformPreviewTabs({
               <div className="flex items-center gap-1">
                 <span className="font-bold text-sm">Your Name</span>
                 <span className="text-muted-foreground text-sm">
-                  @yourhandle
+                  @yourhandle.bsky.social
                 </span>
               </div>
 
               {readOnly ? (
                 <div className="mt-2 text-sm whitespace-pre-wrap">
-                  {twitterContent}
+                  {blueskyContent}
                 </div>
               ) : (
                 <textarea
-                  value={twitterContent}
-                  onChange={handleTwitterContentChange}
+                  value={blueskyContent}
+                  onChange={handleBlueskyContentChange}
                   className="w-full mt-2 bg-transparent border-none focus:ring-0 resize-none text-sm min-h-[100px]"
-                  placeholder="What's happening?"
-                  aria-label="Twitter post content"
+                  placeholder="What's on your mind?"
+                  aria-label="Bluesky post content"
                 />
               )}
 
-              {(twitterImage || onTwitterImageChange) && (
+              {(blueskyImage || onBlueskyImageChange) && (
                 <div className="mt-3">
                   <ImageUpload
-                    value={twitterImage}
-                    onChange={onTwitterImageChange || (() => {})}
-                    platformPreview="twitter"
+                    value={blueskyImage}
+                    onChange={onBlueskyImageChange || (() => {})}
+                    platformPreview="bluesky"
                   />
                 </div>
               )}
 
               <div className="flex items-center justify-between mt-4 text-primary">
                 <div className="flex items-center gap-4">
-                  <span className="text-xs">280 characters</span>
+                  <span className="text-xs">300 characters</span>
                 </div>
               </div>
             </div>

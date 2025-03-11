@@ -20,6 +20,7 @@ import MobileNavBar from "./MobileNavBar";
 import NotificationCenter from "@/components/features/notifications/NotificationCenter";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { UserButton, useUser } from "@clerk/nextjs";
+import UserInitializer from "@/components/auth/UserInitializer";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -76,6 +77,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <div className="flex h-screen bg-background">
+      <UserInitializer />
       {/* Desktop Sidebar */}
       <aside
         className="bg-card/90 dark:bg-card/50 shadow-md fixed inset-y-0 left-0 z-30 w-64 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 hidden lg:block"

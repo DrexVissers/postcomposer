@@ -84,7 +84,7 @@ export default function DashboardPage() {
       if (selectedPlatform === "linkedin" && !post.platforms.linkedin) {
         return false;
       }
-      if (selectedPlatform === "twitter" && !post.platforms.twitter) {
+      if (selectedPlatform === "bluesky" && !post.platforms.bluesky) {
         return false;
       }
       if (selectedPlatform === "threads" && !post.platforms.threads) {
@@ -132,10 +132,10 @@ export default function DashboardPage() {
               <Link href="/dashboard/approvals" className="w-full sm:w-auto">
                 <Button
                   variant="outline"
-                  className="flex items-center gap-2 w-full sm:w-auto"
+                  className="flex items-center gap-2 w-full sm:w-auto border-border bg-background hover:bg-muted/50"
                 >
                   <Clock className="w-4 h-4 text-amber-500" />
-                  <span>Pending Approvals</span>
+                  <span className="text-foreground">Pending Approvals</span>
                   <Badge className="ml-1 bg-amber-100 text-amber-800 hover:bg-amber-100">
                     {pendingApprovalCount}
                   </Badge>
@@ -143,7 +143,7 @@ export default function DashboardPage() {
               </Link>
             )}
             <Link href="/create" className="w-full sm:w-auto">
-              <Button className="w-full sm:w-auto bg-card hover:bg-card/80 text-muted-foreground hover:text-foreground/80">
+              <Button className="w-full sm:w-auto bg-background hover:bg-muted/50 text-foreground border border-border">
                 Create New Post
               </Button>
             </Link>
@@ -262,7 +262,7 @@ export default function DashboardPage() {
                       ? null
                       : (value as
                           | "linkedin"
-                          | "twitter"
+                          | "bluesky"
                           | "threads"
                           | "mastodon")
                   )
@@ -274,7 +274,7 @@ export default function DashboardPage() {
                 <SelectContent>
                   <SelectItem value="all">All Platforms</SelectItem>
                   <SelectItem value="linkedin">LinkedIn</SelectItem>
-                  <SelectItem value="twitter">Twitter</SelectItem>
+                  <SelectItem value="bluesky">Bluesky</SelectItem>
                   <SelectItem value="threads">Threads</SelectItem>
                   <SelectItem value="mastodon">Mastodon</SelectItem>
                 </SelectContent>
@@ -362,86 +362,82 @@ export default function DashboardPage() {
                     <div className="col-span-2 self-center">
                       <div className="flex flex-col gap-1 mt-2">
                         {post.platforms.linkedin && (
-                          <div className="flex items-center text-xs">
-                            <span className="w-3 h-3 rounded-full bg-blue-600 mr-1.5"></span>
+                          <div className="flex items-center gap-2">
                             <span className="font-medium">LinkedIn:</span>
-                            <span
-                              className={`ml-1 ${
-                                post.platforms.linkedin.published
-                                  ? "text-green-600 dark:text-green-400"
-                                  : "text-amber-600 dark:text-amber-400"
-                              }`}
+                            <Badge
+                              variant="secondary"
+                              className="bg-muted text-foreground"
                             >
                               {post.platforms.linkedin.published
                                 ? "Published"
-                                : "Draft"}
-                            </span>
+                                : "Scheduled"}
+                            </Badge>
                           </div>
                         )}
-                        {post.platforms.twitter && (
-                          <div className="flex items-center text-xs">
-                            <span className="w-3 h-3 rounded-full bg-sky-500 mr-1.5"></span>
-                            <span className="font-medium">Twitter:</span>
-                            <span
-                              className={`ml-1 ${
-                                post.platforms.twitter.published
-                                  ? "text-green-600 dark:text-green-400"
-                                  : "text-amber-600 dark:text-amber-400"
-                              }`}
+                        {post.platforms.bluesky && (
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">Bluesky:</span>
+                            <Badge
+                              variant="secondary"
+                              className="bg-muted text-foreground"
                             >
-                              {post.platforms.twitter.published
+                              {post.platforms.bluesky.published
                                 ? "Published"
-                                : "Draft"}
-                            </span>
+                                : "Scheduled"}
+                            </Badge>
                           </div>
                         )}
                         {post.platforms.threads && (
-                          <div className="flex items-center text-xs">
-                            <span className="w-3 h-3 rounded-full bg-purple-600 mr-1.5"></span>
+                          <div className="flex items-center gap-2">
                             <span className="font-medium">Threads:</span>
-                            <span
-                              className={`ml-1 ${
-                                post.platforms.threads.published
-                                  ? "text-green-600 dark:text-green-400"
-                                  : "text-amber-600 dark:text-amber-400"
-                              }`}
+                            <Badge
+                              variant="secondary"
+                              className="bg-muted text-foreground"
                             >
                               {post.platforms.threads.published
                                 ? "Published"
-                                : "Draft"}
-                            </span>
+                                : "Scheduled"}
+                            </Badge>
                           </div>
                         )}
                         {post.platforms.mastodon && (
-                          <div className="flex items-center text-xs">
-                            <span className="w-3 h-3 rounded-full bg-teal-500 mr-1.5"></span>
+                          <div className="flex items-center gap-2">
                             <span className="font-medium">Mastodon:</span>
-                            <span
-                              className={`ml-1 ${
-                                post.platforms.mastodon.published
-                                  ? "text-green-600 dark:text-green-400"
-                                  : "text-amber-600 dark:text-amber-400"
-                              }`}
+                            <Badge
+                              variant="secondary"
+                              className="bg-muted text-foreground"
                             >
                               {post.platforms.mastodon.published
                                 ? "Published"
-                                : "Draft"}
-                            </span>
+                                : "Scheduled"}
+                            </Badge>
                           </div>
                         )}
                       </div>
                     </div>
                     <div className="col-span-1 self-center">
                       <div className="flex space-x-2">
-                        <button className="p-1 text-foreground/90 hover:text-primary transition-colors">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 p-0 text-foreground hover:bg-muted/50"
+                        >
                           <Edit className="h-4 w-4" />
-                        </button>
-                        <button className="p-1 text-foreground/90 hover:text-primary transition-colors">
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 p-0 text-foreground hover:bg-destructive/10 hover:text-destructive"
+                        >
                           <Trash className="h-4 w-4" />
-                        </button>
-                        <button className="p-1 text-foreground/90 hover:text-primary transition-colors">
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 p-0 text-foreground hover:bg-muted/50"
+                        >
                           <ExternalLink className="h-4 w-4" />
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -487,12 +483,20 @@ export default function DashboardPage() {
                         {timeAgo}
                       </div>
                       <div className="flex space-x-2">
-                        <button className="p-1 text-foreground/90 hover:text-primary transition-colors">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 p-0 text-foreground hover:bg-muted/50"
+                        >
                           <Edit className="h-4 w-4" />
-                        </button>
-                        <button className="p-1 text-foreground/90 hover:text-primary transition-colors">
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 p-0 text-foreground hover:bg-destructive/10 hover:text-destructive"
+                        >
                           <Trash className="h-4 w-4" />
-                        </button>
+                        </Button>
                       </div>
                     </div>
 
@@ -537,79 +541,67 @@ export default function DashboardPage() {
 
                     <div className="flex flex-col gap-1 mt-2">
                       {post.platforms.linkedin && (
-                        <div className="flex items-center text-xs">
-                          <span className="w-3 h-3 rounded-full bg-blue-600 mr-1.5"></span>
+                        <div className="flex items-center gap-2">
                           <span className="font-medium">LinkedIn:</span>
-                          <span
-                            className={`ml-1 ${
-                              post.platforms.linkedin.published
-                                ? "text-green-600 dark:text-green-400"
-                                : "text-amber-600 dark:text-amber-400"
-                            }`}
+                          <Badge
+                            variant="secondary"
+                            className="bg-muted text-foreground"
                           >
                             {post.platforms.linkedin.published
                               ? "Published"
-                              : "Draft"}
-                          </span>
+                              : "Scheduled"}
+                          </Badge>
                         </div>
                       )}
-                      {post.platforms.twitter && (
-                        <div className="flex items-center text-xs">
-                          <span className="w-3 h-3 rounded-full bg-sky-500 mr-1.5"></span>
-                          <span className="font-medium">Twitter:</span>
-                          <span
-                            className={`ml-1 ${
-                              post.platforms.twitter.published
-                                ? "text-green-600 dark:text-green-400"
-                                : "text-amber-600 dark:text-amber-400"
-                            }`}
+                      {post.platforms.bluesky && (
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">Bluesky:</span>
+                          <Badge
+                            variant="secondary"
+                            className="bg-muted text-foreground"
                           >
-                            {post.platforms.twitter.published
+                            {post.platforms.bluesky.published
                               ? "Published"
-                              : "Draft"}
-                          </span>
+                              : "Scheduled"}
+                          </Badge>
                         </div>
                       )}
                       {post.platforms.threads && (
-                        <div className="flex items-center text-xs">
-                          <span className="w-3 h-3 rounded-full bg-purple-600 mr-1.5"></span>
+                        <div className="flex items-center gap-2">
                           <span className="font-medium">Threads:</span>
-                          <span
-                            className={`ml-1 ${
-                              post.platforms.threads.published
-                                ? "text-green-600 dark:text-green-400"
-                                : "text-amber-600 dark:text-amber-400"
-                            }`}
+                          <Badge
+                            variant="secondary"
+                            className="bg-muted text-foreground"
                           >
                             {post.platforms.threads.published
                               ? "Published"
-                              : "Draft"}
-                          </span>
+                              : "Scheduled"}
+                          </Badge>
                         </div>
                       )}
                       {post.platforms.mastodon && (
-                        <div className="flex items-center text-xs">
-                          <span className="w-3 h-3 rounded-full bg-teal-500 mr-1.5"></span>
+                        <div className="flex items-center gap-2">
                           <span className="font-medium">Mastodon:</span>
-                          <span
-                            className={`ml-1 ${
-                              post.platforms.mastodon.published
-                                ? "text-green-600 dark:text-green-400"
-                                : "text-amber-600 dark:text-amber-400"
-                            }`}
+                          <Badge
+                            variant="secondary"
+                            className="bg-muted text-foreground"
                           >
                             {post.platforms.mastodon.published
                               ? "Published"
-                              : "Draft"}
-                          </span>
+                              : "Scheduled"}
+                          </Badge>
                         </div>
                       )}
                     </div>
 
                     <div className="flex justify-between items-center">
-                      <button className="p-1 text-foreground/90 hover:text-primary transition-colors">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 p-0 text-foreground hover:bg-muted/50"
+                      >
                         <ChevronRight className="h-4 w-4" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 );

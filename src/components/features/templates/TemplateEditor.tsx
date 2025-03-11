@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { toast } from "sonner";
-import { Linkedin, Twitter, Instagram, Globe, Plus } from "lucide-react";
+import { Linkedin, Instagram, Globe, Plus } from "lucide-react";
 import { useTemplates } from "@/context/TemplateContext";
 
 // Template name suggestions based on platform
@@ -77,7 +77,7 @@ export default function TemplateEditor({
   const [platform, setPlatform] = useState<
     "linkedin" | "bluesky" | "threads" | "mastodon"
   >(template?.platform || "linkedin");
-  const [structure, setStructure] = useState(template?.structure || "");
+  const [content, setContent] = useState(template?.content || "");
   const [category, setCategory] = useState(template?.category || "");
   const [isCustom] = useState(template?.isCustom || true);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -110,11 +110,8 @@ export default function TemplateEditor({
       newErrors.name = "Template name is required";
     }
 
-    if (!structure.trim()) {
-      newErrors.structure = "Template structure is required";
-    } else if (!structure.includes("[") || !structure.includes("]")) {
-      newErrors.structure =
-        "Template should include at least one placeholder [LIKE_THIS]";
+    if (!content.trim()) {
+      newErrors.content = "Template content is required";
     }
 
     // Only validate category if there are categories to select from
@@ -139,7 +136,7 @@ export default function TemplateEditor({
     onSave({
       name,
       platform,
-      structure,
+      content,
       category,
       isCustom,
     });
@@ -180,11 +177,11 @@ export default function TemplateEditor({
 
   // Preview section with placeholder highlighting
   const renderPreview = () => {
-    if (!structure)
-      return <p className="text-gray-400">No content to preview</p>;
+    if (!content)
+      return <p className="text-muted-foreground">No content to preview</p>;
 
     // Highlight placeholders
-    const parts = structure.split(/(\[[^\]]+\])/g);
+    const parts = content.split(/(\[[^\]]+\])/g);
 
     return (
       <div className="whitespace-pre-wrap">
@@ -193,7 +190,7 @@ export default function TemplateEditor({
             return (
               <span
                 key={index}
-                className="bg-primary/20 text-primary px-1 rounded"
+                className="bg-primary/20 text-primary font-medium px-1 rounded"
               >
                 {part}
               </span>
@@ -255,7 +252,7 @@ export default function TemplateEditor({
                 </SelectItem>
                 <SelectItem value="bluesky" className="flex items-center">
                   <div className="flex items-center">
-                    <Twitter className="h-4 w-4 mr-2 text-sky-500" />
+                    <Globe className="h-4 w-4 mr-2 text-blue-500" />
                     Bluesky
                   </div>
                 </SelectItem>
@@ -356,25 +353,25 @@ export default function TemplateEditor({
           </div>
 
           <div>
-            <Label htmlFor="template-structure">
-              Template Structure
+            <Label htmlFor="template-content">
+              Template Content
               <span className="text-sm text-muted-foreground ml-2">
                 (Use [PLACEHOLDER] for dynamic content)
               </span>
             </Label>
             <textarea
-              id="template-structure"
-              value={structure}
+              id="template-content"
+              value={content}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setStructure(e.target.value)
+                setContent(e.target.value)
               }
               placeholder="I'm excited to share that [MAIN_POINT]. This represents [SIGNIFICANCE]. #[HASHTAG1] #[HASHTAG2]"
-              className={`min-h-[200px] w-full p-4 border border-border bg-background text-foreground rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
-                errors.structure ? "border-red-500" : ""
+              className={`min-h-[200px] w-full p-4 border border-border bg-card text-card-foreground rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                errors.content ? "border-red-500" : ""
               }`}
             />
-            {errors.structure && (
-              <p className="text-red-500 text-sm mt-1">{errors.structure}</p>
+            {errors.content && (
+              <p className="text-red-500 text-sm mt-1">{errors.content}</p>
             )}
           </div>
 
@@ -391,13 +388,13 @@ export default function TemplateEditor({
         {/* Preview */}
         <div>
           <Label>Preview</Label>
-          <div className="border border-gray-200 rounded-lg p-4 min-h-[200px] bg-gray-50">
+          <div className="border border-border rounded-lg p-4 min-h-[200px] bg-card text-card-foreground">
             {renderPreview()}
           </div>
 
           <div className="mt-4 space-y-2">
             <h4 className="text-sm font-medium">Placeholder Tips:</h4>
-            <ul className="text-sm text-gray-600 space-y-1 list-disc pl-5">
+            <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-5">
               <li>Use square brackets for placeholders: [LIKE_THIS]</li>
               <li>Be descriptive with placeholder names</li>
               <li>
