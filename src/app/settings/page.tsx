@@ -510,27 +510,30 @@ export default function SettingsPage() {
                   </button>
                 </div>
 
-                <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex justify-between items-center p-4 border border-border rounded-lg bg-card dark:bg-card">
                   <div className="flex items-center">
                     <BlueskyIcon className="w-6 h-6 text-sky-500 mr-3" />
                     <div>
-                      <h3 className="font-medium">Bluesky</h3>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="font-medium text-foreground/90 dark:text-foreground/90">
+                        Bluesky
+                      </p>
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                         {user.connectedAccounts.bluesky
                           ? "Connected"
-                          : "Connect your Bluesky account"}
+                          : "Not connected"}
                       </p>
                     </div>
                   </div>
-                  <Button
-                    variant={
-                      user.connectedAccounts.bluesky ? "outline" : "default"
-                    }
+                  <button
                     onClick={() => toggleConnection("bluesky")}
-                    size="sm"
+                    className={`px-3 py-1 rounded-lg text-sm ${
+                      user.connectedAccounts.bluesky
+                        ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
+                        : "bg-primary/10 text-primary hover:bg-primary/20"
+                    }`}
                   >
                     {user.connectedAccounts.bluesky ? "Disconnect" : "Connect"}
-                  </Button>
+                  </button>
                 </div>
 
                 <div className="flex justify-between items-center p-4 border border-border rounded-lg bg-card dark:bg-card">

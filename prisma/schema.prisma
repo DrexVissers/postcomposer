@@ -69,6 +69,7 @@ model PostPlatform {
   publishedAt   DateTime?
   scheduledFor  DateTime?
   platformPostId String?  // ID of the post on the platform
+  error         String?   // Error message if posting fails
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

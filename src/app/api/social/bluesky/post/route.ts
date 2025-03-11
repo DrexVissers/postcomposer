@@ -14,6 +14,14 @@ export async function POST(request: Request) {
       );
     }
 
+    // Validate content length
+    if (content.length > 300) {
+      return NextResponse.json(
+        { error: "Content exceeds 300 character limit" },
+        { status: 400 }
+      );
+    }
+
     // Get the user's Bluesky account
     const socialAccount = await prisma.socialAccount.findFirst({
       where: {
@@ -49,6 +57,7 @@ export async function POST(request: Request) {
             status: "published",
             publishedAt: new Date(),
             platformPostId: result.uri || null,
+            error: null, // Clear any previous error
           },
           create: {
             id: `${postId}-bluesky`,
@@ -68,11 +77,15 @@ export async function POST(request: Request) {
           postUrl: `https://bsky.app/profile/${
             socialAccount.handle
           }/post/${result.uri?.split("/").pop()}`,
+          remainingChars: 300 - content.length,
         },
         { status: 200 }
       );
     } catch (error) {
       console.error("Error posting to Bluesky:", error);
+
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to post to Bluesky";
 
       // If a postId was provided, update the post platform status to failed
       if (postId) {
@@ -82,6 +95,7 @@ export async function POST(request: Request) {
           },
           update: {
             status: "failed",
+            error: errorMessage,
           },
           create: {
             id: `${postId}-bluesky`,
@@ -89,20 +103,17 @@ export async function POST(request: Request) {
             platform: "bluesky",
             content: content,
             status: "failed",
+            error: errorMessage,
           },
         });
       }
 
-      return NextResponse.json(
-        { error: "Failed to post to Bluesky" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: errorMessage }, { status: 500 });
     }
   } catch (error) {
     console.error("Error in Bluesky post API:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal server error";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
