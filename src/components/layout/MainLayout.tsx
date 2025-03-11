@@ -94,23 +94,23 @@ export default function MainLayout({ children }: MainLayoutProps) {
           <nav className="flex-1 px-4 py-6 space-y-2" aria-label="Main menu">
             <Link
               href="/dashboard"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
             >
-              <LayoutDashboard className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
+              <LayoutDashboard className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
               <span>My Posts</span>
             </Link>
             <Link
               href="/create"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
             >
-              <PlusCircle className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
+              <PlusCircle className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
               <span>Create Post</span>
             </Link>
             <Link
               href="/schedule"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
             >
-              <Calendar className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
+              <Calendar className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
               <span>Schedule</span>
             </Link>
             <Link
@@ -250,26 +250,26 @@ export default function MainLayout({ children }: MainLayoutProps) {
           <nav className="flex-1 px-4 py-6 space-y-2">
             <Link
               href="/dashboard"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
               onClick={toggleMobileMenu}
             >
-              <LayoutDashboard className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
+              <LayoutDashboard className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
               <span>My Posts</span>
             </Link>
             <Link
               href="/create"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
               onClick={toggleMobileMenu}
             >
-              <PlusCircle className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
+              <PlusCircle className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
               <span>Create Post</span>
             </Link>
             <Link
               href="/schedule"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
               onClick={toggleMobileMenu}
             >
-              <Calendar className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
+              <Calendar className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
               <span>Schedule</span>
             </Link>
             <Link
@@ -345,7 +345,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
       {/* Main Content */}
       <main
-        className={`flex-1 overflow-y-auto pt-16 lg:pt-0 w-full bg-main-dot-pattern ${
+        className={`flex-1 overflow-y-auto pt-20 lg:pt-8 w-full bg-main-dot-pattern ${
           isMobile ? "pb-24" : "pb-8"
         }`}
       >

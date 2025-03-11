@@ -96,11 +96,11 @@ export default function CreatePostPage() {
   const handleTemplateSelect = (templateId: string) => {
     const template = templates.find((t) => t.id === templateId);
     if (template) {
-      setContent(template.structure);
+      setContent(template.content);
       // Also update the generated content for the active platform
       setGeneratedContent({
         ...generatedContent,
-        [activeTab]: template.structure,
+        [activeTab]: template.content,
       });
       addNotification({
         type: "success",
@@ -131,14 +131,15 @@ export default function CreatePostPage() {
   return (
     <MainLayout>
       <div className="max-w-6xl mx-auto px-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+          <h1 className="text-2xl font-bold text-muted-foreground">
+            Create New Post
+          </h1>
+        </div>
         <div className="flex flex-col md:flex-row gap-8">
           {/* Left Column - Content Creation */}
           <div className="flex-1 space-y-6">
             <div className="bg-card dark:bg-card rounded-lg border border-border shadow-sm p-6">
-              <h1 className="text-2xl font-bold text-foreground/90 dark:text-foreground/90 mb-6">
-                Create New Post
-              </h1>
-
               {/* Content Input */}
               <div className="mb-6">
                 <textarea

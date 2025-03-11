@@ -142,11 +142,6 @@ export default function DashboardPage() {
                 </Button>
               </Link>
             )}
-            <Link href="/create" className="w-full sm:w-auto">
-              <Button className="w-full sm:w-auto bg-background hover:bg-muted/50 text-foreground border border-border">
-                Create New Post
-              </Button>
-            </Link>
           </div>
         </div>
 
