@@ -16,7 +16,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Linkedin,
-  Twitter,
+  Instagram,
+  Globe,
   CreditCard,
   User,
   Bell,
@@ -29,8 +30,6 @@ import {
   UserPlus,
   Users,
   Shield,
-  Instagram,
-  Globe,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -56,6 +55,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useNotification } from "@/context/NotificationContext";
+import BlueskyIcon from "@/components/ui/icons/BlueskyIcon";
+
+// Update the platform types
+type SocialPlatform = "linkedin" | "bluesky" | "threads" | "mastodon";
 
 export default function SettingsPage() {
   const [user, setUser] = useState<UserType>(mockUser);
@@ -87,6 +90,14 @@ export default function SettingsPage() {
   const [newRole, setNewRole] = useState<UserRole>("editor");
 
   const { addNotification } = useNotification();
+
+  // Update the platforms object
+  const platforms = {
+    linkedin: "LinkedIn",
+    bluesky: "Bluesky",
+    threads: "Threads",
+    mastodon: "Mastodon",
+  };
 
   // Handle category actions
   const addCategory = () => {
@@ -272,22 +283,18 @@ export default function SettingsPage() {
   };
 
   // Handle connecting/disconnecting social accounts
-  const toggleConnection = (
-    platform: "linkedin" | "twitter" | "threads" | "mastodon"
-  ) => {
-    const updatedUser = { ...user };
-    const isConnecting = !updatedUser.connectedAccounts[platform];
-    updatedUser.connectedAccounts[platform] = isConnecting;
-    setUser(updatedUser);
+  const toggleConnection = (platform: SocialPlatform) => {
+    const isConnecting = !user.connectedAccounts[platform];
+    setUser((prev) => ({
+      ...prev,
+      connectedAccounts: {
+        ...prev.connectedAccounts,
+        [platform]: !prev.connectedAccounts[platform],
+      },
+    }));
 
     // Show notification
-    const platformNames = {
-      linkedin: "LinkedIn",
-      twitter: "Twitter",
-      threads: "Threads",
-      mastodon: "Mastodon",
-    };
-
+    const platformNames = platforms;
     addNotification({
       type: isConnecting ? "success" : "info",
       title: isConnecting ? "Account Connected" : "Account Disconnected",
@@ -503,30 +510,27 @@ export default function SettingsPage() {
                   </button>
                 </div>
 
-                <div className="flex justify-between items-center p-4 border border-border rounded-lg bg-card dark:bg-card">
+                <div className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="flex items-center">
-                    <Twitter className="w-6 h-6 text-sky-500 mr-3" />
+                    <BlueskyIcon className="w-6 h-6 text-sky-500 mr-3" />
                     <div>
-                      <p className="font-medium text-foreground/90 dark:text-foreground/90">
-                        Twitter
-                      </p>
-                      <p className="text-sm text-muted-foreground dark:text-muted-foreground">
-                        {user.connectedAccounts.twitter
+                      <h3 className="font-medium">Bluesky</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {user.connectedAccounts.bluesky
                           ? "Connected"
-                          : "Not connected"}
+                          : "Connect your Bluesky account"}
                       </p>
                     </div>
                   </div>
-                  <button
-                    onClick={() => toggleConnection("twitter")}
-                    className={`px-3 py-1 rounded-lg text-sm ${
-                      user.connectedAccounts.twitter
-                        ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
-                        : "bg-primary/10 text-primary hover:bg-primary/20"
-                    }`}
+                  <Button
+                    variant={
+                      user.connectedAccounts.bluesky ? "outline" : "default"
+                    }
+                    onClick={() => toggleConnection("bluesky")}
+                    size="sm"
                   >
-                    {user.connectedAccounts.twitter ? "Disconnect" : "Connect"}
-                  </button>
+                    {user.connectedAccounts.bluesky ? "Disconnect" : "Connect"}
+                  </Button>
                 </div>
 
                 <div className="flex justify-between items-center p-4 border border-border rounded-lg bg-card dark:bg-card">

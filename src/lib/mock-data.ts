@@ -10,7 +10,7 @@ export interface Post {
       published: boolean;
       publishedAt?: string;
     };
-    twitter?: {
+    bluesky?: {
       content: string;
       published: boolean;
       publishedAt?: string;
@@ -29,13 +29,14 @@ export interface Post {
   status?: "draft" | "pending_approval" | "approved" | "rejected"; // Post approval status
   approvedBy?: string; // User ID who approved the post
   createdBy: string; // User ID who created the post
+  platform: "linkedin" | "bluesky" | "threads" | "mastodon";
 }
 
 export interface ScheduledPost {
   id: string;
   content: string;
   scheduledDate: string;
-  platform: "linkedin" | "twitter" | "threads" | "mastodon";
+  platform: "linkedin" | "bluesky" | "threads" | "mastodon";
   postId?: string; // Reference to the original post if applicable
   repeat?: "none" | "daily" | "weekly" | "monthly";
   category?: string; // Category ID
@@ -53,29 +54,36 @@ export interface User {
   };
   connectedAccounts: {
     linkedin: boolean;
-    twitter: boolean;
+    bluesky: boolean;
     threads: boolean;
     mastodon: boolean;
   };
   role: UserRole;
   teamId?: string; // ID of the team the user belongs to
   avatar?: string; // URL to user's avatar
+  preferences: {
+    darkMode: boolean;
+    emailNotifications: boolean;
+    pushNotifications: boolean;
+  };
 }
 
-export type UserRole = "owner" | "admin" | "editor" | "viewer";
+export type UserRole = "owner" | "admin" | "editor" | "viewer" | "user";
 
 export interface Template {
   id: string;
   name: string;
-  platform: "linkedin" | "twitter" | "threads" | "mastodon";
+  platform: "linkedin" | "bluesky" | "threads" | "mastodon";
   structure: string;
   category?: string; // Category of the template
   isCustom?: boolean; // Whether this is a custom user-created template
+  tags?: string[];
+  isDefault?: boolean;
 }
 
 export interface PostAnalytics {
   postId: string;
-  platform: "linkedin" | "twitter" | "threads" | "mastodon";
+  platform: "linkedin" | "bluesky" | "threads" | "mastodon";
   views: number;
   likes: number;
   shares: number;
@@ -170,7 +178,7 @@ export const mockPosts: Post[] = [
         published: true,
         publishedAt: "2023-06-15T10:30:00Z",
       },
-      twitter: {
+      bluesky: {
         content:
           "Excited to announce our new product launch! #innovation #tech",
         published: true,
@@ -178,6 +186,7 @@ export const mockPosts: Post[] = [
       },
     },
     createdBy: "user1",
+    platform: "linkedin",
   },
   {
     id: "post2",
@@ -195,6 +204,7 @@ export const mockPosts: Post[] = [
       },
     },
     createdBy: "user1",
+    platform: "linkedin",
   },
   {
     id: "post3",
@@ -208,6 +218,7 @@ export const mockPosts: Post[] = [
       },
     },
     createdBy: "user1",
+    platform: "linkedin",
   },
 ];
 
@@ -233,7 +244,7 @@ export const mockScheduledPosts: ScheduledPost[] = [
     scheduledDate: new Date(
       new Date().setDate(new Date().getDate() + 1)
     ).toISOString(),
-    platform: "twitter",
+    platform: "bluesky",
     postId: "1",
     repeat: "none",
     category: "cat-1",
@@ -259,7 +270,7 @@ export const mockScheduledPosts: ScheduledPost[] = [
     scheduledDate: new Date(
       new Date().setDate(new Date().getDate() + 3)
     ).toISOString(),
-    platform: "twitter",
+    platform: "bluesky",
     postId: "2",
     repeat: "weekly",
     category: "cat-3",
@@ -355,7 +366,7 @@ export const mockAnalytics: PostAnalytics[] = [
   },
   {
     postId: "1",
-    platform: "twitter",
+    platform: "bluesky",
     views: 2350,
     likes: 145,
     shares: 78,
@@ -631,13 +642,18 @@ export const mockUser: User = {
   },
   connectedAccounts: {
     linkedin: true,
-    twitter: true,
+    bluesky: true,
     threads: true,
     mastodon: true,
   },
   role: "owner",
   teamId: "team1",
   avatar: "https://example.com/avatar.jpg",
+  preferences: {
+    darkMode: true,
+    emailNotifications: true,
+    pushNotifications: false,
+  },
 };
 
 // Mock template categories
@@ -683,7 +699,7 @@ export const mockTemplates: Template[] = [
   {
     id: "template2",
     name: "Quick Update",
-    platform: "twitter",
+    platform: "bluesky",
     structure: "Just [ACTION]! [EMOJI] [BRIEF_DETAIL] #[HASHTAG]",
     category: "cat-announcement",
   },
@@ -706,7 +722,7 @@ export const mockTemplates: Template[] = [
   {
     id: "template5",
     name: "Poll Introduction",
-    platform: "twitter",
+    platform: "bluesky",
     structure: "I'm curious: [QUESTION]\n\nVote in the poll below! [EMOJI]",
     category: "cat-engagement",
   },
@@ -870,13 +886,18 @@ export const mockTeamMembers: User[] = [
     },
     connectedAccounts: {
       linkedin: true,
-      twitter: true,
+      bluesky: true,
       threads: true,
       mastodon: true,
     },
     role: "owner",
     teamId: "team1",
     avatar: "https://randomuser.me/api/portraits/men/1.jpg",
+    preferences: {
+      darkMode: true,
+      emailNotifications: true,
+      pushNotifications: false,
+    },
   },
   {
     id: "user2",
@@ -889,50 +910,63 @@ export const mockTeamMembers: User[] = [
     },
     connectedAccounts: {
       linkedin: true,
-      twitter: false,
+      bluesky: false,
       threads: true,
       mastodon: true,
     },
     role: "admin",
     teamId: "team1",
     avatar: "https://randomuser.me/api/portraits/women/2.jpg",
+    preferences: {
+      darkMode: false,
+      emailNotifications: true,
+      pushNotifications: true,
+    },
   },
   {
     id: "user3",
-    name: "Mike Johnson",
-    email: "mike@example.com",
-    subscription: {
-      plan: "pro",
-      status: "active",
-      renewalDate: "2024-03-10",
-    },
+    name: "Alex Johnson",
+    email: "alex@example.com",
+    role: "user",
+    avatar: "/avatars/user3.png",
     connectedAccounts: {
-      linkedin: true,
-      twitter: true,
-      threads: true,
-      mastodon: true,
+      linkedin: false,
+      bluesky: true,
+      threads: false,
+      mastodon: false,
     },
-    role: "editor",
-    teamId: "team1",
-    avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-  },
-  {
-    id: "user4",
-    name: "Sarah Williams",
-    email: "sarah@example.com",
+    preferences: {
+      darkMode: true,
+      emailNotifications: false,
+      pushNotifications: true,
+    },
     subscription: {
       plan: "free",
       status: "active",
-      renewalDate: "2024-04-05",
+      renewalDate: "2024-05-15",
     },
+  },
+  {
+    id: "user4",
+    name: "Sam Wilson",
+    email: "sam@example.com",
+    role: "user",
+    avatar: "/avatars/user4.png",
     connectedAccounts: {
-      linkedin: false,
-      twitter: true,
+      linkedin: true,
+      bluesky: false,
       threads: true,
-      mastodon: true,
+      mastodon: false,
     },
-    role: "viewer",
-    teamId: "team1",
-    avatar: "https://randomuser.me/api/portraits/women/4.jpg",
+    preferences: {
+      darkMode: false,
+      emailNotifications: true,
+      pushNotifications: false,
+    },
+    subscription: {
+      plan: "pro",
+      status: "active",
+      renewalDate: "2024-06-20",
+    },
   },
 ];

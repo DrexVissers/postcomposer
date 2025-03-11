@@ -5,17 +5,17 @@ import {
   MessageSquare,
   ExternalLink,
   Linkedin,
-  Twitter,
-  Instagram,
   Globe,
 } from "lucide-react";
+import { BlueskyIcon } from "@/components/icons/BlueskyIcon";
+import { ThreadsIcon } from "@/components/icons/ThreadsIcon";
 import { format, isValid } from "date-fns";
 
-interface PostWithAnalytics {
+export interface PostWithAnalytics {
   id: string;
   content: string;
   createdAt: string;
-  platform: "linkedin" | "twitter" | "threads" | "mastodon";
+  platform: "linkedin" | "bluesky" | "threads" | "mastodon";
   metrics: {
     views: number;
     likes: number;
@@ -65,17 +65,17 @@ export default function PostPerformance({
 
   // Get platform icon
   const getPlatformIcon = (
-    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+    platform: "linkedin" | "bluesky" | "threads" | "mastodon"
   ) => {
     switch (platform) {
       case "linkedin":
-        return <Linkedin className="w-4 h-4 text-blue-600" />;
-      case "twitter":
-        return <Twitter className="w-4 h-4 text-sky-500" />;
+        return <Linkedin className="w-5 h-5 text-blue-600" />;
+      case "bluesky":
+        return <BlueskyIcon className="w-5 h-5 text-sky-500" />;
       case "threads":
-        return <Instagram className="w-4 h-4 text-purple-600" />;
+        return <ThreadsIcon className="w-5 h-5 text-purple-600" />;
       case "mastodon":
-        return <Globe className="w-4 h-4 text-teal-500" />;
+        return <Globe className="w-5 h-5 text-teal-500" />;
       default:
         return null;
     }
@@ -83,13 +83,13 @@ export default function PostPerformance({
 
   // Get platform name
   const getPlatformName = (
-    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+    platform: "linkedin" | "bluesky" | "threads" | "mastodon"
   ) => {
     switch (platform) {
       case "linkedin":
         return "LinkedIn";
-      case "twitter":
-        return "Twitter";
+      case "bluesky":
+        return "Bluesky";
       case "threads":
         return "Threads";
       case "mastodon":

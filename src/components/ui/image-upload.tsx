@@ -1,162 +1,159 @@
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Button } from "./button";
-import { Image as ImageIcon, X, Upload } from "lucide-react";
-import NextImage from "next/image";
+import { Button } from "@/components/ui/button";
+import { ImageIcon, X } from "lucide-react";
+import Image from "next/image";
 
 interface ImageUploadProps {
-  onChange: (file: File | null) => void;
-  value?: File | string | null;
   className?: string;
-  maxSizeMB?: number;
+  value?: File | string | null;
+  onChange?: (file: File | null) => void;
+  disabled?: boolean;
+  maxSize?: number; // in MB
   allowedTypes?: string[];
   aspectRatio?: number;
-  platformPreview?: "twitter" | "linkedin" | "threads" | "mastodon" | null;
+  platformPreview?: "bluesky" | "linkedin" | "threads" | "mastodon" | null;
 }
 
 export function ImageUpload({
-  onChange,
-  value,
   className,
-  maxSizeMB = 5,
-  allowedTypes = ["image/jpeg", "image/png", "image/gif"],
+  value,
+  onChange,
+  disabled = false,
+  maxSize = 5, // Default 5MB
+  allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"],
   aspectRatio,
-  platformPreview,
+  platformPreview = null,
 }: ImageUploadProps) {
-  const [preview, setPreview] = useState<string | null>(
-    typeof value === "string" ? value : null
-  );
+  const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-
-    if (!file) {
-      setPreview(null);
-      onChange(null);
-      return;
+  const handleClick = () => {
+    if (inputRef.current) {
+      inputRef.current.click();
     }
-
-    // Validate file type
-    if (!allowedTypes.includes(file.type)) {
-      setError(
-        `File type not supported. Please upload ${allowedTypes.join(", ")}`
-      );
-      return;
-    }
-
-    // Validate file size
-    if (file.size > maxSizeMB * 1024 * 1024) {
-      setError(`File size exceeds ${maxSizeMB}MB limit`);
-      return;
-    }
-
-    setError(null);
-    const reader = new FileReader();
-    reader.onload = () => {
-      setPreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-    onChange(file);
   };
 
-  const handleRemove = () => {
-    setPreview(null);
-    setError(null);
-    onChange(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      return;
     }
+
+    // Check file size
+    if (file.size > maxSize * 1024 * 1024) {
+      setError(`File size exceeds ${maxSize}MB`);
+      return;
+    }
+
+    // Check file type
+    if (!allowedTypes.includes(file.type)) {
+      setError(`File type not supported. Allowed: ${allowedTypes.join(", ")}`);
+      return;
+    }
+
+    setError(null);
+    if (onChange) {
+      onChange(file);
+    }
+  };
+
+  const handleRemove = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onChange) {
+      onChange(null);
+    }
+  };
+
+  const getPreviewUrl = () => {
+    if (!value) return null;
+    if (typeof value === "string") return value;
+    return URL.createObjectURL(value);
   };
 
   const getPreviewContainerClass = () => {
-    if (platformPreview === "twitter") {
-      return "aspect-[16/9] max-w-[500px]";
+    if (platformPreview === "bluesky") {
+      return "aspect-video rounded-md";
     } else if (platformPreview === "linkedin") {
       return "aspect-[1.91/1] max-w-[500px]";
     } else if (platformPreview === "threads") {
-      return "aspect-[1/1] max-w-[500px]";
+      return "aspect-square max-w-[500px]";
     } else if (platformPreview === "mastodon") {
       return "aspect-[16/9] max-w-[500px]";
     } else if (aspectRatio) {
       return `aspect-[${aspectRatio}]`;
     }
-    return "max-h-[300px]";
+    return "aspect-video";
+  };
+
+  const getPlatformLabel = () => {
+    if (platformPreview === "linkedin") return "LinkedIn";
+    if (platformPreview === "bluesky") return "Bluesky";
+    if (platformPreview === "threads") return "Threads";
+    if (platformPreview === "mastodon") return "Mastodon";
+    return "";
   };
 
   return (
     <div className={cn("space-y-4", className)}>
-      {!preview ? (
-        <div
-          className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-border rounded-lg bg-muted/30 cursor-pointer"
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <Upload
-            className="w-8 h-8 text-muted-foreground mb-2"
-            aria-hidden="true"
-          />
-          <p className="text-sm font-medium text-foreground mb-1">
-            Click to upload an image
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {allowedTypes.map((type) => type.replace("image/", "")).join(", ")}{" "}
-            up to {maxSizeMB}MB
-          </p>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept={allowedTypes.join(",")}
-            className="hidden"
-            aria-label="Upload image"
-          />
-        </div>
-      ) : (
-        <div className="relative">
-          <div
-            className={cn(
-              "relative overflow-hidden rounded-lg border border-border",
-              getPreviewContainerClass()
-            )}
-          >
-            <NextImage
-              src={preview || ""}
-              alt="Preview"
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 500px"
-            />
-            <Button
-              variant="destructive"
-              size="icon"
-              className="absolute top-2 right-2 h-8 w-8 rounded-full"
-              onClick={handleRemove}
-              aria-label="Remove image"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-          {platformPreview && (
-            <div className="mt-2 text-xs text-muted-foreground">
-              <ImageIcon className="w-4 h-4 inline mr-1" />
-              {platformPreview === "twitter"
-                ? "Twitter"
-                : platformPreview === "linkedin"
-                ? "LinkedIn"
-                : platformPreview === "threads"
-                ? "Threads"
-                : "Mastodon"}{" "}
-              optimized preview
+      {platformPreview && (
+        <div className="text-sm font-medium">{getPlatformLabel()} Image</div>
+      )}
+
+      <div
+        onClick={!disabled ? handleClick : undefined}
+        className={cn(
+          "relative border border-dashed rounded-lg overflow-hidden",
+          getPreviewContainerClass(),
+          !disabled && "cursor-pointer hover:border-primary/50",
+          disabled && "opacity-60 cursor-not-allowed"
+        )}
+      >
+        {getPreviewUrl() ? (
+          <>
+            <div className="relative w-full h-full">
+              <Image
+                src={getPreviewUrl() as string}
+                alt="Preview"
+                className="w-full h-full object-cover"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
             </div>
-          )}
-        </div>
-      )}
-      {error && (
-        <p className="text-sm text-destructive" role="alert">
-          {error}
-        </p>
-      )}
+            {!disabled && (
+              <Button
+                type="button"
+                variant="destructive"
+                size="icon"
+                className="absolute top-2 right-2 h-6 w-6 rounded-full"
+                onClick={handleRemove}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            )}
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full p-6 text-center">
+            <ImageIcon className="h-8 w-8 mb-2 text-muted-foreground" />
+            <div className="text-sm font-medium">Click to upload an image</div>
+            <div className="text-xs text-muted-foreground mt-1">
+              {allowedTypes.map((type) => type.split("/")[1]).join(", ")} up to{" "}
+              {maxSize}MB
+            </div>
+          </div>
+        )}
+      </div>
+
+      {error && <div className="text-sm text-destructive">{error}</div>}
+
+      <input
+        type="file"
+        ref={inputRef}
+        onChange={handleChange}
+        accept={allowedTypes.join(",")}
+        className="hidden"
+        disabled={disabled}
+      />
     </div>
   );
 }

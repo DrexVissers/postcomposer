@@ -1,8 +1,16 @@
 import { useState } from "react";
-import { Clock, Calendar as CalendarIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Linkedin, Instagram, Globe, Clock } from "lucide-react";
+import BlueskyIcon from "@/components/ui/icons/BlueskyIcon";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Post } from "@/lib/mock-data";
-import { Linkedin, Twitter, Instagram, Globe } from "lucide-react";
 
 interface ScheduleFormProps {
   selectedDate: Date;
@@ -11,7 +19,7 @@ interface ScheduleFormProps {
     time: string;
     platforms: {
       linkedin: boolean;
-      twitter: boolean;
+      bluesky: boolean;
       threads: boolean;
       mastodon: boolean;
     };
@@ -34,10 +42,11 @@ export default function ScheduleForm({
   subtextClassName = "text-foreground/80 dark:text-foreground/80",
   buttonClassName = "bg-muted text-muted-foreground hover:bg-muted/80",
 }: ScheduleFormProps) {
-  const [time, setTime] = useState("09:00");
+  const [date, setDate] = useState<Date | undefined>(selectedDate);
+  const [time, setTime] = useState<string>("12:00");
   const [platforms, setPlatforms] = useState({
     linkedin: true,
-    twitter: false,
+    bluesky: false,
     threads: false,
     mastodon: false,
   });
@@ -63,13 +72,11 @@ export default function ScheduleForm({
     });
   };
 
-  const togglePlatform = (
-    platform: "linkedin" | "twitter" | "threads" | "mastodon"
-  ) => {
-    setPlatforms({
-      ...platforms,
-      [platform]: !platforms[platform],
-    });
+  const togglePlatform = (platform: keyof typeof platforms) => {
+    setPlatforms((prev) => ({
+      ...prev,
+      [platform]: !prev[platform],
+    }));
   };
 
   return (
@@ -83,18 +90,29 @@ export default function ScheduleForm({
 
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
-          <div>
-            <label
-              className={`block text-sm font-medium mb-1 ${subtextClassName}`}
-            >
-              Selected Date
-            </label>
-            <div className="flex items-center p-2 border border-border rounded-md bg-muted/30">
-              <CalendarIcon className="w-5 h-5 mr-2" />
-              <span className={textClassName}>
-                {format(selectedDate, "EEEE, MMMM d, yyyy")}
-              </span>
-            </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Date</label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !date && "text-muted-foreground"
+                  )}
+                >
+                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <CalendarComponent
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
 
           {posts.length > 0 && (
@@ -119,75 +137,58 @@ export default function ScheduleForm({
             </div>
           )}
 
-          <div>
-            <label
-              className={`block text-sm font-medium mb-1 ${subtextClassName}`}
-            >
+          <div className="space-y-2">
+            <label htmlFor="time" className="text-sm font-medium">
               Time
             </label>
             <input
               type="time"
-              className="w-full p-2 border border-border rounded-md bg-background"
+              id="time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
           </div>
 
-          <div>
-            <label
-              className={`block text-sm font-medium mb-1 ${subtextClassName}`}
-            >
-              Platforms
-            </label>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Platforms</label>
             <div className="flex flex-wrap gap-2">
-              <button
+              <Button
                 type="button"
-                className={`px-3 py-2 rounded-md flex items-center ${
-                  platforms.linkedin
-                    ? "bg-blue-100 text-blue-800 border border-blue-300"
-                    : "bg-muted/50 text-muted-foreground border border-border"
-                }`}
+                variant={platforms.linkedin ? "default" : "outline"}
+                size="sm"
                 onClick={() => togglePlatform("linkedin")}
               >
                 <Linkedin className="w-4 h-4 mr-2 text-blue-600" />
                 LinkedIn
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                className={`px-3 py-2 rounded-md flex items-center ${
-                  platforms.twitter
-                    ? "bg-sky-100 text-sky-800 border border-sky-300"
-                    : "bg-muted/50 text-muted-foreground border border-border"
-                }`}
-                onClick={() => togglePlatform("twitter")}
+                variant={platforms.bluesky ? "default" : "outline"}
+                size="sm"
+                onClick={() => togglePlatform("bluesky")}
               >
-                <Twitter className="w-4 h-4 mr-2 text-sky-500" />
-                Twitter
-              </button>
-              <button
+                <BlueskyIcon className="w-4 h-4 mr-2 text-sky-500" />
+                Bluesky
+              </Button>
+              <Button
                 type="button"
-                className={`px-3 py-2 rounded-md flex items-center ${
-                  platforms.threads
-                    ? "bg-purple-100 text-purple-800 border border-purple-300"
-                    : "bg-muted/50 text-muted-foreground border border-border"
-                }`}
+                variant={platforms.threads ? "default" : "outline"}
+                size="sm"
                 onClick={() => togglePlatform("threads")}
               >
-                <Instagram className="w-4 h-4 mr-2 text-purple-600" />
+                <Instagram className="w-4 h-4 mr-2 text-pink-600" />
                 Threads
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                className={`px-3 py-2 rounded-md flex items-center ${
-                  platforms.mastodon
-                    ? "bg-teal-100 text-teal-800 border border-teal-300"
-                    : "bg-muted/50 text-muted-foreground border border-border"
-                }`}
+                variant={platforms.mastodon ? "default" : "outline"}
+                size="sm"
                 onClick={() => togglePlatform("mastodon")}
               >
-                <Globe className="w-4 h-4 mr-2 text-teal-500" />
+                <Globe className="w-4 h-4 mr-2 text-purple-600" />
                 Mastodon
-              </button>
+              </Button>
             </div>
           </div>
 

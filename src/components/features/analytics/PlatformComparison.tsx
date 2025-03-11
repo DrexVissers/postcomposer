@@ -1,7 +1,9 @@
-import { Linkedin, Twitter, Instagram, Globe } from "lucide-react";
+import { Linkedin, Globe } from "lucide-react";
+import { BlueskyIcon } from "@/components/icons/BlueskyIcon";
+import { ThreadsIcon } from "@/components/icons/ThreadsIcon";
 
 interface PlatformData {
-  platform: "linkedin" | "twitter" | "threads" | "mastodon";
+  platform: "linkedin" | "bluesky" | "threads" | "mastodon";
   metrics: {
     views: number;
     likes: number;
@@ -45,15 +47,15 @@ export default function PlatformComparison({
 
   // Get platform icon
   const getPlatformIcon = (
-    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+    platform: "linkedin" | "bluesky" | "threads" | "mastodon"
   ) => {
     switch (platform) {
       case "linkedin":
         return <Linkedin className="w-5 h-5 text-blue-600" />;
-      case "twitter":
-        return <Twitter className="w-5 h-5 text-sky-500" />;
+      case "bluesky":
+        return <BlueskyIcon className="w-5 h-5 text-sky-500" />;
       case "threads":
-        return <Instagram className="w-5 h-5 text-purple-600" />;
+        return <ThreadsIcon className="w-5 h-5 text-purple-600" />;
       case "mastodon":
         return <Globe className="w-5 h-5 text-teal-500" />;
       default:
@@ -63,12 +65,12 @@ export default function PlatformComparison({
 
   // Get platform color
   const getPlatformColor = (
-    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+    platform: "linkedin" | "bluesky" | "threads" | "mastodon"
   ) => {
     switch (platform) {
       case "linkedin":
         return "bg-blue-600";
-      case "twitter":
+      case "bluesky":
         return "bg-sky-500";
       case "threads":
         return "bg-purple-600";
@@ -81,13 +83,13 @@ export default function PlatformComparison({
 
   // Get platform name
   const getPlatformName = (
-    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+    platform: "linkedin" | "bluesky" | "threads" | "mastodon"
   ) => {
     switch (platform) {
       case "linkedin":
         return "LinkedIn";
-      case "twitter":
-        return "Twitter";
+      case "bluesky":
+        return "Bluesky";
       case "threads":
         return "Threads";
       case "mastodon":

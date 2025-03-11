@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Define your models below
+
+model User {
+  id                String              @id @default(uuid())
+  clerkId           String?             @unique
+  email             String              @unique
+  name              String?
+  username          String?             @unique
+  bio               String?
+  profileImage      String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  posts             Post[]
+  socialAccounts    SocialAccount[]
+}
+
+model Post {
+  id            String    @id @default(uuid())
+  content       String
+  imageUrl      String?
+  published     Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  authorId      String
+  author        User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  platforms     PostPlatform[]
+}
+
+model SocialAccount {
+  id            String    @id @default(uuid())
+  platform      String    // "linkedin", "bluesky", "mastodon", etc.
+  accessToken   String?
+  refreshToken  String?
+  handle        String?
+  profileUrl    String?
+  isConnected   Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, platform])
+}
+
+model PostPlatform {
+  id            String    @id @default(uuid())
+  postId        String
+  post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  platform      String    // "linkedin", "bluesky", "mastodon", etc.
+  content       String?   // Platform-specific content
+  status        String    @default("draft") // draft, scheduled, published, failed
+  publishedAt   DateTime?
+  scheduledFor  DateTime?
+  platformPostId String?  // ID of the post on the platform
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([postId, platform])
+}

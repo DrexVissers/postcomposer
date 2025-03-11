@@ -10,7 +10,7 @@ export default function Home() {
         </h1>
         <p className="text-xl text-muted-foreground">
           Transform your ideas into polished social media posts for LinkedIn,
-          Twitter, and more.
+          Bluesky, and more.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">

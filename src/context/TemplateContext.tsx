@@ -20,7 +20,7 @@ interface TemplateContextType {
   deleteTemplateCategory: (categoryId: string) => void;
   getTemplatesByCategory: (categoryId: string) => Template[];
   getTemplatesByPlatform: (
-    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+    platform: "linkedin" | "bluesky" | "threads" | "mastodon"
   ) => Template[];
 }
 
@@ -79,7 +79,7 @@ export function TemplateProvider({ children }: { children: ReactNode }) {
   };
 
   const getTemplatesByPlatform = (
-    platform: "linkedin" | "twitter" | "threads" | "mastodon"
+    platform: "linkedin" | "bluesky" | "threads" | "mastodon"
   ) => {
     return templates.filter((t) => t.platform === platform);
   };
@@ -111,3 +111,26 @@ export function useTemplates() {
   }
   return context;
 }
+
+export type TemplateFormValues = {
+  id?: string;
+  name: string;
+  description: string;
+  content: string;
+  platform: "linkedin" | "bluesky" | "threads" | "mastodon";
+  isDefault: boolean;
+  tags: string[];
+};
+
+export type TemplateWithStats = {
+  id: string;
+  name: string;
+  description: string;
+  content: string;
+  platform: "linkedin" | "bluesky" | "threads" | "mastodon";
+  isDefault: boolean;
+  tags: string[];
+  usageCount: number;
+  createdAt: string;
+  updatedAt: string;
+};

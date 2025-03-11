@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Linkedin,
-  Twitter,
+  Instagram,
+  Globe,
   Image as ImageIcon,
   Tag,
   Calendar,
@@ -13,9 +14,13 @@ import {
 } from "lucide-react";
 import { Category, Tag as TagType } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { ImageUpload } from "@/components/ui/image-upload";
+import BlueskyIcon from "@/components/ui/icons/BlueskyIcon";
 
 interface MobilePostEditorProps {
   onContentChange?: (platform: string, content: string) => void;
+  onImageChange?: (platform: string, file: File | null) => void;
   onSubmit?: () => void;
   categories?: Category[];
   tags?: TagType[];
@@ -23,10 +28,24 @@ interface MobilePostEditorProps {
   selectedTags?: string[];
   onCategorySelect?: (categoryId: string) => void;
   onTagToggle?: (tagId: string) => void;
+  initialContent?: {
+    linkedin?: string;
+    bluesky?: string;
+    threads?: string;
+    mastodon?: string;
+  };
+  initialImages?: {
+    linkedin?: File | null;
+    bluesky?: File | null;
+    threads?: File | null;
+    mastodon?: File | null;
+  };
+  submitButtonText?: string;
 }
 
 export default function MobilePostEditor({
   onContentChange,
+  onImageChange,
   onSubmit,
   categories = [],
   tags = [],
@@ -34,10 +53,23 @@ export default function MobilePostEditor({
   selectedTags = [],
   onCategorySelect,
   onTagToggle,
+  initialContent = {},
+  initialImages = {},
+  submitButtonText = "Create Post",
 }: MobilePostEditorProps) {
   const [activeTab, setActiveTab] = useState("linkedin");
-  const [linkedinContent, setLinkedinContent] = useState("");
-  const [twitterContent, setTwitterContent] = useState("");
+  const [linkedinContent, setLinkedinContent] = useState(
+    initialContent.linkedin || ""
+  );
+  const [blueskyContent, setBlueskyContent] = useState(
+    initialContent.bluesky || ""
+  );
+  const [threadsContent, setThreadsContent] = useState(
+    initialContent.threads || ""
+  );
+  const [mastodonContent, setMastodonContent] = useState(
+    initialContent.mastodon || ""
+  );
   const [showOptions, setShowOptions] = useState(false);
 
   const handleLinkedinChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -47,10 +79,24 @@ export default function MobilePostEditor({
     }
   };
 
-  const handleTwitterChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setTwitterContent(e.target.value);
+  const handleBlueskyChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setBlueskyContent(e.target.value);
     if (onContentChange) {
-      onContentChange("twitter", e.target.value);
+      onContentChange("bluesky", e.target.value);
+    }
+  };
+
+  const handleThreadsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setThreadsContent(e.target.value);
+    if (onContentChange) {
+      onContentChange("threads", e.target.value);
+    }
+  };
+
+  const handleMastodonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMastodonContent(e.target.value);
+    if (onContentChange) {
+      onContentChange("mastodon", e.target.value);
     }
   };
 
@@ -70,6 +116,12 @@ export default function MobilePostEditor({
     .map((tagId) => tags.find((t) => t.id === tagId))
     .filter(Boolean) as TagType[];
 
+  const handleImageChange = (platform: string, file: File | null) => {
+    if (onImageChange) {
+      onImageChange(platform, file);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
       <Tabs
@@ -78,7 +130,7 @@ export default function MobilePostEditor({
         className="flex-1 flex flex-col"
       >
         <div className="px-4 py-3 border-b">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger
               value="linkedin"
               className="flex items-center space-x-2"
@@ -87,11 +139,25 @@ export default function MobilePostEditor({
               <span>LinkedIn</span>
             </TabsTrigger>
             <TabsTrigger
-              value="twitter"
+              value="bluesky"
               className="flex items-center space-x-2"
             >
-              <Twitter className="w-4 h-4" />
-              <span>Twitter</span>
+              <BlueskyIcon className="w-4 h-4" />
+              <span>Bluesky</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="threads"
+              className="flex items-center space-x-2"
+            >
+              <Instagram className="w-4 h-4" />
+              <span>Threads</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="mastodon"
+              className="flex items-center space-x-2"
+            >
+              <Globe className="w-4 h-4" />
+              <span>Mastodon</span>
             </TabsTrigger>
           </TabsList>
         </div>
@@ -101,29 +167,92 @@ export default function MobilePostEditor({
           key="mobile-linkedin"
           className="flex-1 flex flex-col p-0 m-0"
         >
-          <textarea
-            className="flex-1 p-4 w-full resize-none border-0 focus:ring-0 focus:outline-none"
-            placeholder="What do you want to share on LinkedIn?"
-            value={linkedinContent}
-            onChange={handleLinkedinChange}
-          ></textarea>
+          <div className="relative">
+            <Textarea
+              placeholder="What do you want to share on LinkedIn?"
+              className="min-h-[200px] resize-none"
+              value={linkedinContent}
+              onChange={handleLinkedinChange}
+            />
+            <div className="absolute bottom-2 right-2 text-xs text-muted-foreground">
+              {linkedinContent.length}/3000
+            </div>
+          </div>
+          <ImageUpload
+            value={initialImages.linkedin || null}
+            onChange={(file) => handleImageChange("linkedin", file)}
+            platformPreview="linkedin"
+          />
         </TabsContent>
 
         <TabsContent
-          value="twitter"
-          key="mobile-twitter"
+          value="bluesky"
+          key="mobile-bluesky"
           className="flex-1 flex flex-col p-0 m-0"
         >
-          <textarea
-            className="flex-1 p-4 w-full resize-none border-0 focus:ring-0 focus:outline-none"
-            placeholder="What's happening?"
-            value={twitterContent}
-            onChange={handleTwitterChange}
-            maxLength={280}
-          ></textarea>
-          <div className="px-4 py-2 text-right text-xs text-gray-500">
-            {twitterContent.length}/280
+          <div className="relative">
+            <Textarea
+              placeholder="What's happening?"
+              className="min-h-[200px] resize-none"
+              value={blueskyContent}
+              onChange={handleBlueskyChange}
+              aria-label="Bluesky post content"
+            />
+            <div className="absolute bottom-2 right-2 text-xs text-muted-foreground">
+              {blueskyContent.length}/300
+            </div>
           </div>
+          <ImageUpload
+            value={initialImages.bluesky || null}
+            onChange={(file) => handleImageChange("bluesky", file)}
+            platformPreview="bluesky"
+          />
+        </TabsContent>
+
+        <TabsContent
+          value="threads"
+          key="mobile-threads"
+          className="flex-1 flex flex-col p-0 m-0"
+        >
+          <div className="relative">
+            <Textarea
+              placeholder="Start a thread..."
+              className="min-h-[200px] resize-none"
+              value={threadsContent}
+              onChange={handleThreadsChange}
+            />
+            <div className="absolute bottom-2 right-2 text-xs text-muted-foreground">
+              {threadsContent.length}/500
+            </div>
+          </div>
+          <ImageUpload
+            value={initialImages.threads || null}
+            onChange={(file) => handleImageChange("threads", file)}
+            platformPreview="threads"
+          />
+        </TabsContent>
+
+        <TabsContent
+          value="mastodon"
+          key="mobile-mastodon"
+          className="flex-1 flex flex-col p-0 m-0"
+        >
+          <div className="relative">
+            <Textarea
+              placeholder="What's on your mind?"
+              className="min-h-[200px] resize-none"
+              value={mastodonContent}
+              onChange={handleMastodonChange}
+            />
+            <div className="absolute bottom-2 right-2 text-xs text-muted-foreground">
+              {mastodonContent.length}/500
+            </div>
+          </div>
+          <ImageUpload
+            value={initialImages.mastodon || null}
+            onChange={(file) => handleImageChange("mastodon", file)}
+            platformPreview="mastodon"
+          />
         </TabsContent>
       </Tabs>
 
@@ -186,10 +315,15 @@ export default function MobilePostEditor({
           onClick={onSubmit}
           size="sm"
           className="rounded-full"
-          disabled={!linkedinContent && !twitterContent}
+          disabled={
+            !linkedinContent &&
+            !blueskyContent &&
+            !threadsContent &&
+            !mastodonContent
+          }
         >
           <Send className="w-4 h-4 mr-1" />
-          <span>Post</span>
+          <span>{submitButtonText}</span>
         </Button>
       </div>
 

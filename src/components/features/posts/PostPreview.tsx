@@ -3,20 +3,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Category, MediaItem, Tag } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/badge";
-import {
-  Linkedin,
-  Twitter,
-  Instagram,
-  Globe,
-  Monitor,
-  Laptop,
-} from "lucide-react";
+import { Linkedin, Instagram, Globe, Monitor, Laptop } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import BlueskyIcon from "@/components/ui/icons/BlueskyIcon";
 
 interface PostPreviewProps {
   content?: {
     linkedin?: string;
-    twitter?: string;
+    bluesky?: string;
     threads?: string;
     mastodon?: string;
   };
@@ -30,6 +24,7 @@ interface PostPreviewProps {
   subtextClassName?: string;
   tabClassName?: string;
   selectedTabClassName?: string;
+  deviceView?: "desktop" | "mobile" | "responsive";
 }
 
 export default function PostPreview({
@@ -42,70 +37,63 @@ export default function PostPreview({
   className = "bg-card dark:bg-card rounded-lg shadow-sm p-4 sm:p-6",
   textClassName = "text-foreground/90 dark:text-foreground/90",
   subtextClassName = "text-muted-foreground dark:text-muted-foreground",
+  deviceView = "responsive",
 }: PostPreviewProps) {
-  const [deviceView, setDeviceView] = useState<"desktop" | "mobile">("desktop");
-  const [internalActiveTab, setInternalActiveTab] = useState(activeTab);
+  const [effectiveActiveTab, setEffectiveActiveTab] = useState(activeTab);
   const isMobile = useMediaQuery("(max-width: 640px)");
 
-  // Use the internal state if no onTabChange is provided
-  const effectiveActiveTab = onTabChange ? activeTab : internalActiveTab;
+  // Update internal state when prop changes
+  useEffect(() => {
+    if (activeTab) {
+      setEffectiveActiveTab(activeTab);
+    }
+  }, [activeTab]);
 
-  // Handle tab changes internally if no onTabChange is provided
-  const handleInternalTabChange = (tab: string) => {
+  const handleTabChange = (value: string) => {
+    setEffectiveActiveTab(value);
     if (onTabChange) {
-      onTabChange(tab);
-    } else {
-      setInternalActiveTab(tab);
+      onTabChange(value);
     }
   };
-
-  useEffect(() => {
-    if (isMobile) {
-      setDeviceView("mobile");
-    }
-  }, [isMobile]);
 
   const tabClassName = "text-muted-foreground hover:text-foreground/80";
   const selectedTabClassName = "bg-card dark:bg-card shadow-sm text-primary";
 
   return (
-    <div className={className}>
-      <div className="flex justify-between items-center mb-4">
-        <h3 className={cn("text-lg font-medium", textClassName)}>Preview</h3>
-        {!isMobile && (
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => setDeviceView("desktop")}
-              className={cn(
-                "p-1.5 rounded-md transition-colors",
-                deviceView === "desktop"
-                  ? "bg-muted text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-              aria-label="Desktop view"
-            >
-              <Monitor className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => setDeviceView("mobile")}
-              className={cn(
-                "p-1.5 rounded-md transition-colors",
-                deviceView === "mobile"
-                  ? "bg-muted text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-              aria-label="Mobile view"
-            >
-              <Laptop className="h-4 w-4" />
-            </button>
-          </div>
-        )}
+    <div className={cn("w-full", className)}>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className={cn("text-lg font-medium", textClassName)}>
+          Post Preview
+        </h3>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className={cn(
+              "p-1.5 rounded-md",
+              deviceView === "desktop" ? "bg-primary/10" : "bg-transparent"
+            )}
+            onClick={() => {}}
+            title="Desktop view"
+          >
+            <Monitor className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            className={cn(
+              "p-1.5 rounded-md",
+              deviceView === "mobile" ? "bg-primary/10" : "bg-transparent"
+            )}
+            onClick={() => {}}
+            title="Mobile view"
+          >
+            <Laptop className="h-4 w-4" />
+          </button>
+        </div>
       </div>
 
       <Tabs
-        defaultValue={effectiveActiveTab}
         value={effectiveActiveTab}
-        onValueChange={handleInternalTabChange}
+        onValueChange={handleTabChange}
         className="space-y-4"
       >
         <TabsList className="grid grid-cols-4 h-9">
@@ -121,15 +109,15 @@ export default function PostPreview({
             <span className="hidden sm:inline">LinkedIn</span>
           </TabsTrigger>
           <TabsTrigger
-            value="twitter"
+            value="bluesky"
             className={cn(
               "flex items-center gap-1.5 text-xs h-8",
               tabClassName,
-              effectiveActiveTab === "twitter" && selectedTabClassName
+              effectiveActiveTab === "bluesky" && selectedTabClassName
             )}
           >
-            <Twitter className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Twitter</span>
+            <BlueskyIcon className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Bluesky</span>
           </TabsTrigger>
           <TabsTrigger
             value="threads"
@@ -163,20 +151,21 @@ export default function PostPreview({
             )}
           >
             <div className="flex items-start gap-3">
-              <div className="w-12 h-12 rounded-full bg-muted/50 dark:bg-muted/30 flex-shrink-0"></div>
+              <div className="w-10 h-10 rounded-full bg-muted/50 dark:bg-muted/30 flex-shrink-0"></div>
               <div className="flex-1">
-                <div>
+                <div className="flex items-center gap-1">
                   <span className={cn("font-bold text-sm", textClassName)}>
                     Your Name
                   </span>
-                  <span className={cn("text-xs block", subtextClassName)}>
-                    Your Title
-                  </span>
+                  <span className={cn("text-xs", subtextClassName)}>• 1st</span>
+                </div>
+                <div className={cn("text-xs mt-0.5 mb-2", subtextClassName)}>
+                  Your Title
                 </div>
 
                 <div
                   className={cn(
-                    "mt-3 text-sm whitespace-pre-wrap",
+                    "mt-2 text-sm whitespace-pre-wrap",
                     textClassName
                   )}
                 >
@@ -185,20 +174,13 @@ export default function PostPreview({
                 </div>
 
                 {media.length > 0 && (
-                  <div className="mt-3 grid grid-cols-2 gap-2">
-                    {media.map((item) => (
-                      <div
-                        key={item.id}
-                        className="aspect-video bg-muted/30 rounded-md overflow-hidden relative"
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={item.thumbnailUrl}
-                          alt={item.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ))}
+                  <div className="mt-3 rounded-xl bg-muted/30 overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={media[0].thumbnailUrl}
+                      alt={media[0].name}
+                      className="w-full h-auto object-cover"
+                    />
                   </div>
                 )}
               </div>
@@ -206,7 +188,7 @@ export default function PostPreview({
           </div>
         </TabsContent>
 
-        <TabsContent value="twitter" className="space-y-4">
+        <TabsContent value="bluesky" className="space-y-4">
           <div
             className={cn(
               "bg-white dark:bg-gray-900 rounded-lg border border-border p-4",
@@ -221,7 +203,7 @@ export default function PostPreview({
                     Your Name
                   </span>
                   <span className={cn("text-sm", subtextClassName)}>
-                    @yourhandle
+                    @yourhandle.bsky.social
                   </span>
                 </div>
 
@@ -231,8 +213,8 @@ export default function PostPreview({
                     textClassName
                   )}
                 >
-                  {content?.twitter ||
-                    "Your Twitter post content will appear here."}
+                  {content?.bluesky ||
+                    "Your Bluesky post content will appear here."}
                 </div>
 
                 {media.length > 0 && (

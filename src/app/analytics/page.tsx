@@ -9,6 +9,7 @@ import PostPerformance from "@/components/features/analytics/PostPerformance";
 import { mockAnalytics, mockPosts } from "@/lib/mock-data";
 import { Eye, Heart, Share2, MessageSquare, ExternalLink } from "lucide-react";
 import { useNotification } from "@/context/NotificationContext";
+import { PostWithAnalytics } from "@/components/features/analytics/PostPerformance";
 
 // Predefined chart data to avoid hydration errors
 const PREDEFINED_CHART_DATA = [
@@ -41,7 +42,7 @@ const PREDEFINED_POST_ANALYTICS = [
     },
   },
   {
-    platform: "twitter" as const,
+    platform: "bluesky" as const,
     metrics: {
       views: 3200,
       likes: 450,
@@ -181,44 +182,46 @@ export default function AnalyticsPage() {
   const platformData = PREDEFINED_POST_ANALYTICS;
 
   // Generate post analytics data for the table
-  const postsWithAnalytics = mockPosts.slice(0, 5).map((post, index) => {
-    // Determine which platform to use for this post
-    let platform: "linkedin" | "twitter" | "threads" | "mastodon";
+  const postsWithAnalytics: PostWithAnalytics[] = mockPosts
+    .slice(0, 5)
+    .map((post, index) => {
+      // Determine which platform to use for this post
+      let platform: "linkedin" | "bluesky" | "threads" | "mastodon";
 
-    // Assign platforms in a round-robin fashion
-    switch (index % 4) {
-      case 0:
-        platform = "linkedin";
-        break;
-      case 1:
-        platform = "twitter";
-        break;
-      case 2:
-        platform = "threads";
-        break;
-      case 3:
-        platform = "mastodon";
-        break;
-      default:
-        platform = "linkedin";
-    }
+      // Assign platforms in a round-robin fashion
+      switch (index % 4) {
+        case 0:
+          platform = "linkedin";
+          break;
+        case 1:
+          platform = "bluesky";
+          break;
+        case 2:
+          platform = "threads";
+          break;
+        case 3:
+          platform = "mastodon";
+          break;
+        default:
+          platform = "linkedin";
+      }
 
-    return {
-      id: post.id,
-      content:
-        post.content.substring(0, 100) +
-        (post.content.length > 100 ? "..." : ""),
-      createdAt: post.createdAt,
-      platform,
-      metrics: {
-        views: Math.floor(Math.random() * 2000) + 500,
-        likes: Math.floor(Math.random() * 200) + 50,
-        shares: Math.floor(Math.random() * 50) + 10,
-        comments: Math.floor(Math.random() * 30) + 5,
-        clicks: Math.floor(Math.random() * 100) + 20,
-      },
-    };
-  });
+      return {
+        id: post.id,
+        content:
+          post.content.substring(0, 100) +
+          (post.content.length > 100 ? "..." : ""),
+        createdAt: post.createdAt,
+        platform,
+        metrics: {
+          views: Math.floor(Math.random() * 2000) + 500,
+          likes: Math.floor(Math.random() * 200) + 50,
+          shares: Math.floor(Math.random() * 50) + 10,
+          comments: Math.floor(Math.random() * 30) + 5,
+          clicks: Math.floor(Math.random() * 100) + 20,
+        },
+      };
+    });
 
   const handleMetricSelect = (
     metric: "views" | "likes" | "shares" | "comments" | "clicks"
