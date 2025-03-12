@@ -1,12 +1,15 @@
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
-    "clerkId" TEXT,
+    "clerkId" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT,
     "username" TEXT,
     "bio" TEXT,
     "profileImage" TEXT,
+    "publicMetadata" JSONB,
+    "privateMetadataCache" JSONB,
+    "lastSyncedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -52,6 +55,7 @@ CREATE TABLE "PostPlatform" (
     "publishedAt" TIMESTAMP(3),
     "scheduledFor" TIMESTAMP(3),
     "platformPostId" TEXT,
+    "error" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -87,6 +91,19 @@ CREATE TABLE "TemplateCategory" (
     CONSTRAINT "TemplateCategory_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "UserRole" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "scope" TEXT NOT NULL,
+    "role" TEXT NOT NULL,
+    "permissions" TEXT[],
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "UserRole_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_clerkId_key" ON "User"("clerkId");
 
@@ -102,6 +119,9 @@ CREATE UNIQUE INDEX "SocialAccount_userId_platform_key" ON "SocialAccount"("user
 -- CreateIndex
 CREATE UNIQUE INDEX "PostPlatform_postId_platform_key" ON "PostPlatform"("postId", "platform");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "UserRole_userId_scope_key" ON "UserRole"("userId", "scope");
+
 -- AddForeignKey
 ALTER TABLE "Post" ADD CONSTRAINT "Post_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -113,3 +133,6 @@ ALTER TABLE "PostPlatform" ADD CONSTRAINT "PostPlatform_postId_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "Template" ADD CONSTRAINT "Template_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UserRole" ADD CONSTRAINT "UserRole_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
