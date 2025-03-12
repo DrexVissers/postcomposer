@@ -2,21 +2,42 @@
 
 import { useState } from "react";
 import { useMedia } from "@/context/MediaContext";
-import { Search, Image as ImageIcon, Film, LayoutGrid } from "lucide-react";
-import Image from "next/image";
+import {
+  Search,
+  Image as ImageIcon,
+  Film,
+  LayoutGrid,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { formatFileSize } from "@/lib/media-utils";
 import MediaUploader from "./MediaUploader";
 import { MediaItem } from "@/lib/mock-data";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import dynamic from "next/dynamic";
+
+// Dynamically import the VirtualizedMediaGrid with no SSR to avoid hydration issues
+const VirtualizedMediaGrid = dynamic(() => import("./VirtualizedMediaGrid"), {
+  ssr: false,
+});
 
 interface MediaLibraryProps {
   onSelectMedia?: (media: MediaItem) => void;
 }
 
 export default function MediaLibrary({ onSelectMedia }: MediaLibraryProps) {
-  const { selectMedia, searchMedia, filterByType } = useMedia();
+  const {
+    selectMedia,
+    searchMedia,
+    filterByType,
+    currentPage,
+    totalItems,
+    isLoading,
+    loadNextPage,
+    loadPreviousPage,
+    goToPage,
+  } = useMedia();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<"all" | "image" | "video">(
     "all"
@@ -39,6 +60,18 @@ export default function MediaLibrary({ onSelectMedia }: MediaLibraryProps) {
         (item) => filterType === "all" || item.type === filterType
       )
     : filteredItems;
+
+  const handleSelectMedia = (item: MediaItem) => {
+    if (onSelectMedia) {
+      onSelectMedia(item);
+    } else {
+      selectMedia(item.id);
+    }
+  };
+
+  // Calculate pagination info
+  const itemsPerPage = 50; // Should match ITEMS_PER_PAGE in MediaContext
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   return (
     <div className="space-y-4">
@@ -80,52 +113,75 @@ export default function MediaLibrary({ onSelectMedia }: MediaLibraryProps) {
 
       <MediaUploader />
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {displayedItems.map((item) => (
-          <Card
-            key={item.id}
-            className="overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary transition-all bg-card dark:bg-card"
-            onClick={() => {
-              if (onSelectMedia) {
-                onSelectMedia(item);
-              } else {
-                selectMedia(item.id);
-              }
-            }}
-          >
-            <div className="relative">
-              <Image
-                src={item.thumbnailUrl}
-                alt={item.name}
-                width={200}
-                height={200}
-                className="w-full aspect-square object-cover"
-              />
-              {item.type === "video" && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
-                  <div className="w-12 h-12 rounded-full bg-white bg-opacity-80 flex items-center justify-center">
-                    <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-teal-600 border-b-8 border-b-transparent ml-1"></div>
-                  </div>
-                </div>
-              )}
-            </div>
-            <CardContent className="p-3">
-              <p className="font-medium text-sm truncate text-foreground/90 dark:text-foreground/90">
-                {item.name}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {formatFileSize(item.size)}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {displayedItems.length === 0 && (
-        <div className="text-center py-8">
-          <p className="text-muted-foreground">No media items found</p>
+      {isLoading ? (
+        <div className="flex justify-center items-center h-[400px]">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
         </div>
+      ) : (
+        <VirtualizedMediaGrid
+          items={displayedItems}
+          onSelectMedia={handleSelectMedia}
+        />
       )}
+
+      {/* Pagination Controls */}
+      <div className="flex justify-between items-center mt-6">
+        <div className="text-sm text-muted-foreground">
+          Showing page {currentPage} of {totalPages} ({totalItems} items)
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={loadPreviousPage}
+            disabled={currentPage <= 1}
+            className="flex items-center gap-1"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Previous
+          </Button>
+
+          {/* Page number buttons - show up to 5 pages */}
+          <div className="flex gap-1">
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              // Calculate which page numbers to show
+              let pageNum;
+              if (totalPages <= 5) {
+                pageNum = i + 1;
+              } else if (currentPage <= 3) {
+                pageNum = i + 1;
+              } else if (currentPage >= totalPages - 2) {
+                pageNum = totalPages - 4 + i;
+              } else {
+                pageNum = currentPage - 2 + i;
+              }
+
+              return (
+                <Button
+                  key={pageNum}
+                  variant={currentPage === pageNum ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => goToPage(pageNum)}
+                  className="w-9 h-9 p-0"
+                >
+                  {pageNum}
+                </Button>
+              );
+            })}
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={loadNextPage}
+            disabled={currentPage >= totalPages}
+            className="flex items-center gap-1"
+          >
+            Next
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

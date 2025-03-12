@@ -10,9 +10,12 @@
 
 Tasks are ordered chronologically from most recent to oldest:
 
-- [x] Fix API route issue with dynamic parameters in Next.js 15 (2025-03-12)
-- [x] Optimize UserContext with debouncing and improved fetch state tracking (2025-03-12)
-- [x] Fix infinite API calls issue in user data fetching (2025-03-12)
+- [x] Fix deprecated images.domains configuration in next.config.ts
+- [x] Set up Jest and React Testing Library for unit testing
+- [x] Create initial test files for UI components and utilities
+- [x] Update template categorization to properly separate short-form and long-form templates
+- [x] Fix template display on templates page to correctly categorize custom templates
+- [x] Update `isShortFormTemplate` function to only consider Bluesky and Threads as short-form platforms
 - [x] Rename project from Lever Cast to SocialSphere
 - [x] Add Mastodon platform support and improve UI components
 - [x] Update analytics page button styles for improved theme consistency
@@ -32,7 +35,7 @@ The application is organized into the following main sections:
 - Create: Content creation interface
 - Schedule: Post scheduling and calendar management
 - Preview: Content preview across different platforms
-- Templates: Template management system
+- Templates: Template management system with proper categorization of short-form and long-form templates
 - Analytics: Performance metrics and reporting
 - Media: Media library and asset management
 - Settings: User and application settings
@@ -41,17 +44,7 @@ The application is organized into the following main sections:
 
 Tasks prioritized for implementation:
 
-- [ ] Add premade templates for various content types:
-  - [ ] Email templates
-  - [ ] Newsletter templates
-  - [ ] Blog post templates
-  - [ ] Content outline templates
-  - [ ] Script templates for YouTube/podcasts
-- [ ] Implement proper error handling in the UI
-- [ ] Add loading states for better user experience
-- [ ] Fix deprecated images.domains configuration (warning in console)
-- [ ] Implement database integration with Prisma (currently using mock data)
-- [ ] Add comprehensive unit and integration tests
+- [ ] Complete test coverage for all major components
 - [ ] Optimize performance for large media libraries
 - [ ] Enhance analytics with more detailed reporting options
 
@@ -59,9 +52,6 @@ Tasks prioritized for implementation:
 
 Future enhancements to consider:
 
-- [ ] Optimize API calls with server-side caching
-- [ ] Enhance user profile management
-- [ ] Implement advanced role-based access control
 - [ ] Add AI-assisted content creation features
 - [ ] Implement advanced scheduling algorithms
 - [ ] Add support for additional social media platforms
@@ -70,7 +60,9 @@ Future enhancements to consider:
 
 ## Update History
 
-- **Update:** 2025-03-12 - Added recent fixes for UserContext and API routes, updated pending tasks with template creation plan
+- **Update:** 2025-03-12 - Fixed Next.js image configuration to use remotePatterns
+- **Update:** 2025-03-12 - Added testing framework with Jest and React Testing Library
+- **Update:** 2025-03-12 - Updated template categorization to properly separate short-form (Bluesky, Threads) and long-form templates
 - **Update:** 2025-02-28 - Updated to reflect current project state after renaming to SocialSphere
 
   **Action Required:**  
