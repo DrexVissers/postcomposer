@@ -38,7 +38,6 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useTemplates } from "@/context/TemplateContext";
-import Link from "next/link";
 
 export default function CreatePostPage() {
   const [content, setContent] = useState("");
@@ -96,6 +95,20 @@ export default function CreatePostPage() {
   const handleTemplateSelect = (templateId: string) => {
     const template = templates.find((t) => t.id === templateId);
     if (template) {
+      // Check if this is a Bluesky or Threads template
+      const isBlueSkyOrThreadsTemplate = ["bluesky", "threads"].includes(
+        template.platform.toLowerCase()
+      );
+
+      // If it's not a Bluesky or Threads template, redirect to preview page
+      if (!isBlueSkyOrThreadsTemplate) {
+        // For other templates, redirect to the preview page with template data
+        localStorage.setItem("selectedTemplate", JSON.stringify(template));
+        window.location.href = "/preview";
+        return;
+      }
+
+      // For Bluesky or Threads templates, continue with the current behavior
       setContent(template.content);
       // Also update the generated content for the active platform
       setGeneratedContent({
@@ -133,8 +146,11 @@ export default function CreatePostPage() {
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
           <h1 className="text-2xl font-bold text-muted-foreground">
-            Create New Post
+            Short Form
           </h1>
+          <div className="flex items-center gap-2">
+            {/* ... existing code ... */}
+          </div>
         </div>
         <div className="flex flex-col md:flex-row gap-8">
           {/* Left Column - Content Creation */}
@@ -284,6 +300,38 @@ export default function CreatePostPage() {
                   <RefreshCw className="w-4 h-4" />
                   <span>Clear</span>
                 </button>
+
+                <div className="w-full max-w-xs mx-4">
+                  <Select
+                    onValueChange={(value) => handleTemplateSelect(value)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a template" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {templates
+                        .filter((template) =>
+                          // Only include Bluesky and Threads templates
+                          ["bluesky", "threads"].includes(
+                            (template.platform || "").toLowerCase()
+                          )
+                        )
+                        .map((template) => {
+                          // Remove "(Copy)" from template names if present
+                          const displayName = template.name.replace(
+                            /\s*\(Copy\)/g,
+                            ""
+                          );
+                          return (
+                            <SelectItem key={template.id} value={template.id}>
+                              {displayName}
+                            </SelectItem>
+                          );
+                        })}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <button
                   className="flex items-center gap-2 px-6 py-2 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors"
                   onClick={handlePublish}
@@ -294,37 +342,6 @@ export default function CreatePostPage() {
                     {requiresApproval ? "Submit for Approval" : "Publish"}
                   </span>
                 </button>
-              </div>
-            </div>
-
-            {/* Templates Section */}
-            <div className="mt-6">
-              <h3 className="text-sm font-medium text-foreground/90 dark:text-foreground/90 mb-2">
-                Templates
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {templates.map((template) => (
-                  <div
-                    key={template.id}
-                    className="p-3 border border-border bg-card dark:bg-card rounded-lg hover:border-primary cursor-pointer text-sm"
-                    onClick={() => handleTemplateSelect(template.id)}
-                  >
-                    <p className="font-medium text-foreground/90 dark:text-foreground/90">
-                      {template.name}
-                    </p>
-                    <p className="text-muted-foreground text-xs mt-1">
-                      For {template.platform}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-2 text-right">
-                <Link
-                  href="/templates"
-                  className="text-sm text-primary hover:text-primary/80"
-                >
-                  Manage Templates →
-                </Link>
               </div>
             </div>
           </div>

@@ -4,16 +4,15 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   LayoutDashboard,
-  PlusCircle,
   Settings,
   Menu,
   X,
-  Eye,
   Calendar,
   BarChart2,
   Image as ImageIcon,
   CheckCircle,
   FileText,
+  MessageSquare,
 } from "lucide-react";
 import { mockUser } from "@/lib/mock-data";
 import MobileNavBar from "./MobileNavBar";
@@ -103,22 +102,15 @@ export default function MainLayout({ children }: MainLayoutProps) {
               href="/create"
               className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
             >
-              <PlusCircle className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
-              <span>Create Post</span>
-            </Link>
-            <Link
-              href="/schedule"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
-            >
-              <Calendar className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
-              <span>Schedule</span>
+              <MessageSquare className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
+              <span>Short Form</span>
             </Link>
             <Link
               href="/preview"
               className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
             >
-              <Eye className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
-              <span>Preview</span>
+              <FileText className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
+              <span>Long Form</span>
             </Link>
             <Link
               href="/templates"
@@ -126,6 +118,13 @@ export default function MainLayout({ children }: MainLayoutProps) {
             >
               <FileText className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
               <span>Templates</span>
+            </Link>
+            <Link
+              href="/schedule"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
+            >
+              <Calendar className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
+              <span>Schedule</span>
             </Link>
             <Link
               href="/analytics"
@@ -261,24 +260,16 @@ export default function MainLayout({ children }: MainLayoutProps) {
               className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
               onClick={toggleMobileMenu}
             >
-              <PlusCircle className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
-              <span>Create Post</span>
-            </Link>
-            <Link
-              href="/schedule"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
-              onClick={toggleMobileMenu}
-            >
-              <Calendar className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
-              <span>Schedule</span>
+              <MessageSquare className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
+              <span>Short Form</span>
             </Link>
             <Link
               href="/preview"
               className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
               onClick={toggleMobileMenu}
             >
-              <Eye className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
-              <span>Preview</span>
+              <FileText className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
+              <span>Long Form</span>
             </Link>
             <Link
               href="/templates"
@@ -287,6 +278,14 @@ export default function MainLayout({ children }: MainLayoutProps) {
             >
               <FileText className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
               <span>Templates</span>
+            </Link>
+            <Link
+              href="/schedule"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
+              onClick={toggleMobileMenu}
+            >
+              <Calendar className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
+              <span>Schedule</span>
             </Link>
             <Link
               href="/analytics"

@@ -1,0 +1,80 @@
+# SocialSphere Project Scratchpad
+
+**Usage Instructions:**  
+ This file is used for task planning, progress tracking, and organizing your thoughts throughout the project.
+
+**Project Overview:**  
+ SocialSphere (previously Lever Cast) is a social media management platform built with Next.js 15, featuring a modern UI with shadcn components and Tailwind CSS. The application includes features for content creation, scheduling, analytics, and multi-platform publishing.
+
+## Completed Tasks
+
+Tasks are ordered chronologically from most recent to oldest:
+
+- [x] Fix API route issue with dynamic parameters in Next.js 15 (2025-03-12)
+- [x] Optimize UserContext with debouncing and improved fetch state tracking (2025-03-12)
+- [x] Fix infinite API calls issue in user data fetching (2025-03-12)
+- [x] Rename project from Lever Cast to SocialSphere
+- [x] Add Mastodon platform support and improve UI components
+- [x] Update analytics page button styles for improved theme consistency
+- [x] Standardize background and styling across application components
+- [x] Add new UI components and enhance dark mode styling
+- [x] Implement dark mode with theme context and color palette updates
+- [x] Add system notifications and notification management
+- [x] Enhance mobile responsiveness and add mobile-specific UI components
+- [x] Add template management with dynamic template creation and categorization
+- [x] Add team management and role-based access control
+
+## Current Project Structure
+
+The application is organized into the following main sections:
+
+- Dashboard: Main overview and content approval workflow
+- Create: Content creation interface
+- Schedule: Post scheduling and calendar management
+- Preview: Content preview across different platforms
+- Templates: Template management system
+- Analytics: Performance metrics and reporting
+- Media: Media library and asset management
+- Settings: User and application settings
+
+## Pending Tasks
+
+Tasks prioritized for implementation:
+
+- [ ] Add premade templates for various content types:
+  - [ ] Email templates
+  - [ ] Newsletter templates
+  - [ ] Blog post templates
+  - [ ] Content outline templates
+  - [ ] Script templates for YouTube/podcasts
+- [ ] Implement proper error handling in the UI
+- [ ] Add loading states for better user experience
+- [ ] Fix deprecated images.domains configuration (warning in console)
+- [ ] Implement database integration with Prisma (currently using mock data)
+- [ ] Add comprehensive unit and integration tests
+- [ ] Optimize performance for large media libraries
+- [ ] Enhance analytics with more detailed reporting options
+
+## Backlog Tasks
+
+Future enhancements to consider:
+
+- [ ] Optimize API calls with server-side caching
+- [ ] Enhance user profile management
+- [ ] Implement advanced role-based access control
+- [ ] Add AI-assisted content creation features
+- [ ] Implement advanced scheduling algorithms
+- [ ] Add support for additional social media platforms
+- [ ] Create a comprehensive user onboarding flow
+- [ ] Develop a mobile application companion
+
+## Update History
+
+- **Update:** 2025-03-12 - Added recent fixes for UserContext and API routes, updated pending tasks with template creation plan
+- **Update:** 2025-02-28 - Updated to reflect current project state after renaming to SocialSphere
+
+  **Action Required:**  
+  Whenever I add the line "CHECK UPDATES" to this file, please review the current content.
+
+- If there are new tasks or updates that need to be recorded, add them along with a timestamp and reply "Update added: [brief description]."
+- If no updates are necessary, respond with "No new updates needed."

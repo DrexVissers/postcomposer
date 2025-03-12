@@ -5,7 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  PlusCircle,
+  MessageSquare,
+  FileText,
   Calendar,
   Settings,
   Menu,
@@ -71,8 +72,21 @@ export default function MobileNavBar() {
           }`}
           aria-current={isActive("/create") ? "page" : undefined}
         >
-          <PlusCircle className="w-5 h-5" aria-hidden="true" />
-          <span className="text-xs mt-1">Create</span>
+          <MessageSquare className="w-5 h-5" aria-hidden="true" />
+          <span className="text-xs mt-1">Short Form</span>
+        </Link>
+
+        <Link
+          href="/preview"
+          className={`flex flex-col items-center justify-center w-full h-full ${
+            isActive("/preview")
+              ? "text-primary"
+              : "text-muted-foreground dark:text-foreground/70"
+          }`}
+          aria-current={isActive("/preview") ? "page" : undefined}
+        >
+          <FileText className="w-5 h-5" aria-hidden="true" />
+          <span className="text-xs mt-1">Long Form</span>
         </Link>
 
         <Link

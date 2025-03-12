@@ -45,6 +45,19 @@ type UserContextType = {
 // Create the context
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
+// Debounce helper function
+const debounce = <T extends (...args: unknown[]) => unknown>(
+  func: T,
+  wait: number
+): ((...args: Parameters<T>) => void) => {
+  let timeout: NodeJS.Timeout | null = null;
+
+  return (...args: Parameters<T>) => {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+};
+
 // Create a provider component
 export function UserProvider({ children }: { children: ReactNode }) {
   const { user: clerkUser, isLoaded: isClerkLoaded } = useUser();
@@ -54,6 +67,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const isFetchingRef = useRef(false);
   const lastFetchedClerkIdRef = useRef<string | null>(null);
+  const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Function to fetch user data from our API
   const fetchUserData = useCallback(async () => {
@@ -61,6 +75,12 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
     // Skip if we've already fetched for this clerk ID
     if (lastFetchedClerkIdRef.current === clerkUser.id && user !== null) return;
+
+    // Clear any existing timeout
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current);
+      fetchTimeoutRef.current = null;
+    }
 
     isFetchingRef.current = true;
     setIsLoading(true);
@@ -109,19 +129,27 @@ export function UserProvider({ children }: { children: ReactNode }) {
     }
   }, [clerkUser?.id, syncUser, user]);
 
+  // Debounced version of fetchUserData
+  const debouncedFetchUserData = useCallback(
+    debounce(() => {
+      fetchUserData();
+    }, 300),
+    [fetchUserData]
+  );
+
   // Fetch user data when Clerk user is loaded
   useEffect(() => {
     if (isClerkLoaded && clerkUser && !isFetchingRef.current) {
       // Only fetch if the clerk ID has changed or we don't have user data yet
       if (lastFetchedClerkIdRef.current !== clerkUser.id || user === null) {
-        fetchUserData();
+        debouncedFetchUserData();
       }
     } else if (isClerkLoaded && !clerkUser) {
       setUser(null);
       setIsLoading(false);
       lastFetchedClerkIdRef.current = null;
     }
-  }, [isClerkLoaded, clerkUser, fetchUserData]);
+  }, [isClerkLoaded, clerkUser, debouncedFetchUserData]);
 
   // Manual refetch function that forces a new fetch regardless of cache
   const refetch = useCallback(async () => {
@@ -138,6 +166,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
       setError(syncError);
     }
   }, [syncError]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Provide the context value
   const value = {

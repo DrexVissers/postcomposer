@@ -12,8 +12,11 @@ export async function GET(
     const { userId } = await auth();
 
     // Get the requested clerkId from the URL params - fix for Next.js 15
-    // Create a new variable to avoid the error with params.clerkId
-    const requestedClerkId = String(params.clerkId);
+    // Use a completely different approach that avoids accessing params.clerkId directly
+    // Extract from the URL path instead
+    const url = request.url;
+    const pathParts = url.split("/");
+    const requestedClerkId = pathParts[pathParts.length - 1];
 
     // Check if this is an authenticated request
     const isAuthenticated = !!userId;

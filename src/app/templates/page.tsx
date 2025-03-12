@@ -6,7 +6,6 @@ import { useTemplates } from "@/context/TemplateContext";
 import { Template } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
   CardContent,
@@ -36,6 +35,8 @@ import {
   Globe,
   Loader2,
   RefreshCw,
+  MessageSquare,
+  FileText,
 } from "lucide-react";
 
 export default function TemplatesPage() {
@@ -46,7 +47,6 @@ export default function TemplatesPage() {
     addTemplate,
     updateTemplate,
     deleteTemplate,
-    getTemplatesByCategory,
     refreshTemplates,
     refreshCategories,
   } = useTemplates();
@@ -55,27 +55,32 @@ export default function TemplatesPage() {
   const [currentTemplate, setCurrentTemplate] = useState<Template | undefined>(
     undefined
   );
-  const [activeCategory, setActiveCategory] = useState<string>("all");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [templateToDelete, setTemplateToDelete] = useState<Template | null>(
     null
   );
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Get templates to display based on active category
-  const getDisplayTemplates = () => {
-    if (activeCategory === "all") {
-      return templates;
-    } else if (
-      activeCategory === "linkedin" ||
-      activeCategory === "bluesky" ||
-      activeCategory === "threads" ||
-      activeCategory === "mastodon"
-    ) {
-      return templates.filter((t) => t.platform === activeCategory);
-    } else {
-      return getTemplatesByCategory(activeCategory);
-    }
+  // Determine if a template is short-form or long-form
+  const isShortFormTemplate = (template: { platform: string }) => {
+    // Short-form platforms: only bluesky and threads
+    const shortFormPlatforms = ["bluesky", "threads"];
+    return shortFormPlatforms.includes((template.platform || "").toLowerCase());
+  };
+
+  // Get custom templates (only long-form custom templates)
+  const getCustomTemplates = () => {
+    return templates.filter((t) => t.isCustom && !isShortFormTemplate(t));
+  };
+
+  // Get short-form templates (including custom short-form templates)
+  const getShortFormTemplates = () => {
+    return templates.filter((t) => isShortFormTemplate(t));
+  };
+
+  // Get long-form templates (only default long-form templates)
+  const getLongFormTemplates = () => {
+    return templates.filter((t) => !t.isCustom && !isShortFormTemplate(t));
   };
 
   // Open editor for new template
@@ -202,11 +207,12 @@ export default function TemplatesPage() {
   const renderPlatformIcon = (
     platform: "linkedin" | "bluesky" | "threads" | "mastodon"
   ) => {
-    if (platform === "linkedin") {
+    const platformLower = platform.toLowerCase();
+    if (platformLower === "linkedin") {
       return <Linkedin className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
-    } else if (platform === "bluesky") {
+    } else if (platformLower === "bluesky") {
       return <BlueskyIcon className="h-4 w-4 text-sky-500 dark:text-sky-400" />;
-    } else if (platform === "threads") {
+    } else if (platformLower === "threads") {
       return (
         <Instagram className="h-4 w-4 text-purple-600 dark:text-purple-400" />
       );
@@ -221,208 +227,238 @@ export default function TemplatesPage() {
     return category ? category.name : "Uncategorized";
   };
 
+  // Render template card
+  const renderTemplateCard = (template: Template) => {
+    // Remove LinkedIn branding from long-form template names
+    let displayName = template.name;
+    if (!isShortFormTemplate(template) && displayName.includes("LinkedIn")) {
+      displayName = displayName.replace(/LinkedIn\s*/g, "").trim();
+    }
+
+    return (
+      <Card
+        key={template.id}
+        className="overflow-hidden border border-border hover:shadow-md transition-shadow"
+      >
+        <CardHeader className="pb-2">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center gap-2">
+              {isShortFormTemplate(template) &&
+                renderPlatformIcon(
+                  template.platform.toLowerCase() as
+                    | "linkedin"
+                    | "bluesky"
+                    | "threads"
+                    | "mastodon"
+                )}
+              <CardTitle className="text-lg">{displayName}</CardTitle>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="h-8 w-8 p-0"
+                  aria-label="More options"
+                >
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => handleEditTemplate(template)}>
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleDuplicateTemplate(template)}
+                >
+                  <Copy className="h-4 w-4 mr-2" />
+                  Duplicate
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => confirmDeleteTemplate(template)}
+                  className="text-destructive focus:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          {template.category && (
+            <Badge variant="outline" className="mt-1 text-xs font-normal">
+              {getCategoryName(template.category)}
+            </Badge>
+          )}
+          <CardDescription className="mt-2 line-clamp-2">
+            {template.description || "No description provided"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-2">
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {template.content || "No content"}
+          </p>
+        </CardContent>
+        <CardFooter className="pt-2 flex justify-between">
+          <div className="flex gap-1">
+            {template.tags &&
+              template.tags.slice(0, 3).map((tag, i) => (
+                <Badge key={i} variant="secondary" className="text-xs">
+                  {tag}
+                </Badge>
+              ))}
+            {template.tags && template.tags.length > 3 && (
+              <Badge variant="secondary" className="text-xs">
+                +{template.tags.length - 3}
+              </Badge>
+            )}
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEditTemplate(template)}
+          >
+            <Pencil className="h-3.5 w-3.5 mr-1" />
+            Edit
+          </Button>
+        </CardFooter>
+      </Card>
+    );
+  };
+
   return (
     <MainLayout>
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-foreground/90 dark:text-foreground/90">
-            Template Management
+            Templates
           </h1>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="flex items-center gap-2"
-            >
-              {isRefreshing ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <RefreshCw className="h-4 w-4" />
-              )}
-              <span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
-            </Button>
-            <Button
-              onClick={handleAddTemplate}
-              className="flex items-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Create Template</span>
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="flex items-center gap-2"
+          >
+            {isRefreshing ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="h-4 w-4" />
+            )}
+            <span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
+          </Button>
         </div>
 
-        <Tabs
-          defaultValue="all"
-          value={activeCategory}
-          onValueChange={setActiveCategory}
-        >
-          <div className="border-b border-border mb-6">
-            <TabsList className="bg-transparent">
-              <TabsTrigger
-                value="all"
-                className="data-[state=active]:bg-background data-[state=active]:text-primary"
-              >
-                All Templates
-              </TabsTrigger>
-              <TabsTrigger
-                value="linkedin"
-                className="data-[state=active]:bg-background data-[state=active]:text-primary"
-              >
-                LinkedIn
-              </TabsTrigger>
-              <TabsTrigger
-                value="bluesky"
-                className="data-[state=active]:bg-background data-[state=active]:text-primary"
-              >
-                Bluesky
-              </TabsTrigger>
-              <TabsTrigger
-                value="threads"
-                className="data-[state=active]:bg-background data-[state=active]:text-primary"
-              >
-                Threads
-              </TabsTrigger>
-              <TabsTrigger
-                value="mastodon"
-                className="data-[state=active]:bg-background data-[state=active]:text-primary"
-              >
-                Mastodon
-              </TabsTrigger>
-              {templateCategories.map((category) => (
-                <TabsTrigger
-                  key={category.id}
-                  value={category.id}
-                  className="data-[state=active]:bg-background data-[state=active]:text-primary"
-                >
-                  {category.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
-
-          <TabsContent
-            value={activeCategory}
-            key={`template-${activeCategory}`}
-            className="mt-0"
+        <div className="flex justify-center my-8">
+          <Button
+            onClick={handleAddTemplate}
+            className="flex items-center gap-2 px-8 py-6 text-lg"
+            size="lg"
           >
-            {loading ? (
-              <div className="flex justify-center items-center h-64">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <span className="ml-2 text-lg">Loading templates...</span>
-              </div>
-            ) : getDisplayTemplates().length === 0 ? (
-              <div className="text-center py-12 border border-dashed rounded-lg">
-                <p className="text-muted-foreground mb-4">No templates found</p>
-                <Button onClick={handleAddTemplate} variant="outline">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create your first template
-                </Button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {getDisplayTemplates().map((template) => (
-                  <Card
-                    key={template.id}
-                    className="overflow-hidden border border-border hover:shadow-md transition-shadow"
+            <Plus className="h-5 w-5" />
+            <span>Create Template</span>
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          {/* Custom Templates Card */}
+          <Card className="col-span-1">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" />
+                My Custom Long Form Templates
+              </CardTitle>
+              <CardDescription>
+                Long form templates you&apos;ve created or customized
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className="flex justify-center items-center h-32">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              ) : getCustomTemplates().length === 0 ? (
+                <div className="text-center py-8 border border-dashed rounded-lg">
+                  <p className="text-muted-foreground mb-4">
+                    No custom long form templates yet
+                  </p>
+                  <Button
+                    onClick={handleAddTemplate}
+                    variant="outline"
+                    size="sm"
                   >
-                    <CardHeader className="pb-2">
-                      <div className="flex justify-between items-start">
-                        <div className="flex items-center gap-2">
-                          {renderPlatformIcon(
-                            template.platform as
-                              | "linkedin"
-                              | "bluesky"
-                              | "threads"
-                              | "mastodon"
-                          )}
-                          <CardTitle className="text-lg">
-                            {template.name}
-                          </CardTitle>
-                        </div>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              className="h-8 w-8 p-0"
-                              aria-label="More options"
-                            >
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => handleEditTemplate(template)}
-                            >
-                              <Pencil className="h-4 w-4 mr-2" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleDuplicateTemplate(template)}
-                            >
-                              <Copy className="h-4 w-4 mr-2" />
-                              Duplicate
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => confirmDeleteTemplate(template)}
-                              className="text-destructive focus:text-destructive"
-                            >
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                      {template.category && (
-                        <Badge
-                          variant="outline"
-                          className="mt-1 text-xs font-normal"
-                        >
-                          {getCategoryName(template.category)}
-                        </Badge>
-                      )}
-                      <CardDescription className="mt-2 line-clamp-2">
-                        {template.description || "No description provided"}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-2">
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {template.content || "No content"}
-                      </p>
-                    </CardContent>
-                    <CardFooter className="pt-2 flex justify-between">
-                      <div className="flex gap-1">
-                        {template.tags &&
-                          template.tags.slice(0, 3).map((tag, i) => (
-                            <Badge
-                              key={i}
-                              variant="secondary"
-                              className="text-xs"
-                            >
-                              {tag}
-                            </Badge>
-                          ))}
-                        {template.tags && template.tags.length > 3 && (
-                          <Badge variant="secondary" className="text-xs">
-                            +{template.tags.length - 3}
-                          </Badge>
-                        )}
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEditTemplate(template)}
-                      >
-                        <Pencil className="h-3.5 w-3.5 mr-1" />
-                        Edit
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create your first template
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                  {getCustomTemplates().map(renderTemplateCard)}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Short Form Templates Card */}
+          <Card className="col-span-1">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MessageSquare className="h-5 w-5 text-blue-500" />
+                Short Form Templates
+              </CardTitle>
+              <CardDescription>
+                All short form templates for social media posts (including
+                custom)
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className="flex justify-center items-center h-32">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              ) : getShortFormTemplates().length === 0 ? (
+                <div className="text-center py-8 border border-dashed rounded-lg">
+                  <p className="text-muted-foreground">
+                    No short form templates available
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                  {getShortFormTemplates().map(renderTemplateCard)}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Long Form Templates Card */}
+          <Card className="col-span-1">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-indigo-500" />
+                Default Long Form Templates
+              </CardTitle>
+              <CardDescription>
+                Pre-made templates for articles, newsletters, and detailed
+                content
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className="flex justify-center items-center h-32">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              ) : getLongFormTemplates().length === 0 ? (
+                <div className="text-center py-8 border border-dashed rounded-lg">
+                  <p className="text-muted-foreground">
+                    No long form templates available
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                  {getLongFormTemplates().map(renderTemplateCard)}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Template Editor Dialog */}
