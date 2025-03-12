@@ -5,6 +5,7 @@ import { NotificationProvider } from "@/context/NotificationContext";
 import { TemplateProvider } from "@/context/TemplateContext";
 import { SystemNotificationProvider } from "@/context/SystemNotificationContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { UserProvider } from "@/context/UserContext";
 import { ClerkProvider } from "@clerk/nextjs";
 import { clerkAppearance } from "@/lib/clerk-theme";
 import { Toaster } from "sonner";
@@ -37,14 +38,16 @@ export default function RootLayout({
       >
         <ClerkProvider appearance={clerkAppearance}>
           <ThemeProvider defaultTheme="dark" enableSystem={false}>
-            <NotificationProvider>
-              <SystemNotificationProvider>
-                <TemplateProvider>
-                  {children}
-                  <Toaster richColors closeButton position="top-right" />
-                </TemplateProvider>
-              </SystemNotificationProvider>
-            </NotificationProvider>
+            <UserProvider>
+              <NotificationProvider>
+                <SystemNotificationProvider>
+                  <TemplateProvider>
+                    {children}
+                    <Toaster richColors closeButton position="top-right" />
+                  </TemplateProvider>
+                </SystemNotificationProvider>
+              </NotificationProvider>
+            </UserProvider>
           </ThemeProvider>
         </ClerkProvider>
       </body>

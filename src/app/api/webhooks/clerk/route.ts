@@ -3,8 +3,13 @@ import { Webhook } from "svix";
 import { logger } from "@/lib/logger";
 import { userCreatedHandler } from "@/lib/webhooks/clerk/handlers/userCreated";
 
-// Get the webhook secret and ensure proper base64url format
-const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
+// Get the webhook secret and ensure proper format
+const rawWebhookSecret = process.env.CLERK_WEBHOOK_SECRET;
+// The webhook secret from Clerk starts with 'whsec_' which needs to be removed
+// for the Svix library to properly verify the signature
+const webhookSecret = rawWebhookSecret?.startsWith("whsec_")
+  ? rawWebhookSecret.substring(6) // Remove 'whsec_' prefix
+  : rawWebhookSecret;
 
 export async function POST(req: Request) {
   try {
@@ -18,6 +23,7 @@ export async function POST(req: Request) {
 
     // Log the webhook secret for debugging (first 4 chars only)
     logger.info("Using webhook secret:", {
+      rawWebhookSecret: rawWebhookSecret?.slice(0, 4) + "...",
       webhookSecret: webhookSecret.slice(0, 4) + "...",
       service: "socialsphere",
       timestamp: new Date().toISOString(),
@@ -100,7 +106,8 @@ export async function POST(req: Request) {
           "svix-timestamp": svix_timestamp,
           "svix-signature": svix_signature,
         },
-        webhookSecret: webhookSecret.slice(0, 4) + "...", // Log first 4 chars for debugging
+        rawWebhookSecret: rawWebhookSecret?.slice(0, 4) + "...",
+        webhookSecret: webhookSecret.slice(0, 4) + "...",
         service: "socialsphere",
         timestamp: new Date().toISOString(),
       });

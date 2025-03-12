@@ -1,7 +1,24 @@
 import { WebhookEvent } from "@clerk/nextjs/server";
-import { WebhookError } from "@/lib/errors";
 import { logger } from "@/lib/logger";
-import { prisma } from "@/lib/prisma";
+import { UserService } from "@/lib/services/userService";
+
+// Define the user data type for the webhook
+interface ClerkWebhookUserData {
+  id: string;
+  email_addresses?: Array<{ email_address: string }>;
+  username?: string;
+  first_name?: string;
+  last_name?: string;
+  image_url?: string;
+}
+
+// Custom error class for webhook errors
+class WebhookError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "WebhookError";
+  }
+}
 
 class UserCreatedHandler {
   async handle(evt: WebhookEvent) {
@@ -11,7 +28,8 @@ class UserCreatedHandler {
         timestamp: new Date().toISOString(),
       });
 
-      const userData = evt.data;
+      // Type assertion to access user data properties
+      const userData = evt.data as ClerkWebhookUserData;
       logger.info("Processing user data:", {
         userId: userData.id,
         email: userData.email_addresses?.[0]?.email_address,
@@ -20,87 +38,24 @@ class UserCreatedHandler {
         timestamp: new Date().toISOString(),
       });
 
-      // Check if user already exists
-      const existingUser = await prisma.user.findUnique({
-        where: { clerkId: userData.id },
-      });
-
-      if (existingUser) {
-        logger.warn("User already exists:", {
-          userId: userData.id,
-          existingUserId: existingUser.id,
-          service: "socialsphere",
-          timestamp: new Date().toISOString(),
-        });
-        return;
-      }
-
       try {
-        // Create new user
-        logger.info("Creating new user:", {
-          userId: userData.id,
-          service: "socialsphere",
-          timestamp: new Date().toISOString(),
-        });
+        // Use the UserService to sync the user
+        if (!userData.id) {
+          throw new WebhookError("User ID is missing from webhook data");
+        }
 
-        const user = await prisma.user.create({
-          data: {
-            clerkId: userData.id,
-            email: userData.email_addresses?.[0]?.email_address || "",
-            name: `${userData.first_name || ""} ${
-              userData.last_name || ""
-            }`.trim(),
-            username: userData.username || "",
-            profileImage: userData.image_url || "",
-          },
-        });
+        const user = await UserService.syncUserFromClerk(userData.id);
 
-        logger.info("User created successfully:", {
+        logger.info("User synchronized successfully:", {
           userId: user.id,
           clerkId: user.clerkId,
           service: "socialsphere",
           timestamp: new Date().toISOString(),
         });
 
-        try {
-          // Create user role
-          logger.info("Creating user role:", {
-            userId: user.id,
-            service: "socialsphere",
-            timestamp: new Date().toISOString(),
-          });
-
-          await prisma.userRole.create({
-            data: {
-              userId: user.id,
-              role: "USER",
-            },
-          });
-
-          logger.info("User role created successfully:", {
-            userId: user.id,
-            role: "USER",
-            service: "socialsphere",
-            timestamp: new Date().toISOString(),
-          });
-        } catch (err) {
-          logger.error("Error creating user role:", {
-            error:
-              err instanceof Error
-                ? {
-                    message: err.message,
-                    stack: err.stack,
-                    name: err.name,
-                  }
-                : err,
-            userId: user.id,
-            service: "socialsphere",
-            timestamp: new Date().toISOString(),
-          });
-          throw new WebhookError("Failed to create user role");
-        }
+        return user;
       } catch (err) {
-        logger.error("Error creating user:", {
+        logger.error("Error synchronizing user:", {
           error:
             err instanceof Error
               ? {
@@ -113,7 +68,7 @@ class UserCreatedHandler {
           service: "socialsphere",
           timestamp: new Date().toISOString(),
         });
-        throw new WebhookError("Failed to create user");
+        throw new WebhookError("Failed to synchronize user");
       }
     } catch (err) {
       logger.error("Error in user creation handler:", {

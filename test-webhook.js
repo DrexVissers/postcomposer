@@ -2,10 +2,15 @@ import fetch from "node-fetch";
 import crypto from "crypto";
 
 async function testWebhook() {
-  const webhookUrl =
-    "https://199e-47-6-236-165.ngrok-free.app/api/webhooks/clerk";
-  // Get the webhook secret and ensure proper base64url format
-  const webhookSecret = "whsec_VlPluGAMjmbehtuXuDBos-um9LflkoQy";
+  const webhookUrl = "http://localhost:3002/api/webhooks/clerk";
+
+  // Get the webhook secret and ensure proper format
+  // The webhook secret from Clerk starts with 'whsec_' which needs to be removed
+  // for the Svix library to properly verify the signature
+  const rawWebhookSecret = "whsec_VlPluGAMjmbehtuXuDBos-um9LflkoQy";
+  const webhookSecret = rawWebhookSecret.startsWith("whsec_")
+    ? rawWebhookSecret.substring(6) // Remove 'whsec_' prefix
+    : rawWebhookSecret;
 
   const testPayload = {
     data: {
@@ -36,10 +41,8 @@ async function testWebhook() {
   try {
     console.log("Sending webhook request with:");
     console.log("- Webhook URL:", webhookUrl);
-    console.log(
-      "- Webhook Secret (first 4 chars):",
-      webhookSecret.slice(0, 4) + "..."
-    );
+    console.log("- Raw Webhook Secret:", rawWebhookSecret);
+    console.log("- Processed Webhook Secret:", webhookSecret);
     console.log("- Timestamp:", timestamp);
     console.log("- Signature:", signatureHeader);
     console.log("- Payload:", payload);

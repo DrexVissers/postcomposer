@@ -1,5 +1,6 @@
 import { SignIn } from "@clerk/nextjs";
 import { clerkAppearance } from "@/lib/clerk-theme";
+import SignInWrapper from "@/components/auth/SignInWrapper";
 
 export default function Page() {
   return (
@@ -8,7 +9,9 @@ export default function Page() {
         <h1 className="text-3xl font-bold text-foreground">SocialSphere</h1>
         <p className="mt-2 text-muted-foreground">Sign in to your account</p>
       </div>
-      <SignIn appearance={clerkAppearance} />
+      <SignInWrapper>
+        <SignIn appearance={clerkAppearance} />
+      </SignInWrapper>
     </div>
   );
 }
