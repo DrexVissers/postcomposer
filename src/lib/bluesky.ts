@@ -68,7 +68,7 @@ export async function postToBluesky(
       images = [
         {
           image: upload.data.blob,
-          alt: "Image from SocialSphere",
+          alt: "Image from PostComposer",
         },
       ];
     }

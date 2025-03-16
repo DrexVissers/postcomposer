@@ -1,8 +1,8 @@
-# SocialSphere - Product Requirements Document
+# PostComposer - Product Requirements Document
 
 ## 1. Elevator Pitch
 
-SocialSphere is a web-based platform that enables busy entrepreneurs to quickly capture their ideas through voice or text and instantly transform them into polished social media posts. By leveraging AI-powered templates, SocialSphere helps users publish across multiple platforms—focusing on LinkedIn and Twitter in the MVP—while preserving platform-specific formatting and style. The result is a streamlined solution for saving time and maintaining a consistent social media presence.
+PostComposer is a web-based platform that enables busy entrepreneurs to quickly capture their ideas through voice or text and instantly transform them into polished social media posts. By leveraging AI-powered templates, PostComposer helps users publish across multiple platforms—focusing on LinkedIn and Twitter in the MVP—while preserving platform-specific formatting and style. The result is a streamlined solution for saving time and maintaining a consistent social media presence.
 
 ## 2. Who is This App For
 
@@ -53,7 +53,7 @@ SocialSphere is a web-based platform that enables busy entrepreneurs to quickly 
 
 4. **Instant Publishing**
 
-   - _As a user,_ I want to publish my posts to LinkedIn or Twitter directly from SocialSphere so that I save time by not switching between multiple apps.
+   - _As a user,_ I want to publish my posts to LinkedIn or Twitter directly from PostComposer so that I save time by not switching between multiple apps.
 
 5. **Manage Subscription**
    - _As a user,_ I want to manage my subscription details so that I can upgrade or cancel my plan as needed.

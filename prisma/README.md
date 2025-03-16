@@ -1,6 +1,6 @@
-# Prisma Setup for SocialSphere
+# Prisma Setup for PostComposer
 
-This directory contains the Prisma schema and related files for the SocialSphere project.
+This directory contains the Prisma schema and related files for the PostComposer project.
 
 ## Getting Started
 

@@ -1,5 +1,5 @@
 /**
- * Premade Templates for SocialSphere
+ * Premade Templates for PostComposer
  *
  * This file contains template data for various content types:
  * - Email Templates

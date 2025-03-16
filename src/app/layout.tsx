@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SocialSphere - Transform Ideas into Social Media Posts",
+  title: "PostComposer - Transform Ideas into Social Media Posts",
   description:
     "Quickly capture your ideas and transform them into polished social media posts for LinkedIn and Twitter.",
 };

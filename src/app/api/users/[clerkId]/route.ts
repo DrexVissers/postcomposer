@@ -80,7 +80,7 @@ export async function GET(
     logger.info("User details retrieved", {
       userId: user.id,
       clerkId: requestedClerkId,
-      service: "socialsphere",
+      service: "postcomposer",
       timestamp: new Date().toISOString(),
     });
 
@@ -97,7 +97,7 @@ export async function GET(
             }
           : error,
       params,
-      service: "socialsphere",
+      service: "postcomposer",
       timestamp: new Date().toISOString(),
     });
 

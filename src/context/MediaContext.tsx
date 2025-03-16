@@ -26,7 +26,11 @@ interface MediaContextType {
   uploadProgress: number;
   totalItems: number;
   currentPage: number;
-  isLoading: boolean;
+  loadingStates: {
+    isLoadingPage: boolean;
+    isLoadingSearch: boolean;
+    isLoadingFilter: boolean;
+  };
   addMedia: (media: MediaItem) => void;
   removeMedia: (id: string) => void;
   selectMedia: (id: string | null) => void;
@@ -55,8 +59,12 @@ export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
   const [mediaCache, setMediaCache] = useState<MediaCache>({});
+  const [loadingStates, setLoadingStates] = useState({
+    isLoadingPage: false,
+    isLoadingSearch: false,
+    isLoadingFilter: false,
+  });
 
   // Calculate total pages
   const totalItems = allMediaItems.length;
@@ -64,7 +72,7 @@ export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Load media items for the current page
   const loadMediaItems = useCallback(() => {
-    setIsLoading(true);
+    setLoadingStates((prev) => ({ ...prev, isLoadingPage: true }));
 
     // Simulate API delay
     setTimeout(() => {
@@ -73,7 +81,7 @@ export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
       const paginatedItems = allMediaItems.slice(startIndex, endIndex);
 
       setMediaItems(paginatedItems);
-      setIsLoading(false);
+      setLoadingStates((prev) => ({ ...prev, isLoadingPage: false }));
     }, 300);
   }, [currentPage, allMediaItems]);
 
@@ -238,12 +246,21 @@ export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
     (query: string) => {
       if (!query.trim()) return mediaItems;
 
+      setLoadingStates((prev) => ({ ...prev, isLoadingSearch: true }));
+
       const lowercaseQuery = query.toLowerCase();
-      return allMediaItems.filter(
+      const results = allMediaItems.filter(
         (item) =>
           item.name.toLowerCase().includes(lowercaseQuery) ||
           item.tags.some((tag) => tag.toLowerCase().includes(lowercaseQuery))
       );
+
+      // Simulate search delay
+      setTimeout(() => {
+        setLoadingStates((prev) => ({ ...prev, isLoadingSearch: false }));
+      }, 150);
+
+      return results;
     },
     [allMediaItems, mediaItems]
   );
@@ -251,7 +268,17 @@ export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
   const filterByType = useCallback(
     (type: "all" | "image" | "video") => {
       if (type === "all") return mediaItems;
-      return mediaItems.filter((item) => item.type === type);
+
+      setLoadingStates((prev) => ({ ...prev, isLoadingFilter: true }));
+
+      const results = mediaItems.filter((item) => item.type === type);
+
+      // Simulate filter delay
+      setTimeout(() => {
+        setLoadingStates((prev) => ({ ...prev, isLoadingFilter: false }));
+      }, 150);
+
+      return results;
     },
     [mediaItems]
   );
@@ -324,7 +351,7 @@ export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
       uploadProgress,
       totalItems,
       currentPage,
-      isLoading,
+      loadingStates,
       addMedia,
       removeMedia,
       selectMedia,
@@ -345,7 +372,7 @@ export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
       uploadProgress,
       totalItems,
       currentPage,
-      isLoading,
+      loadingStates,
       addMedia,
       removeMedia,
       selectMedia,

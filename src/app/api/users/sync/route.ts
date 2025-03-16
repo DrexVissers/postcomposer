@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       logger.info("User sync timestamp updated", {
         userId: updatedUser.id,
         clerkId: userId,
-        service: "socialsphere",
+        service: "postcomposer",
         timestamp: new Date().toISOString(),
       });
 
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
       logger.info("New user created during sync", {
         userId: newUser.id,
         clerkId: userId,
-        service: "socialsphere",
+        service: "postcomposer",
         timestamp: new Date().toISOString(),
       });
 
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
               name: error.name,
             }
           : error,
-      service: "socialsphere",
+      service: "postcomposer",
       timestamp: new Date().toISOString(),
     });
 

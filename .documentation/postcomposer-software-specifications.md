@@ -1,4 +1,4 @@
-# SocialSphere – Software Requirements Specification (SRS)
+# PostComposer – Software Requirements Specification (SRS)
 
 ## System Design
 

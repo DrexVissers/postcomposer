@@ -13,7 +13,7 @@ export default function Home() {
         <nav className="p-4">
           <div className="max-w-7xl mx-auto flex justify-between items-center">
             <h1 className="text-3xl sm:text-4xl font-bold text-primary">
-              SocialSphere
+              PostComposer
             </h1>
             <div className="space-x-4">
               <Link href="/sign-in">

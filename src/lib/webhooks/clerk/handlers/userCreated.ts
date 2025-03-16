@@ -24,7 +24,7 @@ class UserCreatedHandler {
   async handle(evt: WebhookEvent) {
     try {
       logger.info("Starting user creation handler", {
-        service: "socialsphere",
+        service: "postcomposer",
         timestamp: new Date().toISOString(),
       });
 
@@ -34,7 +34,7 @@ class UserCreatedHandler {
         userId: userData.id,
         email: userData.email_addresses?.[0]?.email_address,
         username: userData.username,
-        service: "socialsphere",
+        service: "postcomposer",
         timestamp: new Date().toISOString(),
       });
 
@@ -49,7 +49,7 @@ class UserCreatedHandler {
         logger.info("User synchronized successfully:", {
           userId: user.id,
           clerkId: user.clerkId,
-          service: "socialsphere",
+          service: "postcomposer",
           timestamp: new Date().toISOString(),
         });
 
@@ -65,7 +65,7 @@ class UserCreatedHandler {
                 }
               : err,
           userData,
-          service: "socialsphere",
+          service: "postcomposer",
           timestamp: new Date().toISOString(),
         });
         throw new WebhookError("Failed to synchronize user");
@@ -81,7 +81,7 @@ class UserCreatedHandler {
               }
             : err,
         eventData: evt.data,
-        service: "socialsphere",
+        service: "postcomposer",
         timestamp: new Date().toISOString(),
       });
       throw err;

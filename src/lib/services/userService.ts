@@ -15,7 +15,7 @@ export class UserService {
     try {
       logger.info("Syncing user from Clerk", {
         clerkId,
-        service: "socialsphere",
+        service: "postcomposer",
         timestamp: new Date().toISOString(),
       });
 
@@ -26,7 +26,7 @@ export class UserService {
       if (!clerkUser) {
         logger.error("User not found in Clerk", {
           clerkId,
-          service: "socialsphere",
+          service: "postcomposer",
           timestamp: new Date().toISOString(),
         });
         throw new Error("User not found in Clerk");
@@ -42,7 +42,7 @@ export class UserService {
         logger.info("Updating existing user", {
           userId: existingUser.id,
           clerkId,
-          service: "socialsphere",
+          service: "postcomposer",
           timestamp: new Date().toISOString(),
         });
 
@@ -68,7 +68,7 @@ export class UserService {
         logger.info("User updated successfully", {
           userId: updatedUser.id,
           clerkId,
-          service: "socialsphere",
+          service: "postcomposer",
           timestamp: new Date().toISOString(),
         });
 
@@ -77,7 +77,7 @@ export class UserService {
         // Create new user
         logger.info("Creating new user", {
           clerkId,
-          service: "socialsphere",
+          service: "postcomposer",
           timestamp: new Date().toISOString(),
         });
 
@@ -108,7 +108,7 @@ export class UserService {
         logger.info("User created successfully", {
           userId: newUser.id,
           clerkId,
-          service: "socialsphere",
+          service: "postcomposer",
           timestamp: new Date().toISOString(),
         });
 
@@ -125,7 +125,7 @@ export class UserService {
               }
             : error,
         clerkId,
-        service: "socialsphere",
+        service: "postcomposer",
         timestamp: new Date().toISOString(),
       });
       throw error;
@@ -177,7 +177,7 @@ export class UserService {
               }
             : error,
         clerkId,
-        service: "socialsphere",
+        service: "postcomposer",
         timestamp: new Date().toISOString(),
       });
       throw error;

@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     logger.info("Using webhook secret:", {
       rawWebhookSecret: rawWebhookSecret?.slice(0, 4) + "...",
       webhookSecret: webhookSecret.slice(0, 4) + "...",
-      service: "socialsphere",
+      service: "postcomposer",
       timestamp: new Date().toISOString(),
     });
 
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     // Log headers for debugging
     logger.info("Received webhook headers:", {
-      service: "socialsphere",
+      service: "postcomposer",
       svix_id,
       svix_timestamp,
       svix_signature,
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     // Log payload for debugging
     logger.info("Received webhook payload:", {
       ...payload,
-      service: "socialsphere",
+      service: "postcomposer",
       timestamp: new Date().toISOString(),
     });
 
@@ -75,7 +75,7 @@ export async function POST(req: Request) {
     try {
       // Log verification attempt
       logger.info("Attempting webhook verification", {
-        service: "socialsphere",
+        service: "postcomposer",
         timestamp: new Date().toISOString(),
       });
 
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
       }) as WebhookEvent;
 
       logger.info("Webhook verification successful", {
-        service: "socialsphere",
+        service: "postcomposer",
         eventType: evt.type,
         timestamp: new Date().toISOString(),
       });
@@ -108,7 +108,7 @@ export async function POST(req: Request) {
         },
         rawWebhookSecret: rawWebhookSecret?.slice(0, 4) + "...",
         webhookSecret: webhookSecret.slice(0, 4) + "...",
-        service: "socialsphere",
+        service: "postcomposer",
         timestamp: new Date().toISOString(),
       });
       return new Response("Error occurred during webhook verification", {
@@ -121,7 +121,7 @@ export async function POST(req: Request) {
       switch (evt.type) {
         case "user.created":
           logger.info("Handling user.created event", {
-            service: "socialsphere",
+            service: "postcomposer",
             timestamp: new Date().toISOString(),
           });
           await userCreatedHandler.handle(evt);
@@ -144,7 +144,7 @@ export async function POST(req: Request) {
             : err,
         eventType: evt.type,
         eventData: evt.data,
-        service: "socialsphere",
+        service: "postcomposer",
         timestamp: new Date().toISOString(),
       });
       return new Response("Error processing webhook", {
@@ -161,7 +161,7 @@ export async function POST(req: Request) {
               name: err.name,
             }
           : err,
-      service: "socialsphere",
+      service: "postcomposer",
       timestamp: new Date().toISOString(),
     });
     return new Response("Error processing request", {

@@ -1,4 +1,4 @@
-# SocialSphere – User Interface Design Document
+# PostComposer – User Interface Design Document
 
 ## 1. Layout Structure
 

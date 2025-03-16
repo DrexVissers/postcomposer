@@ -33,10 +33,10 @@ export default function MediaLibrary({ onSelectMedia }: MediaLibraryProps) {
     filterByType,
     currentPage,
     totalItems,
-    isLoading,
     loadNextPage,
     loadPreviousPage,
     goToPage,
+    loadingStates,
   } = useMedia();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<"all" | "image" | "video">(
@@ -74,12 +74,13 @@ export default function MediaLibrary({ onSelectMedia }: MediaLibraryProps) {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" role="region" aria-label="Media Library">
       <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
           <Search
             className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
             size={18}
+            aria-hidden="true"
           />
           <Input
             type="text"
@@ -87,24 +88,38 @@ export default function MediaLibrary({ onSelectMedia }: MediaLibraryProps) {
             className="pl-10 bg-background dark:bg-background text-foreground"
             value={searchQuery}
             onChange={handleSearch}
+            aria-label="Search media"
           />
         </div>
         <Tabs
           value={filterType}
           onValueChange={handleFilter as (value: string) => void}
           className="w-auto"
+          aria-label="Filter media by type"
         >
           <TabsList className="grid grid-cols-3 w-auto min-w-[240px]">
-            <TabsTrigger value="all" className="flex items-center gap-2">
-              <LayoutGrid className="w-4 h-4" />
+            <TabsTrigger
+              value="all"
+              className="flex items-center gap-2"
+              role="tab"
+            >
+              <LayoutGrid className="w-4 h-4" aria-hidden="true" />
               <span>All</span>
             </TabsTrigger>
-            <TabsTrigger value="image" className="flex items-center gap-2">
-              <ImageIcon className="w-4 h-4" />
+            <TabsTrigger
+              value="image"
+              className="flex items-center gap-2"
+              role="tab"
+            >
+              <ImageIcon className="w-4 h-4" aria-hidden="true" />
               <span>Images</span>
             </TabsTrigger>
-            <TabsTrigger value="video" className="flex items-center gap-2">
-              <Film className="w-4 h-4" />
+            <TabsTrigger
+              value="video"
+              className="flex items-center gap-2"
+              role="tab"
+            >
+              <Film className="w-4 h-4" aria-hidden="true" />
               <span>Videos</span>
             </TabsTrigger>
           </TabsList>
@@ -113,7 +128,9 @@ export default function MediaLibrary({ onSelectMedia }: MediaLibraryProps) {
 
       <MediaUploader />
 
-      {isLoading ? (
+      {loadingStates.isLoadingPage ||
+      loadingStates.isLoadingSearch ||
+      loadingStates.isLoadingFilter ? (
         <div className="flex justify-center items-center h-[400px]">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
         </div>
