@@ -5,10 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  MessageSquare,
   FileText,
-  Calendar,
   Settings,
+  Calendar,
   Menu,
 } from "lucide-react";
 
@@ -60,20 +59,7 @@ export default function MobileNavBar() {
           aria-current={isActive("/dashboard") ? "page" : undefined}
         >
           <LayoutDashboard className="w-5 h-5" aria-hidden="true" />
-          <span className="text-xs mt-1">Posts</span>
-        </Link>
-
-        <Link
-          href="/create"
-          className={`flex flex-col items-center justify-center w-full h-full ${
-            isActive("/create")
-              ? "text-primary"
-              : "text-muted-foreground dark:text-foreground/70"
-          }`}
-          aria-current={isActive("/create") ? "page" : undefined}
-        >
-          <MessageSquare className="w-5 h-5" aria-hidden="true" />
-          <span className="text-xs mt-1">Short Form</span>
+          <span className="text-xs mt-1">My Posts</span>
         </Link>
 
         <Link

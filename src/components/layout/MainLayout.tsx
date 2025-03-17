@@ -12,7 +12,6 @@ import {
   Image as ImageIcon,
   CheckCircle,
   FileText,
-  MessageSquare,
 } from "lucide-react";
 import { mockUser } from "@/lib/mock-data";
 import MobileNavBar from "./MobileNavBar";
@@ -99,13 +98,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
               <span>My Posts</span>
             </Link>
             <Link
-              href="/create"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
-            >
-              <MessageSquare className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
-              <span>Short Form</span>
-            </Link>
-            <Link
               href="/preview"
               className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
             >
@@ -155,6 +147,13 @@ export default function MainLayout({ children }: MainLayoutProps) {
             >
               <Settings className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
               <span>Settings</span>
+            </Link>
+            <Link
+              href="/documentation"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+            >
+              <FileText className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
+              <span>Documentation</span>
             </Link>
           </nav>
           <div className="px-6 py-4 border-t border-border">
@@ -256,14 +255,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
               <span>My Posts</span>
             </Link>
             <Link
-              href="/create"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
-              onClick={toggleMobileMenu}
-            >
-              <MessageSquare className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
-              <span>Short Form</span>
-            </Link>
-            <Link
               href="/preview"
               className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
               onClick={toggleMobileMenu}
@@ -320,6 +311,14 @@ export default function MainLayout({ children }: MainLayoutProps) {
             >
               <Settings className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
               <span>Settings</span>
+            </Link>
+            <Link
+              href="/documentation"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              onClick={toggleMobileMenu}
+            >
+              <FileText className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
+              <span>Documentation</span>
             </Link>
           </nav>
           <div className="px-6 py-4 border-t border-border">
