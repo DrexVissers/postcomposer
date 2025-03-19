@@ -1,4 +1,5 @@
 import { ArrowUp, ArrowDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface StatsCardProps {
   title: string;
@@ -20,20 +21,19 @@ export default function StatsCard({
   icon,
   formatter = (val) => val.toString(),
   onClick,
-  className = "bg-card dark:bg-card shadow-md",
-  textClassName = "text-foreground/90 dark:text-foreground/90",
-  subtextClassName = "text-muted-foreground dark:text-muted-foreground",
+  className = "bg-card/90 dark:bg-card/50 hover:bg-muted/80 dark:hover:bg-background/80 transition-all border-border",
+  textClassName = "text-foreground/80 dark:text-foreground/80",
+  subtextClassName = "text-muted-foreground",
   iconClassName = "bg-muted/50 dark:bg-muted/30",
 }: StatsCardProps) {
   const isPositive = change >= 0;
 
   return (
     <div
-      className={`rounded-lg shadow-sm p-6 transition-all duration-200 ${className} ${
-        onClick
-          ? "cursor-pointer hover:shadow-md hover:border-primary hover:border"
-          : ""
-      }`}
+      className={cn(
+        "bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors border-border rounded-lg p-6",
+        className
+      )}
       onClick={onClick}
     >
       <div className="flex justify-between items-start">

@@ -8,6 +8,7 @@ import React, {
   useEffect,
 } from "react";
 import { Template, TemplateCategory } from "@/lib/mock-data";
+import { socialMediaTemplates } from "@/lib/default-templates";
 
 interface TemplateContextType {
   templates: Template[];
@@ -31,6 +32,31 @@ interface TemplateContextType {
 const TemplateContext = createContext<TemplateContextType | undefined>(
   undefined
 );
+
+// Create default categories for social media platforms
+const defaultCategories: TemplateCategory[] = [
+  {
+    id: "linkedin",
+    name: "LinkedIn Templates",
+    description:
+      "Professional templates optimized for LinkedIn posts and articles",
+  },
+  {
+    id: "threads",
+    name: "Threads Templates",
+    description: "Engaging templates for Threads discussions and updates",
+  },
+  {
+    id: "bluesky",
+    name: "Bluesky Templates",
+    description: "Templates designed for Bluesky's unique features",
+  },
+  {
+    id: "mastodon",
+    name: "Mastodon Templates",
+    description: "Templates for Mastodon posts and interactions",
+  },
+];
 
 export function TemplateProvider({ children }: { children: ReactNode }) {
   const [templates, setTemplates] = useState<Template[]>([]);
@@ -57,9 +83,12 @@ export function TemplateProvider({ children }: { children: ReactNode }) {
         throw new Error("Failed to fetch templates");
       }
       const data = await response.json();
-      setTemplates(data.templates);
+      // Combine API templates with default social media templates
+      setTemplates([...data.templates, ...socialMediaTemplates]);
     } catch (error) {
       console.error("Error fetching templates:", error);
+      // If API fails, at least show default templates
+      setTemplates(socialMediaTemplates);
     }
   };
 
@@ -71,9 +100,12 @@ export function TemplateProvider({ children }: { children: ReactNode }) {
         throw new Error("Failed to fetch template categories");
       }
       const data = await response.json();
-      setTemplateCategories(data.categories);
+      // Combine API categories with default social media categories
+      setTemplateCategories([...data.categories, ...defaultCategories]);
     } catch (error) {
       console.error("Error fetching template categories:", error);
+      // If API fails, at least show default categories
+      setTemplateCategories(defaultCategories);
     }
   };
 

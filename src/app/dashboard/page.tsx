@@ -146,9 +146,9 @@ export default function DashboardPage() {
         </div>
 
         {/* Filter Section */}
-        <div className="bg-card dark:bg-card rounded-lg border border-border shadow-sm p-6 mb-6">
+        <div className="bg-card/90 dark:bg-card/50 hover:bg-muted/80 dark:hover:bg-background/80 transition-all rounded-lg border border-border p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium text-foreground/90 flex items-center">
+            <h2 className="text-lg font-medium text-foreground/80 dark:text-foreground/80 flex items-center">
               <Filter className="h-4 w-4 mr-2 text-muted-foreground" /> Filters
             </h2>
             <button
@@ -280,8 +280,8 @@ export default function DashboardPage() {
 
         {/* Desktop Table View */}
         {!isMobile && (
-          <div className="bg-card dark:bg-card rounded-lg border border-border shadow-sm overflow-hidden hidden md:block">
-            <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-muted/30 dark:bg-muted/10 font-medium text-foreground/90">
+          <div className="bg-card/90 dark:bg-card/50 rounded-lg border border-border overflow-hidden">
+            <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-muted/30 dark:bg-muted/10 font-medium text-foreground/80 dark:text-foreground/80">
               <div className="col-span-5">Content</div>
               <div className="col-span-2">Category & Tags</div>
               <div className="col-span-2">Created</div>
@@ -290,7 +290,7 @@ export default function DashboardPage() {
             </div>
 
             {filteredPosts.length === 0 ? (
-              <div className="p-8 text-center text-foreground/50 bg-card dark:bg-card rounded-lg shadow-sm">
+              <div className="p-8 text-center text-muted-foreground bg-card/90 dark:bg-card/50 rounded-lg">
                 No posts match your filter criteria. Try adjusting your filters.
               </div>
             ) : (
@@ -444,9 +444,9 @@ export default function DashboardPage() {
 
         {/* Mobile Card View */}
         {isMobile && (
-          <div className="space-y-4 md:hidden">
+          <div className="space-y-4">
             {filteredPosts.length === 0 ? (
-              <div className="p-8 text-center text-foreground/50 bg-card dark:bg-card rounded-lg shadow-sm">
+              <div className="p-8 text-center text-muted-foreground bg-card/90 dark:bg-card/50 rounded-lg border border-border">
                 No posts match your filter criteria. Try adjusting your filters.
               </div>
             ) : (
@@ -471,7 +471,7 @@ export default function DashboardPage() {
                 return (
                   <div
                     key={post.id}
-                    className="bg-card dark:bg-card rounded-lg shadow-sm p-4 border-l-4 border-primary"
+                    className="bg-card/90 dark:bg-card/50 hover:bg-muted/80 dark:hover:bg-background/80 transition-all rounded-lg p-4 border border-border border-l-4 border-l-primary"
                   >
                     <div className="flex justify-between items-start mb-3">
                       <div className="text-xs text-foreground/50">

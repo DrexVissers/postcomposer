@@ -31,11 +31,11 @@ export default function DocumentationPage() {
       <h1 className="text-4xl font-bold mb-8">PostComposer Documentation</h1>
 
       <div className="space-y-8">
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Page Flow</h2>
-          <div className="p-6 bg-card rounded-lg shadow-lg">
-            <MermaidDiagram chart={pageFlowChart} className="overflow-x-auto" />
-          </div>
+        <section className="bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors rounded-lg p-6 border border-border">
+          <h2 className="text-xl font-semibold mb-4 text-foreground/80 dark:text-foreground/80">
+            Page Flow
+          </h2>
+          <MermaidDiagram chart={pageFlowChart} className="overflow-x-auto" />
         </section>
 
         <section>

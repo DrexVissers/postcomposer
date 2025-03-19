@@ -44,9 +44,9 @@ export default function Home() {
           </div>
 
           {/* Features Grid */}
-          <div className="mt-32 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="bg-card dark:bg-card/50 backdrop-blur-sm shadow-lg rounded-lg p-6 border border-border/50">
-              <h3 className="text-lg font-semibold text-foreground/90 dark:text-foreground/90 mb-2">
+          <div className="mt-32 grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors rounded-lg p-6 border border-border">
+              <h3 className="text-lg font-semibold text-foreground/80 dark:text-foreground/80 mb-2">
                 Create Posts
               </h3>
               <p className="text-muted-foreground">
@@ -54,16 +54,16 @@ export default function Home() {
                 intuitive editor.
               </p>
             </div>
-            <div className="bg-card dark:bg-card/50 backdrop-blur-sm shadow-lg rounded-lg p-6 border border-border/50">
-              <h3 className="text-lg font-semibold text-foreground/90 dark:text-foreground/90 mb-2">
+            <div className="bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors rounded-lg p-6 border border-border">
+              <h3 className="text-lg font-semibold text-foreground/80 dark:text-foreground/80 mb-2">
                 Use Templates
               </h3>
               <p className="text-muted-foreground">
                 Save time with customizable templates for your regular content.
               </p>
             </div>
-            <div className="bg-card dark:bg-card/50 backdrop-blur-sm shadow-lg rounded-lg p-6 border border-border/50">
-              <h3 className="text-lg font-semibold text-foreground/90 dark:text-foreground/90 mb-2">
+            <div className="bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors rounded-lg p-6 border border-border">
+              <h3 className="text-lg font-semibold text-foreground/80 dark:text-foreground/80 mb-2">
                 Schedule Posts
               </h3>
               <p className="text-muted-foreground">

@@ -365,16 +365,16 @@ export default function SettingsPage() {
 
           {/* Subscription Tab */}
           <TabsContent value="subscription" className="mt-0">
-            <div className="bg-card dark:bg-card rounded-lg shadow-sm p-6 border border-border">
-              <h2 className="text-lg font-medium text-foreground/90 dark:text-foreground/90 mb-6 flex items-center">
+            <div className="bg-card/90 dark:bg-card/50 hover:bg-muted/80 dark:hover:bg-background/80 transition-all rounded-lg border border-border p-6">
+              <h2 className="text-lg font-medium text-foreground/80 dark:text-foreground/80 mb-6 flex items-center">
                 <CreditCard className="w-5 h-5 mr-2" />
                 <span>Subscription Details</span>
               </h2>
 
               <div className="mb-8">
-                <div className="bg-card dark:bg-card p-4 rounded-lg border border-border">
+                <div className="bg-card/90 dark:bg-card/50 hover:bg-muted/80 dark:hover:bg-background/80 transition-all p-4 rounded-lg border border-border">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="font-medium text-foreground/90 dark:text-foreground/90">
+                    <span className="font-medium text-foreground/80 dark:text-foreground/80">
                       Current Plan
                     </span>
                     <span className="px-2 py-1 bg-primary/20 text-primary text-xs rounded-full">
@@ -402,12 +402,12 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              <h3 className="font-medium text-foreground/90 dark:text-foreground/90 mb-4">
+              <h3 className="font-medium text-foreground/80 dark:text-foreground/80 mb-4">
                 Available Plans
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div className="border border-border rounded-lg p-4 hover:border-primary cursor-pointer bg-card dark:bg-card">
+                <div className="bg-card/90 dark:bg-card/50 hover:bg-muted/80 dark:hover:bg-background/80 transition-all border border-border rounded-lg p-4 cursor-pointer">
                   <h4 className="font-medium mb-2">Free</h4>
                   <p className="text-2xl font-bold mb-4">
                     $0
@@ -425,7 +425,7 @@ export default function SettingsPage() {
                   </button>
                 </div>
 
-                <div className="border-2 border-primary rounded-lg p-4 relative bg-card dark:bg-card">
+                <div className="bg-card/90 dark:bg-card/50 hover:bg-muted/80 dark:hover:bg-background/80 transition-all border-2 border-primary rounded-lg p-4 relative">
                   <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-bl-lg">
                     POPULAR
                   </div>
@@ -447,7 +447,7 @@ export default function SettingsPage() {
                   </button>
                 </div>
 
-                <div className="border border-border rounded-lg p-4 hover:border-teal-500 cursor-pointer bg-card dark:bg-card">
+                <div className="bg-card/90 dark:bg-card/50 hover:bg-muted/80 dark:hover:bg-background/80 transition-all border border-border rounded-lg p-4 cursor-pointer">
                   <h4 className="font-medium mb-2">Enterprise</h4>
                   <p className="text-2xl font-bold mb-4">
                     $49

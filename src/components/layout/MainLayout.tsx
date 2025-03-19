@@ -88,7 +88,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors">
+              <div className="p-2 rounded-md bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors border border-border">
                 <ThemeToggle />
               </div>
             </TooltipTrigger>
@@ -98,7 +98,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors">
+              <div className="p-2 rounded-md bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors border border-border">
                 <NotificationCenter />
               </div>
             </TooltipTrigger>
@@ -150,20 +150,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
               <span>Templates</span>
             </Link>
             <Link
-              href="/schedule"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
-            >
-              <Calendar className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
-              <span>Schedule</span>
-            </Link>
-            <Link
-              href="/analytics"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
-            >
-              <BarChart2 className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
-              <span>Analytics</span>
-            </Link>
-            <Link
               href="/media"
               className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
             >
@@ -179,6 +165,20 @@ export default function MainLayout({ children }: MainLayoutProps) {
                 <span>Approvals</span>
               </Link>
             )}
+            <Link
+              href="/schedule"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
+            >
+              <Calendar className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
+              <span>Schedule</span>
+            </Link>
+            <Link
+              href="/analytics"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
+            >
+              <BarChart2 className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
+              <span>Analytics</span>
+            </Link>
             <Link
               href="/settings"
               className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
@@ -325,22 +325,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
               <span>Templates</span>
             </Link>
             <Link
-              href="/schedule"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
-              onClick={toggleMobileMenu}
-            >
-              <Calendar className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
-              <span>Schedule</span>
-            </Link>
-            <Link
-              href="/analytics"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
-              onClick={toggleMobileMenu}
-            >
-              <BarChart2 className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
-              <span>Analytics</span>
-            </Link>
-            <Link
               href="/media"
               className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
               onClick={toggleMobileMenu}
@@ -358,6 +342,22 @@ export default function MainLayout({ children }: MainLayoutProps) {
                 <span>Approvals</span>
               </Link>
             )}
+            <Link
+              href="/schedule"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
+              onClick={toggleMobileMenu}
+            >
+              <Calendar className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
+              <span>Schedule</span>
+            </Link>
+            <Link
+              href="/analytics"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
+              onClick={toggleMobileMenu}
+            >
+              <BarChart2 className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
+              <span>Analytics</span>
+            </Link>
             <Link
               href="/settings"
               className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"

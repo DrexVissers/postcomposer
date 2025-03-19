@@ -1,502 +1,374 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import MainLayout from "@/components/layout/MainLayout";
 import { useTemplates } from "@/context/TemplateContext";
 import { Template } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
-import TemplateEditor from "@/components/features/templates/TemplateEditor";
 import {
-  Pencil,
-  Plus,
-  MoreVertical,
-  Trash2,
-  Copy,
-  Twitter as BlueskyIcon,
-  Linkedin,
-  Instagram,
-  Globe,
+  Search,
   Loader2,
-  RefreshCw,
-  MessageSquare,
   FileText,
+  Mail,
+  BellRing,
+  BookOpen,
+  Presentation,
 } from "lucide-react";
+import { BlueskyIcon } from "@/components/icons/BlueskyIcon";
+import { ThreadsIcon } from "@/components/icons/ThreadsIcon";
+import { LinkedInIcon } from "@/components/icons/LinkedInIcon";
+import { MastodonIcon } from "@/components/icons/MastodonIcon";
+
+interface TemplateCardProps {
+  category: string;
+  description: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  templateCount?: number;
+}
+
+const TemplateCard: React.FC<TemplateCardProps> = ({
+  category,
+  description,
+  icon,
+  onClick,
+  templateCount,
+}) => (
+  <Card
+    className="bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors border-border cursor-pointer"
+    onClick={onClick}
+    tabIndex={0}
+    role="button"
+    aria-label={`View ${category} templates`}
+    onKeyDown={(e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onClick();
+      }
+    }}
+  >
+    <CardHeader>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          {icon}
+          <CardTitle className="text-foreground/80 dark:text-foreground/80">
+            {category}
+          </CardTitle>
+        </div>
+        {templateCount !== undefined && (
+          <span className="text-sm text-muted-foreground">
+            {templateCount} template{templateCount !== 1 ? "s" : ""}
+          </span>
+        )}
+      </div>
+      <CardDescription className="text-muted-foreground">
+        {description}
+      </CardDescription>
+    </CardHeader>
+  </Card>
+);
 
 export default function TemplatesPage() {
-  const {
-    templates,
-    templateCategories,
-    loading,
-    addTemplate,
-    updateTemplate,
-    deleteTemplate,
-    refreshTemplates,
-    refreshCategories,
-  } = useTemplates();
+  const router = useRouter();
+  const { templateCategories, addTemplateCategory, getTemplatesByCategory } =
+    useTemplates();
 
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [currentTemplate, setCurrentTemplate] = useState<Template | undefined>(
-    undefined
-  );
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [templateToDelete, setTemplateToDelete] = useState<Template | null>(
-    null
-  );
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+  const [selectedTemplateCategory, setSelectedTemplateCategory] =
+    useState<string>("");
+  const [newTagName, setNewTagName] = useState("");
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [newCategoryDescription, setNewCategoryDescription] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Determine if a template is short-form or long-form
-  const isShortFormTemplate = (template: { platform: string }) => {
-    // Short-form platforms: only bluesky and threads
-    const shortFormPlatforms = ["bluesky", "threads"];
-    return shortFormPlatforms.includes((template.platform || "").toLowerCase());
-  };
+  // Filter categories based on search
+  const filteredCategories = templateCategories.filter((category) => {
+    // Apply category filter
+    if (selectedCategory !== "all" && category.id !== selectedCategory)
+      return false;
 
-  // Get custom templates (only long-form custom templates)
-  const getCustomTemplates = () => {
-    return templates.filter((t) => t.isCustom && !isShortFormTemplate(t));
-  };
-
-  // Get short-form templates (including custom short-form templates)
-  const getShortFormTemplates = () => {
-    return templates.filter((t) => isShortFormTemplate(t));
-  };
-
-  // Get long-form templates (only default long-form templates)
-  const getLongFormTemplates = () => {
-    return templates.filter((t) => !t.isCustom && !isShortFormTemplate(t));
-  };
-
-  // Open editor for new template
-  const handleAddTemplate = () => {
-    setCurrentTemplate(undefined);
-    setIsEditorOpen(true);
-  };
-
-  // Open editor for existing template
-  const handleEditTemplate = (template: Template) => {
-    setCurrentTemplate(template);
-    setIsEditorOpen(true);
-  };
-
-  // Handle template save
-  const handleSaveTemplate = async (templateData: Omit<Template, "id">) => {
-    try {
-      if (currentTemplate) {
-        // Update existing template
-        await updateTemplate({
-          ...templateData,
-          id: currentTemplate.id,
-        });
-        toast.success("Template Updated", {
-          description: `"${templateData.name}" has been updated successfully.`,
-          duration: 3000,
-        });
-      } else {
-        // Add new template
-        await addTemplate(templateData);
-        toast.success("Template Created", {
-          description: `"${templateData.name}" has been created successfully.`,
-          duration: 3000,
-        });
-      }
-      setIsEditorOpen(false);
-    } catch (error) {
-      toast.error("Error", {
-        description:
-          error instanceof Error
-            ? error.message
-            : "An error occurred. Please try again.",
-        duration: 5000,
-      });
-    }
-  };
-
-  // Confirm template deletion
-  const confirmDeleteTemplate = (template: Template) => {
-    setTemplateToDelete(template);
-    setIsDeleteDialogOpen(true);
-  };
-
-  // Handle template deletion
-  const handleDeleteTemplate = async () => {
-    if (templateToDelete) {
-      try {
-        await deleteTemplate(templateToDelete.id);
-        toast.success("Template Deleted", {
-          description: `"${templateToDelete.name}" has been deleted.`,
-          duration: 3000,
-        });
-        setIsDeleteDialogOpen(false);
-        setTemplateToDelete(null);
-      } catch (error) {
-        toast.error("Error", {
-          description:
-            error instanceof Error
-              ? error.message
-              : "Failed to delete template. Please try again.",
-          duration: 5000,
-        });
-      }
-    }
-  };
-
-  // Duplicate a template
-  const handleDuplicateTemplate = async (template: Template) => {
-    try {
-      // Create a new template without the id property
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { id, ...templateWithoutId } = template;
-      await addTemplate({
-        ...templateWithoutId,
-        name: `${template.name} (Copy)`,
-        isCustom: true,
-      });
-      toast.success("Template Duplicated", {
-        description: `A copy of "${template.name}" has been created.`,
-        duration: 3000,
-      });
-    } catch (error) {
-      toast.error("Error", {
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to duplicate template. Please try again.",
-        duration: 5000,
-      });
-    }
-  };
-
-  // Handle refresh
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    try {
-      await Promise.all([refreshTemplates(), refreshCategories()]);
-      toast.success("Refreshed", {
-        description: "Templates and categories have been refreshed.",
-        duration: 3000,
-      });
-    } catch (error) {
-      toast.error("Error", {
-        description: "Failed to refresh data. Please try again.",
-        duration: 5000,
-      });
-      console.error(error);
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
-
-  // Render platform icon
-  const renderPlatformIcon = (
-    platform: "linkedin" | "bluesky" | "threads" | "mastodon"
-  ) => {
-    const platformLower = platform.toLowerCase();
-    if (platformLower === "linkedin") {
-      return <Linkedin className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
-    } else if (platformLower === "bluesky") {
-      return <BlueskyIcon className="h-4 w-4 text-sky-500 dark:text-sky-400" />;
-    } else if (platformLower === "threads") {
-      return (
-        <Instagram className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+    // Apply search filter
+    if (searchQuery) {
+      const categoryMatches = category.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      const templatesMatch = getTemplatesByCategory(category.id).some(
+        (template) =>
+          template.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
-    } else {
-      return <Globe className="h-4 w-4 text-teal-500 dark:text-teal-400" />;
+      return categoryMatches || templatesMatch;
+    }
+
+    return true;
+  });
+
+  // Handle template category click
+  const handleTemplateCategoryClick = (categoryId: string) => {
+    setSelectedTemplateCategory(categoryId);
+    setIsPreviewModalOpen(true);
+  };
+
+  // Handle use template
+  const handleUseTemplate = async (template: Template) => {
+    setIsLoading(true);
+    try {
+      // Redirect to Composer Studio with template data
+      router.push(`/composer?templateId=${template.id}`);
+      setIsPreviewModalOpen(false);
+      toast.success("Template selected", {
+        description: "Opening template in Composer Studio...",
+      });
+    } catch {
+      toast.error("Failed to load template");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Get category name by ID
-  const getCategoryName = (categoryId: string) => {
-    const category = templateCategories.find((c) => c.id === categoryId);
-    return category ? category.name : "Uncategorized";
-  };
-
-  // Render template card
-  const renderTemplateCard = (template: Template) => {
-    // Remove LinkedIn branding from long-form template names
-    let displayName = template.name;
-    if (!isShortFormTemplate(template) && displayName.includes("LinkedIn")) {
-      displayName = displayName.replace(/LinkedIn\s*/g, "").trim();
+  // Handle create tag
+  const handleCreateTag = async () => {
+    if (!newTagName.trim()) {
+      toast.error("Tag name is required");
+      return;
     }
-
-    return (
-      <Card
-        key={template.id}
-        className="overflow-hidden border border-border hover:shadow-md transition-shadow"
-      >
-        <CardHeader className="pb-2">
-          <div className="flex justify-between items-start">
-            <div className="flex items-center gap-2">
-              {isShortFormTemplate(template) &&
-                renderPlatformIcon(
-                  template.platform.toLowerCase() as
-                    | "linkedin"
-                    | "bluesky"
-                    | "threads"
-                    | "mastodon"
-                )}
-              <CardTitle className="text-lg">{displayName}</CardTitle>
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="h-8 w-8 p-0"
-                  aria-label="More options"
-                >
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => handleEditTemplate(template)}>
-                  <Pencil className="h-4 w-4 mr-2" />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleDuplicateTemplate(template)}
-                >
-                  <Copy className="h-4 w-4 mr-2" />
-                  Duplicate
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => confirmDeleteTemplate(template)}
-                  className="text-destructive focus:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          {template.category && (
-            <Badge variant="outline" className="mt-1 text-xs font-normal">
-              {getCategoryName(template.category)}
-            </Badge>
-          )}
-          <CardDescription className="mt-2 line-clamp-2">
-            {template.description || "No description provided"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-2">
-          <p className="text-sm text-muted-foreground line-clamp-2">
-            {template.content || "No content"}
-          </p>
-        </CardContent>
-        <CardFooter className="pt-2 flex justify-between">
-          <div className="flex gap-1">
-            {template.tags &&
-              template.tags.slice(0, 3).map((tag, i) => (
-                <Badge key={i} variant="secondary" className="text-xs">
-                  {tag}
-                </Badge>
-              ))}
-            {template.tags && template.tags.length > 3 && (
-              <Badge variant="secondary" className="text-xs">
-                +{template.tags.length - 3}
-              </Badge>
-            )}
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleEditTemplate(template)}
-          >
-            <Pencil className="h-3.5 w-3.5 mr-1" />
-            Edit
-          </Button>
-        </CardFooter>
-      </Card>
-    );
+    setIsLoading(true);
+    try {
+      // Add tag creation logic here
+      toast.success("Tag created successfully");
+      setNewTagName("");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to create tag";
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  // Handle create category
+  const handleCreateCategory = async () => {
+    if (!newCategoryName.trim()) {
+      toast.error("Category name is required");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      await addTemplateCategory({
+        name: newCategoryName,
+        description: newCategoryDescription,
+      });
+      toast.success("Category created successfully");
+      setNewCategoryName("");
+      setNewCategoryDescription("");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to create category";
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getTemplateIcon = (categoryId: string) => {
+    switch (categoryId.toLowerCase()) {
+      case "linkedin":
+        return <LinkedInIcon className="h-5 w-5 text-[#0A66C2]" />;
+      case "threads":
+        return <ThreadsIcon className="h-5 w-5 dark:text-white text-black" />;
+      case "bluesky":
+        return <BlueskyIcon className="h-5 w-5 text-[#0560FF]" />;
+      case "mastodon":
+        return <MastodonIcon className="h-5 w-5 text-[#6364FF]" />;
+      case "blog":
+        return <FileText className="h-5 w-5 text-emerald-500" />;
+      case "newsletter":
+        return <Mail className="h-5 w-5 text-amber-500" />;
+      case "announcement":
+        return <BellRing className="h-5 w-5 text-purple-500" />;
+      case "documentation":
+        return <BookOpen className="h-5 w-5 text-blue-500" />;
+      case "presentation":
+        return <Presentation className="h-5 w-5 text-pink-500" />;
+      default:
+        return <FileText className="h-5 w-5 text-muted-foreground" />;
+    }
+  };
+
+  const selectedTemplateDetails = templateCategories.find(
+    (c) => c.id === selectedTemplateCategory
+  );
+  const selectedTemplates = selectedTemplateCategory
+    ? getTemplatesByCategory(selectedTemplateCategory)
+    : [];
 
   return (
     <MainLayout>
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-foreground/90 dark:text-foreground/90">
-            Templates
-          </h1>
-          <Button
-            variant="outline"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className="flex items-center gap-2"
-          >
-            {isRefreshing ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <RefreshCw className="h-4 w-4" />
-            )}
-            <span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
-          </Button>
+      <div className="container mx-auto p-6 mt-16">
+        <div className="flex flex-col gap-6 mb-8">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold">Templates</h1>
+            <Button>Create Template</Button>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search templates..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors border-border"
+              />
+              {searchQuery && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 px-2"
+                  onClick={() => setSearchQuery("")}
+                >
+                  Clear
+                </Button>
+              )}
+            </div>
+            <Select
+              value={selectedCategory}
+              onValueChange={setSelectedCategory}
+            >
+              <SelectTrigger className="w-[200px] bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors border-border">
+                <SelectValue placeholder="All Categories" />
+              </SelectTrigger>
+              <SelectContent className="bg-input border-border">
+                <SelectItem value="all">All Categories</SelectItem>
+                {templateCategories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        <div className="flex justify-center my-8">
-          <Button
-            onClick={handleAddTemplate}
-            className="flex items-center gap-2 px-8 py-6 text-lg"
-            size="lg"
-          >
-            <Plus className="h-5 w-5" />
-            <span>Create Template</span>
-          </Button>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredCategories.map((category) => (
+            <TemplateCard
+              key={category.id}
+              category={category.name}
+              description={category.description || ""}
+              icon={getTemplateIcon(category.id)}
+              onClick={() => handleTemplateCategoryClick(category.id)}
+              templateCount={getTemplatesByCategory(category.id).length}
+            />
+          ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {/* Custom Templates Card */}
-          <Card className="col-span-1">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
-                My Custom Long Form Templates
-              </CardTitle>
-              <CardDescription>
-                Long form templates you&apos;ve created or customized
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="flex justify-center items-center h-32">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                </div>
-              ) : getCustomTemplates().length === 0 ? (
-                <div className="text-center py-8 border border-dashed rounded-lg">
-                  <p className="text-muted-foreground mb-4">
-                    No custom long form templates yet
-                  </p>
-                  <Button
-                    onClick={handleAddTemplate}
-                    variant="outline"
-                    size="sm"
+        <Dialog open={isPreviewModalOpen} onOpenChange={setIsPreviewModalOpen}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col bg-input text-foreground/80 dark:text-foreground/80">
+            <DialogHeader>
+              <DialogTitle className="text-foreground/80 dark:text-foreground/80">
+                {selectedTemplateDetails?.name || ""} Templates
+              </DialogTitle>
+            </DialogHeader>
+            <div className="flex-1 overflow-y-auto py-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                {selectedTemplates.map((template) => (
+                  <Card
+                    key={template.id}
+                    className="flex flex-col bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors border-border"
                   >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create your first template
+                    <CardHeader>
+                      <CardTitle className="text-foreground/80 dark:text-foreground/80">
+                        {template.name}
+                      </CardTitle>
+                      <CardDescription className="text-muted-foreground">
+                        {template.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex-1">
+                      <p className="text-sm text-muted-foreground">
+                        {template.content}
+                      </p>
+                    </CardContent>
+                    <CardFooter className="flex justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => handleUseTemplate(template)}
+                        disabled={isLoading}
+                        className="bg-input hover:bg-muted/80 dark:hover:bg-background/80 text-foreground/80 dark:text-foreground/80 border-border"
+                      >
+                        {isLoading && (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        )}
+                        Use Template
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+              <div className="flex justify-between items-center">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsPreviewModalOpen(false)}
+                  className="bg-input hover:bg-muted/80 dark:hover:bg-background/80 text-foreground/80 dark:text-foreground/80 border-border"
+                >
+                  Close
+                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setNewCategoryName("");
+                      setNewCategoryDescription("");
+                      handleCreateCategory();
+                    }}
+                    disabled={isLoading}
+                    className="bg-input hover:bg-muted/80 dark:hover:bg-background/80 text-foreground/80 dark:text-foreground/80 border-border"
+                  >
+                    Create Category
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setNewTagName("");
+                      handleCreateTag();
+                    }}
+                    disabled={isLoading}
+                    className="bg-input hover:bg-muted/80 dark:hover:bg-background/80 text-foreground/80 dark:text-foreground/80 border-border"
+                  >
+                    Create Tag
                   </Button>
                 </div>
-              ) : (
-                <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
-                  {getCustomTemplates().map(renderTemplateCard)}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Short Form Templates Card */}
-          <Card className="col-span-1">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5 text-blue-500" />
-                Short Form Templates
-              </CardTitle>
-              <CardDescription>
-                All short form templates for social media posts (including
-                custom)
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="flex justify-center items-center h-32">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                </div>
-              ) : getShortFormTemplates().length === 0 ? (
-                <div className="text-center py-8 border border-dashed rounded-lg">
-                  <p className="text-muted-foreground">
-                    No short form templates available
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
-                  {getShortFormTemplates().map(renderTemplateCard)}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Long Form Templates Card */}
-          <Card className="col-span-1">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-indigo-500" />
-                Default Long Form Templates
-              </CardTitle>
-              <CardDescription>
-                Pre-made templates for articles, newsletters, and detailed
-                content
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="flex justify-center items-center h-32">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                </div>
-              ) : getLongFormTemplates().length === 0 ? (
-                <div className="text-center py-8 border border-dashed rounded-lg">
-                  <p className="text-muted-foreground">
-                    No long form templates available
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
-                  {getLongFormTemplates().map(renderTemplateCard)}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
-
-      {/* Template Editor Dialog */}
-      <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-background text-foreground">
-          <DialogTitle>
-            {currentTemplate ? "Edit Template" : "Create Template"}
-          </DialogTitle>
-          <TemplateEditor
-            template={currentTemplate}
-            onSave={handleSaveTemplate}
-            onCancel={() => setIsEditorOpen(false)}
-            categories={templateCategories}
-          />
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="bg-background text-foreground">
-          <DialogTitle>Confirm Deletion</DialogTitle>
-          <p className="py-4">
-            Are you sure you want to delete the template &quot;
-            {templateToDelete?.name}&quot;? This action cannot be undone.
-          </p>
-          <div className="flex justify-end gap-2 mt-4">
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={handleDeleteTemplate}>
-              Delete
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </MainLayout>
   );
 }
