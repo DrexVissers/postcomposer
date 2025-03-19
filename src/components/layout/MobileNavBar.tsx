@@ -50,16 +50,16 @@ export default function MobileNavBar() {
     >
       <div className="flex justify-around items-center h-16">
         <Link
-          href="/dashboard"
+          href="/composer-library"
           className={`flex flex-col items-center justify-center w-full h-full ${
-            isActive("/dashboard")
+            isActive("/composer-library")
               ? "text-primary"
               : "text-muted-foreground dark:text-foreground/70"
           }`}
-          aria-current={isActive("/dashboard") ? "page" : undefined}
+          aria-current={isActive("/composer-library") ? "page" : undefined}
         >
           <LayoutDashboard className="w-5 h-5" aria-hidden="true" />
-          <span className="text-xs mt-1">My Posts</span>
+          <span className="text-xs mt-1">Composer Library</span>
         </Link>
 
         <Link

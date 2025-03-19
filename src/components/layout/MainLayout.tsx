@@ -20,6 +20,12 @@ import NotificationCenter from "@/components/features/notifications/Notification
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { UserButton, useUser } from "@clerk/nextjs";
 import UserInitializer from "@/components/auth/UserInitializer";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -79,8 +85,28 @@ export default function MainLayout({ children }: MainLayoutProps) {
       <UserInitializer />
       {/* Top-right controls */}
       <div className="fixed top-0 right-0 z-50 flex items-center gap-2 p-4 bg-background/80 backdrop-blur-sm rounded-bl-lg">
-        <ThemeToggle />
-        <NotificationCenter />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors">
+                <ThemeToggle />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Toggle theme</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors">
+                <NotificationCenter />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Notifications</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       {/* Desktop Sidebar */}
       <aside
@@ -103,11 +129,11 @@ export default function MainLayout({ children }: MainLayoutProps) {
           </div>
           <nav className="flex-1 px-4 py-6 space-y-2" aria-label="Main menu">
             <Link
-              href="/dashboard"
+              href="/composer-library"
               className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
             >
               <LayoutDashboard className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
-              <span>My Posts</span>
+              <span>Composer Library</span>
             </Link>
             <Link
               href="/workspace"
@@ -169,7 +195,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             </Link>
           </nav>
           <div className="px-6 py-4 border-t border-border">
-            <div className="flex items-center">
+            <div className="flex items-center p-2 rounded-lg bg-input border border-input">
               {isLoaded && user ? (
                 <>
                   <UserButton
@@ -275,12 +301,12 @@ export default function MainLayout({ children }: MainLayoutProps) {
           </div>
           <nav className="flex-1 px-4 py-6 space-y-2">
             <Link
-              href="/dashboard"
+              href="/composer-library"
               className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
               onClick={toggleMobileMenu}
             >
               <LayoutDashboard className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
-              <span>My Posts</span>
+              <span>Composer Library</span>
             </Link>
             <Link
               href="/workspace"
