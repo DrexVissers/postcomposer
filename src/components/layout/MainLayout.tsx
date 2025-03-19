@@ -12,6 +12,7 @@ import {
   Image as ImageIcon,
   CheckCircle,
   FileText,
+  HelpCircle,
 } from "lucide-react";
 import { mockUser } from "@/lib/mock-data";
 import MobileNavBar from "./MobileNavBar";
@@ -76,58 +77,69 @@ export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <div className="flex h-screen bg-background">
       <UserInitializer />
+      {/* Top-right controls */}
+      <div className="fixed top-0 right-0 z-50 flex items-center gap-2 p-4 bg-background/80 backdrop-blur-sm rounded-bl-lg">
+        <ThemeToggle />
+        <NotificationCenter />
+      </div>
       {/* Desktop Sidebar */}
       <aside
         className="bg-card/90 dark:bg-card/50 shadow-md fixed inset-y-0 left-0 z-30 w-64 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 hidden lg:block"
         aria-label="Main navigation"
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between h-16 px-6 border-b border-border">
-            <h1 className="text-xl font-bold text-primary">PostComposer</h1>
+          <div className="flex items-center h-16 px-6 border-b border-border">
             <div className="flex items-center gap-2">
-              <ThemeToggle />
-              <NotificationCenter />
+              {/* Logo */}
+              <div className="w-8 h-8 overflow-hidden rounded">
+                <img
+                  src="/images/postcomposer_logo.jpg"
+                  alt="PostComposer Logo"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h1 className="text-xl font-bold text-primary">PostComposer</h1>
             </div>
           </div>
           <nav className="flex-1 px-4 py-6 space-y-2" aria-label="Main menu">
             <Link
               href="/dashboard"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
             >
               <LayoutDashboard className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
               <span>My Posts</span>
             </Link>
             <Link
-              href="/preview"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              href="/workspace"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
             >
               <FileText className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
-              <span>Long Form</span>
+              <span>Workspace</span>
             </Link>
             <Link
               href="/templates"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
             >
               <FileText className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
               <span>Templates</span>
             </Link>
             <Link
               href="/schedule"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
             >
-              <Calendar className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
+              <Calendar className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
               <span>Schedule</span>
             </Link>
             <Link
               href="/analytics"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
             >
               <BarChart2 className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
               <span>Analytics</span>
             </Link>
             <Link
               href="/media"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
             >
               <ImageIcon className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
               <span>Media</span>
@@ -135,7 +147,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             {canApprove && (
               <Link
                 href="/dashboard/approvals"
-                className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+                className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
               >
                 <CheckCircle className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
                 <span>Approvals</span>
@@ -143,16 +155,16 @@ export default function MainLayout({ children }: MainLayoutProps) {
             )}
             <Link
               href="/settings"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
             >
               <Settings className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
               <span>Settings</span>
             </Link>
             <Link
               href="/documentation"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
             >
-              <FileText className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
+              <HelpCircle className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
               <span>Documentation</span>
             </Link>
           </nav>
@@ -196,24 +208,30 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
       {/* Mobile Menu Button */}
       <div className="fixed top-0 left-0 right-0 z-20 flex items-center justify-between h-16 px-4 bg-card/90 dark:bg-card/50 shadow-md lg:hidden">
-        <h1 className="text-xl font-bold text-primary">PostComposer</h1>
         <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <NotificationCenter />
-          <button
-            onClick={toggleMobileMenu}
-            className="p-2 text-foreground/80 dark:text-foreground/80 rounded-md hover:bg-muted/50 dark:hover:bg-background/50 focus:outline-none focus:ring-2 focus:ring-ring"
-            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={isMobileMenuOpen}
-            aria-controls="mobile-menu"
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
+          {/* Logo for mobile */}
+          <div className="w-8 h-8 overflow-hidden rounded">
+            <img
+              src="/images/postcomposer_logo.jpg"
+              alt="PostComposer Logo"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <h1 className="text-xl font-bold text-primary">PostComposer</h1>
         </div>
+        <button
+          onClick={toggleMobileMenu}
+          className="p-2 text-foreground/80 dark:text-foreground/80 rounded-md hover:bg-muted/50 dark:hover:bg-background/50 focus:outline-none focus:ring-2 focus:ring-ring"
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-menu"
+        >
+          {isMobileMenuOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
+        </button>
       </div>
 
       {/* Overlay when mobile menu is open */}
@@ -236,7 +254,17 @@ export default function MainLayout({ children }: MainLayoutProps) {
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between h-16 px-6 border-b border-border">
-            <h1 className="text-xl font-bold text-primary">PostComposer</h1>
+            <div className="flex items-center gap-2">
+              {/* Logo for mobile menu */}
+              <div className="w-8 h-8 overflow-hidden rounded">
+                <img
+                  src="/images/postcomposer_logo.jpg"
+                  alt="PostComposer Logo"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h1 className="text-xl font-bold text-primary">PostComposer</h1>
+            </div>
             <button
               onClick={toggleMobileMenu}
               className="p-2 text-foreground/80 dark:text-foreground/80 rounded-md hover:bg-muted/50 dark:hover:bg-background/50 focus:outline-none focus:ring-2 focus:ring-ring"
@@ -248,23 +276,23 @@ export default function MainLayout({ children }: MainLayoutProps) {
           <nav className="flex-1 px-4 py-6 space-y-2">
             <Link
               href="/dashboard"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
               onClick={toggleMobileMenu}
             >
               <LayoutDashboard className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
               <span>My Posts</span>
             </Link>
             <Link
-              href="/preview"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              href="/workspace"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
               onClick={toggleMobileMenu}
             >
               <FileText className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
-              <span>Long Form</span>
+              <span>Workspace</span>
             </Link>
             <Link
               href="/templates"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
               onClick={toggleMobileMenu}
             >
               <FileText className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
@@ -272,15 +300,15 @@ export default function MainLayout({ children }: MainLayoutProps) {
             </Link>
             <Link
               href="/schedule"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/80 dark:hover:bg-background/80 hover:text-foreground dark:hover:text-foreground transition-all group"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
               onClick={toggleMobileMenu}
             >
-              <Calendar className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70 group-hover:text-foreground dark:group-hover:text-foreground transition-colors" />
+              <Calendar className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
               <span>Schedule</span>
             </Link>
             <Link
               href="/analytics"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
               onClick={toggleMobileMenu}
             >
               <BarChart2 className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
@@ -288,7 +316,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             </Link>
             <Link
               href="/media"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
               onClick={toggleMobileMenu}
             >
               <ImageIcon className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
@@ -297,7 +325,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             {canApprove && (
               <Link
                 href="/dashboard/approvals"
-                className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+                className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
                 onClick={toggleMobileMenu}
               >
                 <CheckCircle className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
@@ -306,7 +334,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             )}
             <Link
               href="/settings"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
               onClick={toggleMobileMenu}
             >
               <Settings className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
@@ -314,10 +342,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
             </Link>
             <Link
               href="/documentation"
-              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg hover:bg-muted/50 dark:hover:bg-background/50 transition-colors"
+              className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
               onClick={toggleMobileMenu}
             >
-              <FileText className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
+              <HelpCircle className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
               <span>Documentation</span>
             </Link>
           </nav>
