@@ -6,7 +6,6 @@ import React, {
   useState,
   useEffect,
   useCallback,
-  useMemo,
 } from "react";
 import { MediaItem, mockMediaItems } from "@/lib/mock-data";
 import { createMediaItemFromFile } from "@/lib/media-utils";
@@ -17,6 +16,21 @@ const ITEMS_PER_PAGE = 50;
 // Define a cache for media items
 interface MediaCache {
   [key: string]: MediaItem;
+}
+
+// Define Canva types
+interface CanvaGraphic {
+  id: string;
+  title: string;
+  previewUrl: string;
+  width: number;
+  height: number;
+}
+
+interface CanvaState {
+  isConnected: boolean;
+  isSearching: boolean;
+  searchResults: CanvaGraphic[];
 }
 
 interface MediaContextType {
@@ -31,18 +45,22 @@ interface MediaContextType {
     isLoadingSearch: boolean;
     isLoadingFilter: boolean;
   };
+  canvaState: CanvaState;
   addMedia: (media: MediaItem) => void;
   removeMedia: (id: string) => void;
   selectMedia: (id: string | null) => void;
   updateMedia: (id: string, updates: Partial<MediaItem>) => void;
   searchMedia: (query: string) => MediaItem[];
-  filterByType: (type: "all" | "image" | "video") => MediaItem[];
+  filterByType: (type: "all" | "image") => MediaItem[];
   startUpload: () => void;
   finishUpload: (success: boolean) => void;
   uploadMedia: (files: File[]) => Promise<void>;
   loadNextPage: () => void;
   loadPreviousPage: () => void;
   goToPage: (page: number) => void;
+  connectToCanva: () => Promise<void>;
+  searchCanva: (query: string) => Promise<void>;
+  importFromCanva: (id: string) => Promise<void>;
 }
 
 const MediaContext = createContext<MediaContextType | undefined>(undefined);
@@ -50,9 +68,14 @@ const MediaContext = createContext<MediaContextType | undefined>(undefined);
 export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  // Filter out video items from mock data
+  const initialMediaItems = mockMediaItems.filter(
+    (item) => item.type === "image"
+  );
+
   // All media items (for search and filtering)
   const [allMediaItems, setAllMediaItems] =
-    useState<MediaItem[]>(mockMediaItems);
+    useState<MediaItem[]>(initialMediaItems);
   // Paginated media items (for display)
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [selectedMedia, setSelectedMedia] = useState<MediaItem | null>(null);
@@ -64,6 +87,11 @@ export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
     isLoadingPage: false,
     isLoadingSearch: false,
     isLoadingFilter: false,
+  });
+  const [canvaState, setCanvaState] = useState<CanvaState>({
+    isConnected: false,
+    isSearching: false,
+    searchResults: [],
   });
 
   // Calculate total pages
@@ -136,6 +164,8 @@ export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
   // Add media with caching
   const addMedia = useCallback(
     (media: MediaItem) => {
+      if (media.type !== "image") return;
+
       // Add to cache
       setMediaCache((prev) => ({
         ...prev,
@@ -248,17 +278,18 @@ export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setLoadingStates((prev) => ({ ...prev, isLoadingSearch: true }));
 
-      const lowercaseQuery = query.toLowerCase();
+      // Simulate API delay
       const results = allMediaItems.filter(
         (item) =>
-          item.name.toLowerCase().includes(lowercaseQuery) ||
-          item.tags.some((tag) => tag.toLowerCase().includes(lowercaseQuery))
+          item.name.toLowerCase().includes(query.toLowerCase()) ||
+          item.tags.some((tag) =>
+            tag.toLowerCase().includes(query.toLowerCase())
+          )
       );
 
-      // Simulate search delay
       setTimeout(() => {
         setLoadingStates((prev) => ({ ...prev, isLoadingSearch: false }));
-      }, 150);
+      }, 300);
 
       return results;
     },
@@ -266,21 +297,21 @@ export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const filterByType = useCallback(
-    (type: "all" | "image" | "video") => {
-      if (type === "all") return mediaItems;
-
+    (type: "all" | "image") => {
       setLoadingStates((prev) => ({ ...prev, isLoadingFilter: true }));
 
-      const results = mediaItems.filter((item) => item.type === type);
+      const results =
+        type === "all"
+          ? allMediaItems
+          : allMediaItems.filter((item) => item.type === type);
 
-      // Simulate filter delay
       setTimeout(() => {
         setLoadingStates((prev) => ({ ...prev, isLoadingFilter: false }));
-      }, 150);
+      }, 300);
 
       return results;
     },
-    [mediaItems]
+    [allMediaItems]
   );
 
   const startUpload = useCallback(() => {
@@ -299,99 +330,114 @@ export const MediaProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const uploadMedia = useCallback(
     async (files: File[]) => {
-      if (!files.length) return;
-
       startUpload();
 
       try {
-        // Process files in batches to avoid UI freezing
-        const batchSize = 3;
-        const totalFiles = files.length;
-        let processedFiles = 0;
+        // Filter out non-image files
+        const imageFiles = files.filter((file) =>
+          file.type.startsWith("image/")
+        );
 
-        while (processedFiles < totalFiles) {
-          const batch = files.slice(processedFiles, processedFiles + batchSize);
+        // Process each file
+        const mediaItems = await Promise.all(
+          imageFiles.map((file) => createMediaItemFromFile(file))
+        );
 
-          // Process batch concurrently
-          const mediaItems = await Promise.all(
-            batch.map((file) => createMediaItemFromFile(file))
-          );
-
-          // Add each media item
-          for (const mediaItem of mediaItems) {
-            addMedia(mediaItem);
-          }
-
-          processedFiles += batch.length;
-
-          // Update progress based on processed files
-          setUploadProgress(Math.min(90, (processedFiles / totalFiles) * 100));
-
-          // Small delay to allow UI updates
-          if (processedFiles < totalFiles) {
-            await new Promise((resolve) => setTimeout(resolve, 100));
-          }
-        }
+        // Add each media item
+        mediaItems.forEach((item) => {
+          if (item) addMedia(item);
+        });
 
         finishUpload(true);
       } catch (error) {
-        console.error("Error uploading media:", error);
+        console.error("Upload failed:", error);
         finishUpload(false);
+        throw error;
       }
     },
-    [addMedia, finishUpload, startUpload]
+    [addMedia, startUpload, finishUpload]
   );
 
-  // Memoize context value to prevent unnecessary re-renders
-  const contextValue = useMemo(
-    () => ({
-      mediaItems,
-      selectedMedia,
-      isUploading,
-      uploadProgress,
-      totalItems,
-      currentPage,
-      loadingStates,
-      addMedia,
-      removeMedia,
-      selectMedia,
-      updateMedia,
-      searchMedia,
-      filterByType,
-      startUpload,
-      finishUpload,
-      uploadMedia,
-      loadNextPage,
-      loadPreviousPage,
-      goToPage,
-    }),
-    [
-      mediaItems,
-      selectedMedia,
-      isUploading,
-      uploadProgress,
-      totalItems,
-      currentPage,
-      loadingStates,
-      addMedia,
-      removeMedia,
-      selectMedia,
-      updateMedia,
-      searchMedia,
-      filterByType,
-      startUpload,
-      finishUpload,
-      uploadMedia,
-      loadNextPage,
-      loadPreviousPage,
-      goToPage,
-    ]
+  // Canva integration functions
+  const connectToCanva = useCallback(async () => {
+    try {
+      // TODO: Implement Canva OAuth flow
+      setCanvaState((prev) => ({ ...prev, isConnected: true }));
+    } catch (error) {
+      console.error("Failed to connect to Canva:", error);
+      throw error;
+    }
+  }, []);
+
+  const searchCanva = useCallback(async (query: string) => {
+    try {
+      setCanvaState((prev) => ({ ...prev, isSearching: true }));
+      // TODO: Implement Canva search with query parameter
+      console.log(`Searching Canva for: ${query}`);
+      const results: CanvaGraphic[] = []; // Replace with actual Canva API call using query
+      setCanvaState((prev) => ({
+        ...prev,
+        isSearching: false,
+        searchResults: results,
+      }));
+    } catch (error) {
+      console.error("Failed to search Canva:", error);
+      setCanvaState((prev) => ({ ...prev, isSearching: false }));
+      throw error;
+    }
+  }, []);
+
+  const importFromCanva = useCallback(
+    async (canvaId: string) => {
+      try {
+        // TODO: Implement Canva import
+        const mediaItem: MediaItem = {
+          id: `canva-${canvaId}`,
+          type: "image",
+          name: "Imported from Canva",
+          url: "",
+          thumbnailUrl: "",
+          size: 0,
+          createdAt: new Date().toISOString(),
+          tags: ["canva"],
+        };
+        addMedia(mediaItem);
+      } catch (error) {
+        console.error("Failed to import from Canva:", error);
+        throw error;
+      }
+    },
+    [addMedia]
   );
+
+  const value = {
+    mediaItems,
+    selectedMedia,
+    isUploading,
+    uploadProgress,
+    totalItems,
+    currentPage,
+    loadingStates,
+    canvaState,
+    addMedia,
+    removeMedia,
+    selectMedia,
+    updateMedia,
+    searchMedia,
+    filterByType,
+    startUpload,
+    finishUpload,
+    uploadMedia,
+    loadNextPage,
+    loadPreviousPage,
+    goToPage,
+    connectToCanva,
+    searchCanva,
+    importFromCanva,
+  };
 
   return (
-    <MediaContext.Provider value={contextValue}>
-      {children}
-    </MediaContext.Provider>
+    <MediaContext.Provider value={value}>{children}</MediaContext.Provider>
   );
 };
 

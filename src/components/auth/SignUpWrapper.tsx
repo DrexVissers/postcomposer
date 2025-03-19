@@ -20,11 +20,11 @@ export default function SignUpWrapper({ children }: SignUpWrapperProps) {
         </h2>
         <p className="text-muted-foreground text-center max-w-md">
           You already have an account and are currently signed in. Would you
-          like to go to your dashboard or sign out?
+          like to go to the Composer Library or sign out?
         </p>
         <div className="flex space-x-4">
-          <Link href="/dashboard">
-            <Button variant="default">Go to Dashboard</Button>
+          <Link href="/composer-library">
+            <Button variant="default">Go to Composer Library</Button>
           </Link>
           <Link href="/sign-out">
             <Button variant="outline">Sign Out</Button>

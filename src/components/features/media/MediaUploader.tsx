@@ -2,19 +2,19 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { useDropzone } from "react-dropzone";
-import { Upload, X, File, AlertCircle } from "lucide-react";
+import { Upload, X, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useMedia } from "@/context/MediaContext";
 import { formatFileSize } from "@/lib/media-utils";
 
-interface MediaUploaderProps {
+interface ImageUploaderProps {
   onUploadComplete?: () => void;
 }
 
-export default function MediaUploader({
+export default function ImageUploader({
   onUploadComplete,
-}: MediaUploaderProps) {
+}: ImageUploaderProps) {
   const { uploadMedia, isUploading, uploadProgress } = useMedia();
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -38,16 +38,15 @@ export default function MediaUploader({
       setWarnings([]);
 
       // Filter out unsupported files
-      const supportedFiles = acceptedFiles.filter(
-        (file) =>
-          file.type.startsWith("image/") || file.type.startsWith("video/")
+      const supportedFiles = acceptedFiles.filter((file) =>
+        file.type.startsWith("image/")
       );
 
       // Check for unsupported files
       if (supportedFiles.length !== acceptedFiles.length) {
         setWarnings((prev) => [
           ...prev,
-          "Some files were rejected. Only images and videos are supported.",
+          "Some files were rejected. Only images are supported.",
         ]);
       }
 
@@ -88,7 +87,6 @@ export default function MediaUploader({
     onDrop,
     accept: {
       "image/*": [],
-      "video/*": [],
     },
     maxSize: MAX_FILE_SIZE,
   });
@@ -128,7 +126,7 @@ export default function MediaUploader({
         className={`border rounded-lg p-8 text-center cursor-pointer transition-colors ${
           isDragActive
             ? "border-primary bg-primary/5"
-            : "border-border hover:border-primary/50 hover:bg-background/80"
+            : "bg-input hover:bg-muted/80 dark:hover:bg-background/80 border-border hover:border-primary/50"
         }`}
       >
         <input {...getInputProps()} />
@@ -136,11 +134,11 @@ export default function MediaUploader({
           <Upload className="h-10 w-10 text-muted-foreground" />
           <p className="text-lg font-medium text-foreground/90 dark:text-foreground/90">
             {isDragActive
-              ? "Drop the files here..."
-              : "Drag & drop files here, or click to select files"}
+              ? "Drop the images here..."
+              : "Drag & drop images here, or click to select files"}
           </p>
           <p className="text-sm text-muted-foreground">
-            Supports images and videos up to 100MB each (max 500MB total)
+            Supports images up to 100MB each (max 500MB total)
           </p>
         </div>
       </div>
@@ -167,7 +165,7 @@ export default function MediaUploader({
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <p className="text-sm font-medium text-foreground/90 dark:text-foreground/90">
-              Files to upload: {files.length} ({formatFileSize(totalSize)})
+              Images to upload: {files.length} ({formatFileSize(totalSize)})
             </p>
             {files.length > 0 && !isUploading && (
               <Button
@@ -187,19 +185,15 @@ export default function MediaUploader({
                 className="flex items-center justify-between p-2 bg-background dark:bg-background rounded-md border border-border"
               >
                 <div className="flex items-center space-x-2">
-                  {file.type.startsWith("image/") ? (
-                    <div className="h-10 w-10 rounded overflow-hidden relative">
-                      <Image
-                        src={URL.createObjectURL(file)}
-                        alt={file.name}
-                        width={40}
-                        height={40}
-                        className="object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <File className="h-10 w-10 text-muted-foreground p-2" />
-                  )}
+                  <div className="h-10 w-10 rounded overflow-hidden relative">
+                    <Image
+                      src={URL.createObjectURL(file)}
+                      alt={file.name}
+                      width={40}
+                      height={40}
+                      className="object-cover"
+                    />
+                  </div>
                   <div className="overflow-hidden">
                     <p className="text-sm font-medium truncate text-foreground/90 dark:text-foreground/90">
                       {file.name}
@@ -225,7 +219,7 @@ export default function MediaUploader({
 
       {isUploading ? (
         <div className="space-y-2">
-          <div className="w-full bg-muted rounded-full h-2.5">
+          <div className="w-full bg-background rounded-full h-2.5">
             <div
               className="bg-primary h-2.5 rounded-full transition-all duration-300"
               style={{ width: `${uploadProgress}%` }}
@@ -242,7 +236,7 @@ export default function MediaUploader({
             className="w-full"
             disabled={files.length === 0 || !!error}
           >
-            Upload {files.length} {files.length === 1 ? "file" : "files"}
+            Upload {files.length} {files.length === 1 ? "image" : "images"}
           </Button>
         )
       )}

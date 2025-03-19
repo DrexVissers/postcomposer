@@ -154,7 +154,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
               className="flex items-center px-4 py-3 text-foreground/80 dark:text-foreground/80 rounded-lg bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
             >
               <ImageIcon className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
-              <span>Media</span>
+              <span>Image Library</span>
             </Link>
             {canApprove && (
               <Link
@@ -330,7 +330,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
               onClick={toggleMobileMenu}
             >
               <ImageIcon className="w-5 h-5 mr-3 text-foreground/70 dark:text-foreground/70" />
-              <span>Media</span>
+              <span>Image Library</span>
             </Link>
             {canApprove && (
               <Link

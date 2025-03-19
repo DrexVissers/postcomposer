@@ -20,7 +20,6 @@ interface PlatformComparisonProps {
   className?: string;
   textClassName?: string;
   subtextClassName?: string;
-  buttonClassName?: string;
   selectedButtonClassName?: string;
 }
 
@@ -31,7 +30,6 @@ export default function PlatformComparison({
   className = "bg-card dark:bg-card shadow-md",
   textClassName = "text-foreground/90 dark:text-foreground/90",
   subtextClassName = "text-muted-foreground dark:text-muted-foreground",
-  buttonClassName = "bg-muted/50 dark:bg-muted/30 text-foreground/80 dark:text-foreground/80",
   selectedButtonClassName = "bg-primary/20 text-primary border-primary/50",
 }: PlatformComparisonProps) {
   // Get the maximum value for the selected metric across all platforms
@@ -118,7 +116,9 @@ export default function PlatformComparison({
   };
 
   return (
-    <div className={`rounded-lg shadow-sm p-6 ${className}`}>
+    <div
+      className={`rounded-lg shadow-sm p-6 bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors ${className}`}
+    >
       <h3 className={`text-lg font-medium mb-4 ${textClassName}`}>
         Platform Comparison
       </h3>
@@ -135,7 +135,7 @@ export default function PlatformComparison({
             className={`px-3 py-1.5 rounded-full text-sm font-medium ${
               selectedMetric === metric
                 ? selectedButtonClassName
-                : buttonClassName
+                : "bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
             }`}
             onClick={() => onSelectMetric(metric)}
           >

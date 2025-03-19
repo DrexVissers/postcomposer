@@ -50,7 +50,7 @@ export default function MediaDetail() {
       <div className="bg-card dark:bg-card rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
         <div className="flex justify-between items-center p-4 border-b border-border">
           <h3 className="text-lg font-medium text-foreground/90 dark:text-foreground/90">
-            Media Details
+            Image Details
           </h3>
           <button
             onClick={handleClose}

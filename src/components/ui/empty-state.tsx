@@ -20,7 +20,7 @@ const EmptyState = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex flex-col items-center justify-center text-center p-8 rounded-lg border border-dashed border-border bg-card",
+      "flex flex-col items-center justify-center text-center p-8 rounded-lg border border-dashed border-border bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors",
       className
     )}
     {...props}

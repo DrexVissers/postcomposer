@@ -6,7 +6,6 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { MediaItem } from "@/lib/mock-data";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
-import { Film } from "lucide-react";
 import { formatFileSize } from "@/lib/media-utils";
 
 interface VirtualizedMediaGridProps {
@@ -95,10 +94,10 @@ function Cell({ columnIndex, rowIndex, style, data }: CellProps) {
   return (
     <div style={style} className="p-2">
       <Card
-        className="overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary transition-all bg-card dark:bg-card h-full"
+        className="overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary transition-all bg-input hover:bg-muted/80 dark:hover:bg-background/80 h-full"
         onClick={() => onSelectMedia(item)}
       >
-        <div className="relative h-[150px]">
+        <div className="relative h-[150px] bg-input">
           <Image
             src={item.thumbnailUrl}
             alt={item.name}
@@ -107,15 +106,8 @@ function Cell({ columnIndex, rowIndex, style, data }: CellProps) {
             className="object-cover"
             loading="lazy"
           />
-          {item.type === "video" && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
-              <div className="w-12 h-12 rounded-full bg-white bg-opacity-80 flex items-center justify-center">
-                <Film className="h-6 w-6 text-primary" />
-              </div>
-            </div>
-          )}
         </div>
-        <CardContent className="p-3">
+        <CardContent className="p-3 bg-input hover:bg-muted/80 dark:hover:bg-background/80">
           <p className="font-medium text-sm truncate text-foreground/90 dark:text-foreground/90">
             {item.name}
           </p>

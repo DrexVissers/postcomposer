@@ -69,9 +69,17 @@ export default function ApprovalsPage() {
           updatedPlatforms.linkedin.published = true;
           updatedPlatforms.linkedin.publishedAt = new Date().toISOString();
         }
-        if (updatedPlatforms.twitter) {
-          updatedPlatforms.twitter.published = true;
-          updatedPlatforms.twitter.publishedAt = new Date().toISOString();
+        if (updatedPlatforms.bluesky) {
+          updatedPlatforms.bluesky.published = true;
+          updatedPlatforms.bluesky.publishedAt = new Date().toISOString();
+        }
+        if (updatedPlatforms.threads) {
+          updatedPlatforms.threads.published = true;
+          updatedPlatforms.threads.publishedAt = new Date().toISOString();
+        }
+        if (updatedPlatforms.mastodon) {
+          updatedPlatforms.mastodon.published = true;
+          updatedPlatforms.mastodon.publishedAt = new Date().toISOString();
         }
 
         return {
@@ -195,8 +203,8 @@ export default function ApprovalsPage() {
         )}
 
         {filteredPosts.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-            <p className="text-gray-500">
+          <div className="bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors rounded-lg shadow-sm p-8 text-center">
+            <p className="text-muted-foreground">
               {filterStatus === "pending"
                 ? "No posts pending approval."
                 : filterStatus === "approved"
@@ -211,7 +219,7 @@ export default function ApprovalsPage() {
             {filteredPosts.map((post) => (
               <div
                 key={post.id}
-                className="bg-card dark:bg-card rounded-lg shadow-sm p-6 border-l-4 hover:shadow-md transition-shadow"
+                className="bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors rounded-lg shadow-sm p-6 border-l-4"
                 style={{
                   borderLeftColor:
                     post.status === "pending_approval"
@@ -251,12 +259,28 @@ export default function ApprovalsPage() {
                       LinkedIn
                     </Badge>
                   )}
-                  {post.platforms.twitter && (
+                  {post.platforms.bluesky && (
                     <Badge
                       variant="outline"
                       className="bg-sky-50 dark:bg-sky-900/20"
                     >
-                      Twitter
+                      Bluesky
+                    </Badge>
+                  )}
+                  {post.platforms.threads && (
+                    <Badge
+                      variant="outline"
+                      className="bg-purple-50 dark:bg-purple-900/20"
+                    >
+                      Threads
+                    </Badge>
+                  )}
+                  {post.platforms.mastodon && (
+                    <Badge
+                      variant="outline"
+                      className="bg-teal-50 dark:bg-teal-900/20"
+                    >
+                      Mastodon
                     </Badge>
                   )}
                 </div>
@@ -316,7 +340,7 @@ export default function ApprovalsPage() {
               </DialogHeader>
 
               <Tabs defaultValue="linkedin" className="mt-4">
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className="grid w-full grid-cols-4">
                   <TabsTrigger
                     value="linkedin"
                     disabled={!selectedPost.platforms.linkedin}
@@ -324,10 +348,22 @@ export default function ApprovalsPage() {
                     LinkedIn
                   </TabsTrigger>
                   <TabsTrigger
-                    value="twitter"
-                    disabled={!selectedPost.platforms.twitter}
+                    value="bluesky"
+                    disabled={!selectedPost.platforms.bluesky}
                   >
-                    Twitter
+                    Bluesky
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="threads"
+                    disabled={!selectedPost.platforms.threads}
+                  >
+                    Threads
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="mastodon"
+                    disabled={!selectedPost.platforms.mastodon}
+                  >
+                    Mastodon
                   </TabsTrigger>
                 </TabsList>
 
@@ -350,19 +386,55 @@ export default function ApprovalsPage() {
                 </TabsContent>
 
                 <TabsContent
-                  value="twitter"
-                  key="approval-twitter"
+                  value="bluesky"
+                  key="approval-bluesky"
                   className="mt-4"
                 >
-                  {selectedPost.platforms.twitter ? (
+                  {selectedPost.platforms.bluesky ? (
                     <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
                       <p className="whitespace-pre-wrap">
-                        {selectedPost.platforms.twitter.content}
+                        {selectedPost.platforms.bluesky.content}
                       </p>
                     </div>
                   ) : (
                     <p className="text-gray-500 text-center py-4">
-                      No Twitter content
+                      No Bluesky content
+                    </p>
+                  )}
+                </TabsContent>
+
+                <TabsContent
+                  value="threads"
+                  key="approval-threads"
+                  className="mt-4"
+                >
+                  {selectedPost.platforms.threads ? (
+                    <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                      <p className="whitespace-pre-wrap">
+                        {selectedPost.platforms.threads.content}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 text-center py-4">
+                      No Threads content
+                    </p>
+                  )}
+                </TabsContent>
+
+                <TabsContent
+                  value="mastodon"
+                  key="approval-mastodon"
+                  className="mt-4"
+                >
+                  {selectedPost.platforms.mastodon ? (
+                    <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                      <p className="whitespace-pre-wrap">
+                        {selectedPost.platforms.mastodon.content}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 text-center py-4">
+                      No Mastodon content
                     </p>
                   )}
                 </TabsContent>

@@ -118,7 +118,7 @@ export default function ComposerLibraryPage() {
               placeholder="Search posts..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-input border-input"
+              className="pl-10 bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
             />
           </div>
           <div className="flex flex-wrap gap-2">
@@ -129,7 +129,7 @@ export default function ComposerLibraryPage() {
                     value={selectedCategory}
                     onValueChange={setSelectedCategory}
                   >
-                    <SelectTrigger className="w-[150px] bg-input border-input">
+                    <SelectTrigger className="w-[150px] bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors">
                       <SelectValue placeholder="Category" />
                     </SelectTrigger>
                     <SelectContent>

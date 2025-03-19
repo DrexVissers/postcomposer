@@ -85,7 +85,7 @@ export default function MobileMediaGallery({
             <ChevronLeft className="w-6 h-6" />
           </button>
         ) : (
-          <h2 className="text-lg font-medium">Media Gallery</h2>
+          <h2 className="text-lg font-medium">Image Library</h2>
         )}
         <button onClick={onClose} className="p-2" aria-label="Close gallery">
           <X className="w-6 h-6" />

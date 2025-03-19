@@ -37,7 +37,7 @@ export default function ScheduleForm({
   selectedDate,
   onSchedule,
   posts = [],
-  className = "bg-card dark:bg-card rounded-lg shadow-sm p-6",
+  className = "bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors rounded-lg shadow-sm p-6",
   textClassName = "text-foreground/90 dark:text-foreground/90",
   subtextClassName = "text-foreground/80 dark:text-foreground/80",
   buttonClassName = "bg-muted text-muted-foreground hover:bg-muted/80",

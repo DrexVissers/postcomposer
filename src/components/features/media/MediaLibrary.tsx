@@ -1,15 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useMedia } from "@/context/MediaContext";
-import {
-  Search,
-  Image as ImageIcon,
-  Film,
-  LayoutGrid,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import MediaUploader from "./MediaUploader";
 import { MediaItem } from "@/lib/mock-data";
@@ -20,14 +13,25 @@ import dynamic from "next/dynamic";
 // Dynamically import the VirtualizedMediaGrid with no SSR to avoid hydration issues
 const VirtualizedMediaGrid = dynamic(() => import("./VirtualizedMediaGrid"), {
   ssr: false,
+  loading: () => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <div
+          key={i}
+          className="h-[240px] w-full rounded-lg bg-muted animate-pulse"
+        />
+      ))}
+    </div>
+  ),
 });
 
-interface MediaLibraryProps {
+interface ImageLibraryProps {
   onSelectMedia?: (media: MediaItem) => void;
 }
 
-export default function MediaLibrary({ onSelectMedia }: MediaLibraryProps) {
+export default function ImageLibrary({ onSelectMedia }: ImageLibraryProps) {
   const {
+    mediaItems,
     selectMedia,
     searchMedia,
     filterByType,
@@ -35,169 +39,125 @@ export default function MediaLibrary({ onSelectMedia }: MediaLibraryProps) {
     totalItems,
     loadNextPage,
     loadPreviousPage,
-    goToPage,
     loadingStates,
   } = useMedia();
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterType, setFilterType] = useState<"all" | "image" | "video">(
-    "all"
-  );
+  const [filterType, setFilterType] = useState<"all" | "image">("all");
+  const [error, setError] = useState<string | null>(null);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-  };
-
-  const handleFilter = (type: "all" | "image" | "video") => {
-    setFilterType(type);
-  };
-
-  const filteredItems = filterByType(filterType);
-  const searchResults = searchMedia(searchQuery);
-
-  // Combine both filters
-  const displayedItems = searchQuery
-    ? searchResults.filter(
-        (item) => filterType === "all" || item.type === filterType
-      )
-    : filteredItems;
-
-  const handleSelectMedia = (item: MediaItem) => {
-    if (onSelectMedia) {
-      onSelectMedia(item);
-    } else {
-      selectMedia(item.id);
+    try {
+      searchMedia(e.target.value);
+      setError(null);
+    } catch (err) {
+      setError("Failed to search media items");
+      console.error(err);
     }
   };
 
-  // Calculate pagination info
-  const itemsPerPage = 50; // Should match ITEMS_PER_PAGE in MediaContext
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const handleFilter = (type: "all" | "image") => {
+    setFilterType(type);
+    try {
+      filterByType(type);
+      setError(null);
+    } catch (err) {
+      setError("Failed to filter media items");
+      console.error(err);
+    }
+  };
+
+  const handleSelectMedia = (item: MediaItem) => {
+    selectMedia(item.id);
+    onSelectMedia?.(item);
+  };
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-destructive">{error}</p>
+        <Button
+          variant="outline"
+          onClick={() => window.location.reload()}
+          className="mt-4"
+        >
+          Retry
+        </Button>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-4" role="region" aria-label="Media Library">
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
-            size={18}
-            aria-hidden="true"
-          />
-          <Input
-            type="text"
-            placeholder="Search media..."
-            className="pl-10 bg-background dark:bg-background text-foreground"
-            value={searchQuery}
-            onChange={handleSearch}
-            aria-label="Search media"
-          />
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search media..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="pl-10 bg-input hover:bg-muted/80 dark:hover:bg-background/80 transition-colors"
+            />
+          </div>
         </div>
-        <Tabs
-          value={filterType}
-          onValueChange={handleFilter as (value: string) => void}
-          className="w-auto"
-          aria-label="Filter media by type"
-        >
-          <TabsList className="grid grid-cols-3 w-auto min-w-[240px]">
-            <TabsTrigger
-              value="all"
-              className="flex items-center gap-2"
-              role="tab"
-            >
-              <LayoutGrid className="w-4 h-4" aria-hidden="true" />
-              <span>All</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="image"
-              className="flex items-center gap-2"
-              role="tab"
-            >
-              <ImageIcon className="w-4 h-4" aria-hidden="true" />
-              <span>Images</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="video"
-              className="flex items-center gap-2"
-              role="tab"
-            >
-              <Film className="w-4 h-4" aria-hidden="true" />
-              <span>Videos</span>
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex gap-4">
+          <Tabs
+            value={filterType}
+            onValueChange={(v) => handleFilter(v as "all" | "image")}
+          >
+            <TabsList>
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="image">Images</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <MediaUploader onUploadComplete={() => setSearchQuery("")} />
+        </div>
       </div>
 
-      <MediaUploader />
-
-      {loadingStates.isLoadingPage ||
-      loadingStates.isLoadingSearch ||
-      loadingStates.isLoadingFilter ? (
-        <div className="flex justify-center items-center h-[400px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-        </div>
-      ) : (
+      <Suspense
+        fallback={
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-[240px] w-full rounded-lg bg-muted animate-pulse"
+              />
+            ))}
+          </div>
+        }
+      >
         <VirtualizedMediaGrid
-          items={displayedItems}
+          items={mediaItems}
           onSelectMedia={handleSelectMedia}
         />
-      )}
+      </Suspense>
 
-      {/* Pagination Controls */}
-      <div className="flex justify-between items-center mt-6">
-        <div className="text-sm text-muted-foreground">
-          Showing page {currentPage} of {totalPages} ({totalItems} items)
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadPreviousPage}
-            disabled={currentPage <= 1}
-            className="flex items-center gap-1"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Previous
-          </Button>
-
-          {/* Page number buttons - show up to 5 pages */}
-          <div className="flex gap-1">
-            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              // Calculate which page numbers to show
-              let pageNum;
-              if (totalPages <= 5) {
-                pageNum = i + 1;
-              } else if (currentPage <= 3) {
-                pageNum = i + 1;
-              } else if (currentPage >= totalPages - 2) {
-                pageNum = totalPages - 4 + i;
-              } else {
-                pageNum = currentPage - 2 + i;
-              }
-
-              return (
-                <Button
-                  key={pageNum}
-                  variant={currentPage === pageNum ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => goToPage(pageNum)}
-                  className="w-9 h-9 p-0"
-                >
-                  {pageNum}
-                </Button>
-              );
-            })}
-          </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadNextPage}
-            disabled={currentPage >= totalPages}
-            className="flex items-center gap-1"
-          >
-            Next
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
+      {/* Pagination */}
+      <div className="flex justify-between items-center mt-4">
+        <Button
+          variant="outline"
+          onClick={() => loadPreviousPage()}
+          disabled={currentPage === 1 || loadingStates.isLoadingPage}
+        >
+          <ChevronLeft className="h-4 w-4 mr-2" />
+          Previous
+        </Button>
+        <span className="text-sm text-muted-foreground">
+          Page {currentPage} of {Math.ceil(totalItems / 50)}
+        </span>
+        <Button
+          variant="outline"
+          onClick={() => loadNextPage()}
+          disabled={
+            currentPage >= Math.ceil(totalItems / 50) ||
+            loadingStates.isLoadingPage
+          }
+        >
+          Next
+          <ChevronRight className="h-4 w-4 ml-2" />
+        </Button>
       </div>
     </div>
   );
